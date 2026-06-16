@@ -6,13 +6,14 @@
 /*   By: rorollin <rorollin@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:23:20 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/16 16:24:48 by rorollin         ###   ########.fr       */
+/*   Updated: 2026/06/16 20:53:25 by rorollin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #ifndef MESSAGE_HPP
 # define MESSAGE_HPP
+#include "ACommand.hpp"
 # include "ft_irc.hpp"
 
 class Message
@@ -28,6 +29,10 @@ private:
 	std::string _prefix;
 	std::string _command;
 	std::vector<std::string> _params;
+
+	ACommand *getCommand();
+	std::string getParam(int i);
+	size_t paramCount();
 };
 
 #endif

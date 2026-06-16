@@ -6,7 +6,7 @@
 /*   By: rorollin <rorollin@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 14:19:43 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/16 16:49:42 by rorollin         ###   ########.fr       */
+/*   Updated: 2026/06/16 20:36:23 by rorollin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,13 @@
 # include <map>
 # include <vector>
 
-using serverConfig = struct serverConfig 
+typedef struct serverConfig 
 {
 	int	_port;
 	std::string _password;
 	int	_listenFd;
 
-};
+} serverConfig;
 
 enum clientState
 {
@@ -32,13 +32,13 @@ enum clientState
 
 };
 
-using clientInfo = struct clientInfo
+typedef struct clientInfo
 {
 	std::string _nickname;
 	std::string _username;
 	std::string _realname;
 	clientState _state;
-};
+} clientInfo;
 
 typedef struct channelParam
 {
@@ -48,13 +48,13 @@ typedef struct channelParam
 	bool _topicRestricted;
 } channelParam;
 
-using Event = struct Event
+typedef struct Event
 {
 	int fd;
 	bool readable;
 	bool writable;
 	bool closed;
 
-};
+} Event;
 
 #endif
