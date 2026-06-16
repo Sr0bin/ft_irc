@@ -6,7 +6,7 @@
 #    By: rorollin <rorollin@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/01/19 15:44:49 by rorollin          #+#    #+#              #
-#    Updated: 2026/05/28 16:28:00 by rorollin         ###   ########.fr        #
+#    Updated: 2026/06/16 16:39:05 by rorollin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ NAME = ircserv
 
 SOURCES_DIR = src
 
-SOURCES_NAME = main.cpp
+SOURCES_NAME = main.cpp Channel.cpp
 
 #---------------------------
 
@@ -38,9 +38,9 @@ DEPS = $(SOURCES:%.cpp=$(OBJ_DIR)/%.d)
 
 HEADERS_DIR = include/
 
-# INCLUDES = $(addprefix -I , $(HEADERS_DIR)) 
+INCLUDES = $(addprefix -I , $(HEADERS_DIR)) 
 
-INCLUDES = 
+# INCLUDES = 
 
 #COMPILER#####################
 
