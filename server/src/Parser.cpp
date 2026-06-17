@@ -15,8 +15,10 @@
 #include <ostream>
 #include <sstream>
 #include <vector>
+#include "ft_irc.hpp"
+#include "Parser.hpp"
 
-std::vector<std::string> parseParams(const std::string& params, const std::string& last_param)
+std::vector<std::string> Parser::parseParams(const std::string& params, const std::string& last_param)
 {
 	std::vector<std::string> result;
 	std::string token;
@@ -31,7 +33,7 @@ std::vector<std::string> parseParams(const std::string& params, const std::strin
 	return result;
 }
 
-void parseRawMessage(const std::string& raw)
+void Parser::parseRawMessage(const std::string& raw)
 {
 	std::cout<<raw<<std::endl;
 	if (raw.empty())
