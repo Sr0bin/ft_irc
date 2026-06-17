@@ -13,31 +13,22 @@
 
 #include "CommandDispatcher.hpp"
 
-CommandDispatcher::CommandDispatcher(void)
+CommandDispatcher::CommandDispatcher(Server &server) : _server(server)
 {
-	
-}
-
-CommandDispatcher::CommandDispatcher(params)
-{
-	
-}
-
-CommandDispatcher::CommandDispatcher(const CommandDispatcher &other)
-{
-	*this = other;
-}
-
-CommandDispatcher &CommandDispatcher::operator=(const CommandDispatcher &other)
-{
-	if (this != &other)
-	{
-		
-	}
-	return (*this);
 }
 
 CommandDispatcher::~CommandDispatcher(void)
 {
-	
+}
+
+void CommandDispatcher::registerCommand(const std::string &name, ACommand *cmd)
+{
+	(void)name;
+	(void)cmd;
+}
+
+void CommandDispatcher::dispatch(Client &client, Message &msg)
+{
+	(void)client;
+	(void)msg;
 }

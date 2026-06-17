@@ -13,31 +13,45 @@
 
 #include "Client.hpp"
 
-Client::Client(void)
+Client::Client(void) : _fd(-1)
 {
-	
 }
 
-Client::Client(params)
+Client::Client(int fd) : _fd(fd)
 {
-	
-}
-
-Client::Client(const Client &other)
-{
-	*this = other;
-}
-
-Client &Client::operator=(const Client &other)
-{
-	if (this != &other)
-	{
-		
-	}
-	return (*this);
 }
 
 Client::~Client(void)
 {
-	
+}
+
+void Client::appendInput(const std::string &input)
+{
+	(void)input;
+}
+
+bool Client::extractLine(std::string &out)
+{
+	(void)out;
+	return (false);
+}
+
+void Client::queueReply(const std::string &msg)
+{
+	(void)msg;
+}
+
+bool Client::hasPendingOutput(void) const
+{
+	return (false);
+}
+
+bool Client::isRegistered(void) const
+{
+	return (false);
+}
+
+std::string Client::prefix(void) const
+{
+	return (std::string());
 }

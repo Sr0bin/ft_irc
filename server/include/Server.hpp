@@ -30,8 +30,8 @@ public:
 	void run();
 	void acceptClient();
 	void disconnectClient(int fd);
-	Client &getClientByNick(std::string nick);
-	Channel &getChannelByName(std::string name);
+	Client *getClientByNick(std::string nick);
+	Channel *getChannelByName(std::string name);
 
 private:
 

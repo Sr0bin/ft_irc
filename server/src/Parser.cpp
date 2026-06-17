@@ -10,13 +10,13 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "ft_irc.hpp"
+#include "Parser.hpp"
 #include <cstring>
 #include <iostream>
 #include <ostream>
 #include <sstream>
 #include <vector>
-#include "ft_irc.hpp"
-#include "Parser.hpp"
 
 std::vector<std::string> Parser::parseParams(const std::string& params, const std::string& last_param)
 {

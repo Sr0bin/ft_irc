@@ -1,32 +1,44 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ACommand.cpp                                       :+:      :+:    :+:   */
+/*   PollMultiplexer.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rorollin <rorollin@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/16 16:38:05 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/16 16:38:23 by rorollin         ###   ########.fr       */
+/*   Created: 2026/06/17 19:44:12 by rorollin          #+#    #+#             */
+/*   Updated: 2026/06/17 19:45:03 by rorollin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
-#include "ACommand.hpp"
+#include "PollMultiplexer.hpp"
 
-ACommand::ACommand(Server &server) : _server(server)
+PollMultiplexer::PollMultiplexer(void)
 {
 }
 
-ACommand::~ACommand(void)
+PollMultiplexer::~PollMultiplexer(void)
 {
 }
 
-bool ACommand::requiresRegistration(void) const
+void PollMultiplexer::watch(int fd)
 {
-	return (true);
+	(void)fd;
 }
 
-size_t ACommand::minParams(void) const
+void PollMultiplexer::unwatch(int fd)
 {
+	(void)fd;
+}
+
+void PollMultiplexer::setWriteInterest(int fd, bool on)
+{
+	(void)fd;
+	(void)on;
+}
+
+int PollMultiplexer::wait(std::vector<Event> &out)
+{
+	(void)out;
 	return (0);
 }

@@ -16,18 +16,25 @@
 # include "ft_irc.hpp"
 # include "ACommand.hpp"
 
+class Server;
+
 class CommandDispatcher
 {
 public:
-	CommandDispatcher(void);
-	CommandDispatcher(params);
-	CommandDispatcher(const CommandDispatcher &other);
-	CommandDispatcher &operator=(const CommandDispatcher &other);
+	CommandDispatcher(Server &server);
 	~CommandDispatcher(void);
 
+	void registerCommand(const std::string &name, ACommand *cmd);
+	void dispatch(Client &client, Message &msg);
+
 private:
+	// No copy allowed
+	CommandDispatcher(const CommandDispatcher &other);
+	CommandDispatcher &operator=(const CommandDispatcher &other);
+
+	Server &_server;
 	std::map<std::string, ACommand *> _commands;
-	
+
 };
 
 #endif

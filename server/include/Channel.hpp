@@ -23,20 +23,20 @@ public:
 	Channel(std::string name);
 	~Channel(void);
 
+	void addMember(Client &client);
+	void removeMember(Client &client);
+	bool isMember(Client &client) const;
+	bool isOperator(Client &client) const;
+	void promote(Client &client);
+	void demote(Client &client);
+	bool canJoin(Client &client, std::string pass);
+	void broadcast(std::string msg, Client &except);
+
 private:
 
 	//No copy allowed
 	Channel(const Channel &other);
 	Channel &operator=(const Channel &other);
-
-	void addMember(Client &client);
-	void removeMember(Client &client);
-	bool isMember(Client &client);
-	bool isOperator(Client &client);
-	void promote(Client &client);
-	void demote(Client &client);
-	bool canJoin(Client &client, std::string pass);
-	void broadcast(std::string msg, Client &except);
 
 	std::string _name;
 	std::string _topic;
@@ -44,7 +44,7 @@ private:
 	std::set<Client *> _members;
 	std::set<Client *> _operators;
 	std::set<Client *> _invited;
-	
+
 };
 
 #endif

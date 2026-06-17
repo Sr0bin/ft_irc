@@ -27,9 +27,9 @@ public:
 	void appendInput(const std::string &input);
 	bool extractLine(std::string &out);
 	void queueReply(const std::string &msg);
-	bool hasPendingOutput(void);
-	bool isRegistered(void);
-	std::string &prefix();
+	bool hasPendingOutput(void) const;
+	bool isRegistered(void) const;
+	std::string prefix(void) const;
 
 
 private:
@@ -43,7 +43,7 @@ private:
 	std::string _outBuffer;
 	clientInfo _clientInfo;
 	std::set<Channel *> _channels;
-	
+
 };
 
 #endif

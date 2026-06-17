@@ -22,10 +22,20 @@ class Server;
 class ACommand
 {
 public:
-	virtual void execute(Client, Message) = 0;
-	virtual size_t requiresRegistration();
+	ACommand(Server &server);
+	virtual ~ACommand(void);
+
+	virtual void execute(Client &client, Message &msg) = 0;
+	virtual bool requiresRegistration(void) const;
+	virtual size_t minParams(void) const;
+
 protected:
 	Server &_server;
+
+private:
+	// No copy allowed
+	ACommand(const ACommand &other);
+	ACommand &operator=(const ACommand &other);
 };
 
 #endif

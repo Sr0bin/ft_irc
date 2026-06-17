@@ -13,31 +13,6 @@
 
 #include "AMultiplexer.hpp"
 
-AMultiplexer::AMultiplexer(void)
-{
-	
-}
-
-AMultiplexer::AMultiplexer(params)
-{
-	
-}
-
-AMultiplexer::AMultiplexer(const AMultiplexer &other)
-{
-	*this = other;
-}
-
-AMultiplexer &AMultiplexer::operator=(const AMultiplexer &other)
-{
-	if (this != &other)
-	{
-		
-	}
-	return (*this);
-}
-
 AMultiplexer::~AMultiplexer(void)
 {
-	
 }

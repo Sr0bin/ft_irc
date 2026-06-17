@@ -18,15 +18,12 @@
 class AMultiplexer
 {
 public:
+	virtual ~AMultiplexer(void);
+
 	virtual void watch(int fd) = 0;
 	virtual void unwatch(int fd) = 0;
 	virtual void setWriteInterest(int fd, bool on) = 0;
 	virtual int wait(std::vector<Event> &out) = 0;
-	virtual ~AMultiplexer();
-
-private:
-
-	
 };
 
 #endif

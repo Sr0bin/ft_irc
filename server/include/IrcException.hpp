@@ -14,18 +14,21 @@
 #ifndef IRCEXCEPTION_HPP
 # define IRCEXCEPTION_HPP
 # include <exception>
+# include <string>
 
 class IrcException : public std::exception
 {
 public:
-	IrcException(void);
-	IrcException(j);
-	IrcException(const IrcException &other);
-	IrcException &operator=(const IrcException &other);
-	~IrcException(void);
+	IrcException(void) throw();
+	IrcException(const std::string &msg) throw();
+	IrcException(const IrcException &other) throw();
+	IrcException &operator=(const IrcException &other) throw();
+	virtual ~IrcException(void) throw();
+
+	virtual const char *what(void) const throw();
 
 private:
-	
+	std::string _msg;
 };
 
 #endif

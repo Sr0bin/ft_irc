@@ -15,29 +15,57 @@
 
 Channel::Channel(void)
 {
-	
 }
 
-Channel::Channel(params)
+Channel::Channel(std::string name) : _name(name)
 {
-	
-}
-
-Channel::Channel(const Channel &other)
-{
-	*this = other;
-}
-
-Channel &Channel::operator=(const Channel &other)
-{
-	if (this != &other)
-	{
-		
-	}
-	return (*this);
 }
 
 Channel::~Channel(void)
 {
-	
+}
+
+void Channel::addMember(Client &client)
+{
+	(void)client;
+}
+
+void Channel::removeMember(Client &client)
+{
+	(void)client;
+}
+
+bool Channel::isMember(Client &client) const
+{
+	(void)client;
+	return (false);
+}
+
+bool Channel::isOperator(Client &client) const
+{
+	(void)client;
+	return (false);
+}
+
+void Channel::promote(Client &client)
+{
+	(void)client;
+}
+
+void Channel::demote(Client &client)
+{
+	(void)client;
+}
+
+bool Channel::canJoin(Client &client, std::string pass)
+{
+	(void)client;
+	(void)pass;
+	return (false);
+}
+
+void Channel::broadcast(std::string msg, Client &except)
+{
+	(void)msg;
+	(void)except;
 }

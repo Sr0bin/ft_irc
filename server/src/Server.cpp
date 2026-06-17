@@ -13,31 +13,39 @@
 
 #include "Server.hpp"
 
-Server::Server(void)
+Server::Server(void) : _mux(0), _dispatcher(0)
 {
-	
 }
 
-Server::Server(params)
+Server::Server(serverConfig config) : _config(config), _mux(0), _dispatcher(0)
 {
-	
-}
-
-Server::Server(const Server &other)
-{
-	*this = other;
-}
-
-Server &Server::operator=(const Server &other)
-{
-	if (this != &other)
-	{
-		
-	}
-	return (*this);
 }
 
 Server::~Server(void)
 {
-	
+}
+
+void Server::run()
+{
+}
+
+void Server::acceptClient()
+{
+}
+
+void Server::disconnectClient(int fd)
+{
+	(void)fd;
+}
+
+Client *Server::getClientByNick(std::string nick)
+{
+	(void)nick;
+	return (0);
+}
+
+Channel *Server::getChannelByName(std::string name)
+{
+	(void)name;
+	return (0);
 }
