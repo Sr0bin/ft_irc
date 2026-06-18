@@ -26,7 +26,9 @@ SOURCES_NAME = main.cpp \
 			   CommandDispatcher.cpp \
 			   AMultiplexer.cpp \
 			   PollMultiplexer.cpp \
-			   IrcException.cpp
+			   IrcException.cpp \
+			   FatalException.cpp \
+			   ACommandError.cpp
 
 #---------------------------
 
