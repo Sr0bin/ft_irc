@@ -2,6 +2,8 @@
 
 Comment les erreurs circulent dans le serveur, et **où** elles sont rattrapées.
 Document de référence pour quiconque touche au serveur ou aux commandes.
+Complète [ARCHITECTURE.md](ARCHITECTURE.md) §5 ; les choix sous-jacents sont dans
+[DECISIONS.md](DECISIONS.md).
 
 Principe directeur : **on ne lève une exception que pour ce qui est vraiment
 exceptionnel.** Ce qui est fréquent et attendu (un client qui se déconnecte) se
