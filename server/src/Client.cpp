@@ -15,10 +15,12 @@
 
 Client::Client(void) : _fd(-1)
 {
+	_clientInfo._state = CONNECTING;
 }
 
 Client::Client(int fd) : _fd(fd)
 {
+	_clientInfo._state = CONNECTING;
 }
 
 Client::~Client(void)
@@ -27,31 +29,38 @@ Client::~Client(void)
 
 void Client::appendInput(const std::string &input)
 {
-	(void)input;
+	_inBuffer += input;
 }
 
 bool Client::extractLine(std::string &out)
 {
-	(void)out;
-	return (false);
+	std::string::size_type pos = _inBuffer.find("\r\n");
+
+	if (pos == std::string::npos)
+		return (false);
+	out = _inBuffer.substr(0, pos);
+	_inBuffer.erase(0, pos + 2);
+	return (true);
 }
 
 void Client::queueReply(const std::string &msg)
 {
-	(void)msg;
+	_outBuffer += msg;
 }
 
 bool Client::hasPendingOutput(void) const
 {
-	return (false);
+	return (!_outBuffer.empty());
 }
 
 bool Client::isRegistered(void) const
 {
-	return (false);
+	// ponytail: stays false until the command layer sets _state = REGISTERED (PASS+NICK+USER)
+	return (_clientInfo._state == REGISTERED);
 }
 
 std::string Client::prefix(void) const
 {
-	return (std::string());
+	// ponytail: hardcoded host, replace once Server captures the peer address (getpeername)
+	return (_clientInfo._nickname + "!" + _clientInfo._username + "@localhost");
 }

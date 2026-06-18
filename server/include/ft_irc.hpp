@@ -28,8 +28,9 @@ typedef struct serverConfig
 
 enum clientState
 {
-	CONNECTING
-
+	CONNECTING,		// socket accepted, nothing validated yet
+	PASSWORD_OK,	// valid PASS received
+	REGISTERED		// PASS + NICK + USER complete
 };
 
 typedef struct clientInfo
