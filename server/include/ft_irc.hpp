@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 14:19:43 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/18 15:05:43 by prigaudi         ###   ########.fr       */
+/*   Updated: 2026/06/18 16:55:03 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,45 +18,56 @@
 #include <vector>
 
 typedef struct serverConfig {
-  int _port;
-  std::string _password;
-  int _listenFd;
+	int _port;
+	std::string _password;
+	int _listenFd;
 
 } serverConfig;
 
 enum clientState {
-  CONNECTING
+	CONNECTING
 
 };
 
 typedef struct clientInfo {
-  std::string _nickname;
-  std::string _username;
-  std::string _realname;
-  clientState _state;
+	std::string _nickname;
+	std::string _username;
+	std::string _realname;
+	clientState _state;
 } clientInfo;
 
 typedef struct channelParam {
-  std::string _pass;
-  size_t _userLimit;
-  bool _inviteOnly;
-  bool _topicRestricted;
+	std::string _pass;
+	size_t _userLimit;
+	bool _inviteOnly;
+	bool _topicRestricted;
 } channelParam;
 
 typedef struct Event {
-  int fd;
-  bool readable;
-  bool writable;
-  bool closed;
+	int fd;
+	bool readable;
+	bool writable;
+	bool closed;
 
 } Event;
 
 /*A SUPPRIMER, MEMO PA
 struct pollfd {
-    int   fd;       // le file descriptor à surveiller
-    short events;   // ce qu'on veut surveiller (input)
-    short revents;  // ce qui s'est passé réellement (output, rempli par le
+	int   fd;       // le file descriptor à surveiller
+	short events;   // ce qu'on veut surveiller (input)
+	short revents;  // ce qui s'est passé réellement (output, rempli par le
 kernel)
+};
+
+struct sockaddr_in {
+	sa_family_t    sin_family; // AF_INET (IPv4)
+	in_port_t      sin_port;   // port (en network byte order)
+	struct in_addr sin_addr;   // adresse IP
+	char           sin_zero[8]; // padding (inutilisé, mettre à 0)
+};
+
+struct in_addr {
+	uint32_t s_addr; // adresse IP (en network byte order)
 };
 */
 

@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:38:13 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/18 16:18:50 by prigaudi         ###   ########.fr       */
+/*   Updated: 2026/06/18 17:07:07 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,39 @@ void Server::run() {
 	_mux->watch(_config._listenFd);
 
 	while (1) {
+		std::vector<Event> events;
+
+		if (_mux->wait(events) == -1)
+			throw IrcException("poll() failed");
+
+		for (size_t i = 0; i < events.size(); i++) {
+			Event &e = events[i];
+
+			if (e.closed)
+				disconnectClient(e.fd);
+			else if (e.readable && e.fd == _config._listenFd)
+				acceptClient();
+			else if (e.readable)
+				; // recv() → à implémenter
+			else if (e.writable)
+				; // send() → à implémenter
+		}
 	}
 }
 
-void Server::acceptClient() {}
+void Server::acceptClient() {
+	struct sockaddr_in clientAddr = {};
+	socklen_t clientLen = sizeof(clientAddr);
+
+	int clientFd =
+		accept(_config._listenFd, (struct sockaddr *)&clientAddr, &clientLen);
+	if (clientFd == -1)
+		throw IrcException("accept() failed");
+
+	_clients[clientFd] = new Client(clientFd);
+
+	_mux->watch(clientFd);
+}
 
 void Server::disconnectClient(int fd) { (void)fd; }
 
