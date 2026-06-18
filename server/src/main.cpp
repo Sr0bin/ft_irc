@@ -6,13 +6,13 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 14:17:32 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/18 12:00:22 by prigaudi         ###   ########.fr       */
+/*   Updated: 2026/06/18 14:35:04 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/IrcException.hpp"
-#include "../include/Server.hpp"
-#include "../include/ft_irc.hpp"
+#include "IrcException.hpp"
+#include "Server.hpp"
+#include "ft_irc.hpp"
 #include <iostream>
 
 int main(int argc, char **argv) {

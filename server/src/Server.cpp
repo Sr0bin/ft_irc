@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:38:13 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/18 12:37:18 by prigaudi         ###   ########.fr       */
+/*   Updated: 2026/06/18 14:53:29 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@ Server::Server(serverConfig config)
 Server::~Server(void) {}
 
 void Server::run() {
+  _mux = new PollMultiplexer();
+
   _config._listenFd = socket(AF_INET, SOCK_STREAM, 0);
   if (_config._listenFd == -1)
     throw IrcException("socket() failed");
@@ -31,6 +33,9 @@ void Server::run() {
 
   if (bind(_config._listenFd, (struct sockaddr *)&addr, sizeof(addr)) == -1)
     throw IrcException("bind() failed");
+
+  if (listen(_config._listenFd, 10) == -1)
+    throw IrcException("listen() failed");
 }
 
 void Server::acceptClient() {}

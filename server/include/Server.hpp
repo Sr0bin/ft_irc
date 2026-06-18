@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 15:58:43 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/18 12:35:51 by prigaudi         ###   ########.fr       */
+/*   Updated: 2026/06/18 14:34:29 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include "Client.hpp"
 #include "CommandDispatcher.hpp"
 #include "IrcException.hpp"
+#include "PollMultiplexer.hpp"
 #include "ft_irc.hpp"
 #include <map>
 #include <netinet/in.h>
