@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:38:13 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/18 14:53:29 by prigaudi         ###   ########.fr       */
+/*   Updated: 2026/06/18 16:18:50 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,27 +15,32 @@
 Server::Server(void) : _mux(0), _dispatcher(0) {}
 
 Server::Server(serverConfig config)
-    : _config(config), _mux(0), _dispatcher(0) {}
+	: _config(config), _mux(0), _dispatcher(0) {}
 
-Server::~Server(void) {}
+Server::~Server(void) { delete _mux; }
 
 void Server::run() {
-  _mux = new PollMultiplexer();
+	_mux = new PollMultiplexer();
 
-  _config._listenFd = socket(AF_INET, SOCK_STREAM, 0);
-  if (_config._listenFd == -1)
-    throw IrcException("socket() failed");
+	_config._listenFd = socket(AF_INET, SOCK_STREAM, 0);
+	if (_config._listenFd == -1)
+		throw IrcException("socket() failed");
 
-  struct sockaddr_in addr = {};
-  addr.sin_family = AF_INET;
-  addr.sin_port = htons(_config._port);
-  addr.sin_addr.s_addr = INADDR_ANY;
+	struct sockaddr_in addr = {};
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(_config._port);
+	addr.sin_addr.s_addr = INADDR_ANY;
 
-  if (bind(_config._listenFd, (struct sockaddr *)&addr, sizeof(addr)) == -1)
-    throw IrcException("bind() failed");
+	if (bind(_config._listenFd, (struct sockaddr *)&addr, sizeof(addr)) == -1)
+		throw IrcException("bind() failed");
 
-  if (listen(_config._listenFd, 10) == -1)
-    throw IrcException("listen() failed");
+	if (listen(_config._listenFd, 10) == -1)
+		throw IrcException("listen() failed");
+
+	_mux->watch(_config._listenFd);
+
+	while (1) {
+	}
 }
 
 void Server::acceptClient() {}
@@ -43,11 +48,11 @@ void Server::acceptClient() {}
 void Server::disconnectClient(int fd) { (void)fd; }
 
 Client *Server::getClientByNick(std::string nick) {
-  (void)nick;
-  return (0);
+	(void)nick;
+	return (0);
 }
 
 Channel *Server::getChannelByName(std::string name) {
-  (void)name;
-  return (0);
+	(void)name;
+	return (0);
 }
