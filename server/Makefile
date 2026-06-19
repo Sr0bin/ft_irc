@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: rorollin <rorollin@student.42lyon.fr>      +#+  +:+       +#+         #
+#    By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/01/19 15:44:49 by rorollin          #+#    #+#              #
-#    Updated: 2026/06/17 19:50:04 by rorollin         ###   ########.fr        #
+#    Updated: 2026/06/19 14:49:26 by prigaudi         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,7 +26,8 @@ SOURCES_NAME = main.cpp \
 			   CommandDispatcher.cpp \
 			   AMultiplexer.cpp \
 			   PollMultiplexer.cpp \
-			   IrcException.cpp
+			   IrcException.cpp	\
+			   Utils.cpp
 
 #---------------------------
 

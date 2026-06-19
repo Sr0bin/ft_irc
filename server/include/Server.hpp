@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 15:58:43 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/19 10:52:53 by prigaudi         ###   ########.fr       */
+/*   Updated: 2026/06/19 14:47:50 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include "IrcException.hpp"
 #include "Parser.hpp"
 #include "PollMultiplexer.hpp"
+#include "Utils.hpp"
 #include "ft_irc.hpp"
 #include <map>
 #include <netinet/in.h>

@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:38:13 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/19 11:30:26 by prigaudi         ###   ########.fr       */
+/*   Updated: 2026/06/19 15:01:36 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,9 +115,23 @@ void Server::disconnectClient(int fd) {
 
 Client *Server::getClientByNick(std::string nick) {
 	std::map<int, Client *>::iterator it;
+
+	for (it = _clients.begin(); it != _clients.end(); ++it) {
+		Client *client = it->second;
+
+		if (Utils::ircEquals(client->getNickName(), nick)) {
+			return (client);
+		}
+	}
+	return (0);
 }
 
 Channel *Server::getChannelByName(std::string name) {
-	(void)name;
+	std::map<std::string, Channel *>::iterator it;
+
+	for (it = _channels.begin(); it != _channels.end(); ++it)
+		if (Utils::ircEquals(it->first, name))
+			return (it->second);
+
 	return (0);
 }
