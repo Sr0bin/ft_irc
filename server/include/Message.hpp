@@ -25,6 +25,7 @@ public:
 	Message &operator=(const Message &other);
 	~Message(void);
 
+	std::string getPrefix(void) const;
 	std::string getCommand(void) const;
 	std::string getParam(size_t i) const;
 	size_t paramCount(void) const;
@@ -34,5 +35,7 @@ private:
 	std::string _command;
 	std::vector<std::string> _params;
 };
+
+std::ostream& operator<<(std::ostream &os, const Message &msg);
 
 #endif

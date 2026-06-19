@@ -14,13 +14,14 @@
 #ifndef PARSER_HPP
 # define PARSER_HPP
 # include "ft_irc.hpp"
+#include "Message.hpp"
 
 class Parser
 {
 public:
 	static std::vector<std::string>
-	parseParams(const std::string& params, const std::string& last_param);
-	static void parseRawMessage(const std::string& raw);
+	parseParams(const std::string& params, const std::string& last_param, bool);
+	static Message parseRawMessage(const std::string& raw);
 
 	
 };
