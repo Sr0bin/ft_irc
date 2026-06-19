@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:38:13 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/19 09:48:35 by prigaudi         ###   ########.fr       */
+/*   Updated: 2026/06/19 11:11:22 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,12 +52,41 @@ void Server::run() {
 				disconnectClient(e.fd);
 			else if (e.readable && e.fd == _config._listenFd)
 				acceptClient();
-			else if (e.readable)
-				; // recv() → à implémenter
-			else if (e.writable)
-				; // send() → à implémenter
+			else if (e.readable) {
+				std::map<int, Client *>::iterator it = _clients.find(e.fd);
+				if (it == _clients.end())
+					continue;
+
+				Client *client = it->second;
+				char buffer[512];
+				ssize_t dataIn = recv(e.fd, buffer, sizeof(buffer), 0);
+
+				if (dataIn <= 0)
+					disconnectClient(e.fd);
+				else {
+					std::string sDataIn(buffer, dataIn);
+					client->appendInput(sDataIn);
+
+					// gestion input???
+				}
+			}
+		}
+		else if (e.writable) {
+			std::map<int, Client *>::iterator it = _clients.find(e.fd);
+			if (it == _clients.end())
+				continue;
+
+			Client *client = it->second;
+			char buffer[512];
+			ssize_t dataOut = send(e.fd, buffer, sizeof(buffer), 0);
+			if (dataOut == -1)
+				disconnectClient(e.fd);
+			else {
+				// gestion outPut
+			}
 		}
 	}
+}
 }
 
 void Server::acceptClient() {
