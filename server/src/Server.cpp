@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:38:13 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/18 17:07:07 by prigaudi         ###   ########.fr       */
+/*   Updated: 2026/06/19 09:48:35 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,17 @@ void Server::acceptClient() {
 	_mux->watch(clientFd);
 }
 
-void Server::disconnectClient(int fd) { (void)fd; }
+void Server::disconnectClient(int fd) {
+	std::map<int, Client *>::iterator it = _clients.find(fd);
+	if (it == _clients.end())
+		return;
+
+	_mux->unwatch(fd);
+	close(fd);
+
+	delete it->second;
+	_clients.erase(it);
+}
 
 Client *Server::getClientByNick(std::string nick) {
 	(void)nick;
