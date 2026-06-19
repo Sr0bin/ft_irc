@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:38:13 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/19 11:11:22 by prigaudi         ###   ########.fr       */
+/*   Updated: 2026/06/19 11:12:40 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,24 +69,22 @@ void Server::run() {
 
 					// gestion input???
 				}
-			}
-		}
-		else if (e.writable) {
-			std::map<int, Client *>::iterator it = _clients.find(e.fd);
-			if (it == _clients.end())
-				continue;
+			} else if (e.writable) {
+				std::map<int, Client *>::iterator it = _clients.find(e.fd);
+				if (it == _clients.end())
+					continue;
 
-			Client *client = it->second;
-			char buffer[512];
-			ssize_t dataOut = send(e.fd, buffer, sizeof(buffer), 0);
-			if (dataOut == -1)
-				disconnectClient(e.fd);
-			else {
-				// gestion outPut
+				Client *client = it->second;
+				char buffer[512];
+				ssize_t dataOut = send(e.fd, buffer, sizeof(buffer), 0);
+				if (dataOut == -1)
+					disconnectClient(e.fd);
+				else {
+					// gestion outPut
+				}
 			}
 		}
 	}
-}
 }
 
 void Server::acceptClient() {
