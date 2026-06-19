@@ -86,7 +86,8 @@ Message Parser::parseRawMessage(const std::string& raw)
 		newRaw.erase(newRaw.begin(), newRaw.begin() + i + 1);
 		last_param = &newRaw[newRaw.find(':') + 1];
 		size_t len = last_param.length();
-		newRaw.erase(newRaw.find(':'), newRaw.find(':') + len);
+		newRaw.erase(newRaw.find(':'), newRaw.find(':') + len + 1);
+		// std::cout<< "+" <<newRaw<< "+" <<std::endl;
 		params = parseParams(newRaw, last_param, true);
 	}
 	else
