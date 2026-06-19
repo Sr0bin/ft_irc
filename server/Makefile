@@ -28,7 +28,8 @@ SOURCES_NAME = main.cpp \
 			   PollMultiplexer.cpp \
 			   IrcException.cpp \
 			   FatalException.cpp \
-			   ACommandError.cpp
+			   ACommandError.cpp \
+			   randomCmd.cpp     #FOR TESTING PURPOSE ONLY
 
 #---------------------------
 

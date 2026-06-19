@@ -12,9 +12,15 @@
 
 
 #include "CommandDispatcher.hpp"
+#include  "ACommandError.hpp"
+#include <iostream>
+#include <ostream>
+
+#include "randomCmd.hpp"
 
 CommandDispatcher::CommandDispatcher(Server &server) : _server(server)
 {
+	registerCommand("random", new randomCmd(_server));
 }
 
 CommandDispatcher::~CommandDispatcher(void)
@@ -23,12 +29,31 @@ CommandDispatcher::~CommandDispatcher(void)
 
 void CommandDispatcher::registerCommand(const std::string &name, ACommand *cmd)
 {
-	(void)name;
-	(void)cmd;
+	_commands[name] = cmd;
 }
 
-void CommandDispatcher::dispatch(Client &client, Message &msg)
+void CommandDispatcher::dispatch(Client& client, Message& msg)
 {
-	(void)client;
-	(void)msg;
+	std::map<std::string, ACommand*>::iterator it = _commands.find(msg.getCommand());
+
+	if (it == _commands.end())
+		return;
+
+	ACommand* cmd = it->second;
+
+	cmd->execute(client, msg);
+	// try
+	// {
+	// 	if (cmd->requiresRegistration() && !client.isRegistered())
+	// 		// throw NotRegistered();
+	//
+	// 	if (msg.paramCount() < cmd->minParams())
+	// 		throw NeedMoreParams(msg.getCommand());
+	//
+	// 	cmd->execute(client, msg);
+	// }
+	// catch (ACommandError& e)
+	// {
+	// 	std::cout << "error" << std::endl;
+	// }
 }
