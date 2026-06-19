@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ft_irc — référence serveur</title>
+<style>
+  :root {
+    --bg: #f4f3ee;
+    --card: #ffffff;
+    --ink: #1f2328;
+    --ink-soft: #5a6069;
+    --ink-faint: #878d96;
+    --line: #d8d6cc;
+    --accent: #534ab7;
+    --accent-soft: #ece9fb;
+    --concrete: #e7edf2;
+    --concrete-border: #5b6b7a;
+    --concrete-ink: #1f2933;
+    --abstract: #ece9fb;
+    --abstract-border: #534ab7;
+    --abstract-ink: #2e2766;
+    --error: #c0392b;
+    --error-soft: #fbeae8;
+    --error-ink: #7a2018;
+    --ok: #2f7d5b;
+    --ok-soft: #e4f3ec;
+    --ok-ink: #1d4f39;
+    --rel: #7a8694;
+    --mono: "JetBrains Mono", "SF Mono", "Fira Code", ui-monospace, Menlo, Consolas, monospace;
+    --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  html[data-theme="dark"] {
+    --bg: #16181d;
+    --card: #1f2228;
+    --ink: #e6e3da;
+    --ink-soft: #a8adb4;
+    --ink-faint: #7c818a;
+    --line: #34383f;
+    --accent: #afa9ec;
+    --accent-soft: #2b2752;
+    --concrete: #2a2f37;
+    --concrete-border: #8a99a8;
+    --concrete-ink: #d6dde4;
+    --abstract: #2b2752;
+    --abstract-border: #afa9ec;
+    --abstract-ink: #cecbf6;
+    --error: #e8857b;
+    --error-soft: #3a2422;
+    --error-ink: #f3c9c3;
+    --ok: #6cc59a;
+    --ok-soft: #1e3328;
+    --ok-ink: #bfe6d3;
+    --rel: #9aa4b1;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px 80px; }
+
+  /* nav collante */
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+    display: flex; flex-wrap: wrap; align-items: center; gap: 4px;
+    padding: 10px 24px; margin-bottom: 8px;
+  }
+  .nav .brand { font-family: var(--mono); font-size: 12px; color: var(--accent); letter-spacing: 0.06em; margin-right: 12px; }
+  .nav a {
+    font-family: var(--mono); font-size: 12.5px; text-decoration: none; color: var(--ink-soft);
+    padding: 6px 11px; border-radius: 8px; border: 1px solid transparent; transition: .12s;
+  }
+  .nav a:hover { color: var(--accent); border-color: var(--line); }
+  .nav a.active { color: var(--accent); background: var(--accent-soft); }
+  .nav .spacer { margin-left: auto; }
+  .nav .toggle {
+    font-family: var(--mono); font-size: 12px; cursor: pointer;
+    background: var(--card); color: var(--ink-soft); border: 1px solid var(--line);
+    border-radius: 8px; padding: 6px 11px;
+  }
+  .nav .toggle:hover { border-color: var(--accent); color: var(--accent); }
+
+  header.hero { padding: 28px 0 4px; }
+  .eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin: 0 0 6px; }
+  h1 { font-size: 30px; font-weight: 600; margin: 0 0 10px; letter-spacing: -0.01em; }
+  .lede { color: var(--ink-soft); font-size: 15px; max-width: 64ch; margin: 0; }
+
+  section { scroll-margin-top: 64px; padding-top: 18px; }
+  h2 { font-size: 19px; font-weight: 600; margin: 30px 0 6px; letter-spacing: -0.01em; display: flex; align-items: baseline; gap: 10px; }
+  h2 .num { font-family: var(--mono); font-size: 13px; color: var(--accent); }
+  .sec-note { color: var(--ink-soft); font-size: 13.5px; margin: 0 0 14px; max-width: 70ch; }
+  .hint { font-family: var(--mono); font-size: 11px; color: var(--ink-faint); }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 14px 24px; margin: 18px 0 8px; padding: 16px 20px;
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px; }
+  .legend-item { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--ink-soft); }
+  .swatch { width: 26px; height: 16px; border-radius: 4px; flex: none; }
+  .sw-io       { background: var(--concrete);     border: 1.5px solid var(--concrete-border); }
+  .sw-logic    { background: var(--abstract);     border: 1.5px solid var(--abstract-border); }
+  .sw-data     { background: var(--accent-soft);  border: 1.5px solid var(--accent); }
+  .sw-error    { background: var(--error-soft);   border: 1.5px solid var(--error); }
+  .sw-ok       { background: var(--ok-soft);      border: 1.5px solid var(--ok); }
+  .sw-class    { background: transparent;         border: 1.5px dashed var(--rel); }
+
+  .diagram-card { position: relative; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px; margin: 12px 0; }
+  .diagram-card:fullscreen { padding: 24px; background: var(--bg); }
+  .diagram-card:fullscreen .mermaid-host { height: calc(100vh - 90px); }
+  .card-tools { position: absolute; top: 12px; right: 14px; z-index: 5; display: flex; gap: 6px; }
+  .card-tools button {
+    font-family: var(--mono); font-size: 11px; cursor: pointer; padding: 5px 9px;
+    background: var(--card); color: var(--ink-soft); border: 1px solid var(--line); border-radius: 7px;
+  }
+  .card-tools button:hover { border-color: var(--accent); color: var(--accent); }
+  .mermaid-host { height: 540px; overflow: hidden; border-radius: 10px; }
+  .mermaid-host svg { display: block; }
+  .svg-pan-zoom_viewport { transition: none; }
+  .mermaid-host g.node.clickable { cursor: pointer; }
+  .mermaid-host g.node.clickable rect,
+  .mermaid-host g.node.clickable polygon,
+  .mermaid-host g.node.clickable circle,
+  .mermaid-host g.node.clickable path { stroke: var(--accent) !important; stroke-width: 2.5px !important; }
+  .mermaid-host g.node.clickable .nodeLabel { text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 3px; }
+  .mermaid-host .edgeLabel, .mermaid-host .edgeLabel p { background: var(--card) !important; color: var(--ink-soft) !important; font-size: 11px !important; }
+  .mermaid-host .cluster rect { fill: transparent !important; stroke: var(--rel) !important; stroke-dasharray: 6 4 !important; stroke-width: 1.3px !important; }
+  .mermaid-host .cluster .cluster-label, .mermaid-host .cluster .cluster-label *, .mermaid-host .cluster span { color: var(--ink-faint) !important; font-family: var(--mono) !important; font-size: 12px !important; font-weight: 600; }
+
+  details { background: var(--card); border: 1px solid var(--line); border-radius: 14px; margin: 10px 0; overflow: hidden; }
+  details[open] { border-color: var(--accent); }
+  summary { cursor: pointer; padding: 14px 18px; font-weight: 600; font-size: 14px; list-style: none; display: flex; align-items: center; gap: 10px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::before { content: "▸"; color: var(--accent); font-family: var(--mono); transition: transform .15s; }
+  details[open] summary::before { transform: rotate(90deg); }
+  summary .tag { font-family: var(--mono); font-size: 11px; color: var(--ink-faint); font-weight: 400; margin-left: auto; }
+  details .diagram-card { border: none; border-top: 1px solid var(--line); border-radius: 0; margin: 0; }
+  details.flash { animation: flash 1.2s ease; }
+  @keyframes flash { 0% { background: var(--accent-soft); } 100% { background: transparent; } }
+
+  /* tableaux */
+  .table-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+  table.matrix { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 720px; }
+  table.matrix th, table.matrix td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  table.matrix thead th { position: sticky; top: 0; background: var(--card); font-family: var(--mono); font-size: 11.5px; text-transform: uppercase; letter-spacing: .04em; color: var(--ink-faint); z-index: 1; }
+  table.matrix tbody tr:nth-child(even) { background: color-mix(in srgb, var(--accent-soft) 30%, transparent); }
+  table.matrix tbody tr:last-child td { border-bottom: none; }
+  table.matrix td.cmd { font-family: var(--mono); font-weight: 600; color: var(--accent); white-space: nowrap; }
+  table.matrix code { font-family: var(--mono); background: var(--bg); padding: 1px 5px; border-radius: 4px; color: var(--ink); font-size: 12px; }
+  .pill { font-family: var(--mono); font-size: 11px; padding: 1px 8px; border-radius: 999px; border: 1px solid; white-space: nowrap; }
+  .pill.yes { color: var(--ok-ink); background: var(--ok-soft); border-color: var(--ok); }
+  .pill.no  { color: var(--ink-faint); background: transparent; border-color: var(--line); }
+  .num-err { font-family: var(--mono); color: var(--error); font-size: 12px; }
+  .num-ok  { font-family: var(--mono); color: var(--ok); font-size: 12px; }
+  .badge { display: inline-block; font-family: var(--mono); font-size: 10.5px; padding: 2px 8px; border-radius: 6px; background: var(--accent-soft); color: var(--accent); border: 1px solid var(--accent); vertical-align: middle; }
+
+  footer { margin-top: 40px; font-size: 13px; color: var(--ink-faint); border-top: 1px solid var(--line); padding-top: 18px; line-height: 1.7; }
+  footer code { font-family: var(--mono); color: var(--ink-soft); background: var(--bg); padding: 1px 5px; border-radius: 4px; }
+  footer strong { color: var(--ink-soft); }
+  @media (max-width: 640px) { h1 { font-size: 24px; } .mermaid-host { height: 420px; } .nav { padding: 8px 14px; } }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <span class="brand">ft_irc</span>
+  <a href="#sec-classes">Classes</a>
+  <a href="#sec-loops">Boucles</a>
+  <a href="#sec-commands">Commandes</a>
+  <a href="#sec-states">États</a>
+  <a href="#sec-numerics">Numerics</a>
+  <span class="spacer"></span>
+  <button class="toggle" id="themeBtn">mode sombre</button>
+</nav>
+
+<div class="wrap">
+  <header class="hero">
+    <p class="eyebrow">42 · ft_irc · C++98</p>
+    <h1>Référence serveur</h1>
+    <p class="lede">Toute la doc visuelle en un endroit : structure des classes, boucles logiques (du <code style="font-family:var(--mono)">poll()</code> à la réponse), matrice des commandes, machine à états du client, et correspondance numerics ↔ exceptions. Chaque diagramme se zoome (molette), se met en plein écran et s'exporte en SVG.</p>
+  </header>
+
+  <div class="legend">
+    <div class="legend-item"><span class="swatch sw-io"></span>I/O socket / concret</div>
+    <div class="legend-item"><span class="swatch sw-data"></span>donnée en transit</div>
+    <div class="legend-item"><span class="swatch sw-logic"></span>logique / classe abstraite</div>
+    <div class="legend-item"><span class="swatch sw-error"></span>chemin d'exception</div>
+    <div class="legend-item"><span class="swatch sw-ok"></span>boucle / état nominal</div>
+    <div class="legend-item"><span class="swatch sw-class"></span>cadre pointillé = classe / zone du code</div>
+  </div>
+
+  <!-- ===================== CLASSES ===================== -->
+  <section id="sec-classes">
+    <h2><span class="num">1</span> Diagramme de classes</h2>
+    <p class="sec-note">Architecture événementielle autour d'un seul <code>poll()</code>. Violet = classe abstraite (point d'extension) ; ardoise = classe concrète (état / mécanique). <code>Server</code> possède <code>Client</code>/<code>Channel</code> (composition) ; <code>Channel</code> ne fait que les référencer (agrégation) — d'où le retrait des channels avant tout <code>delete</code>.</p>
+    <div class="diagram-card" data-card data-name="ft_irc-classes">
+      <div class="card-tools">
+        <button data-act="reset" title="recadrer">⤢</button>
+        <button data-act="svg" title="exporter en SVG">SVG</button>
+        <button data-act="full" title="plein écran">⛶</button>
+      </div>
+      <div class="mermaid-host"></div>
+      <script type="text/plain" class="diagram-src">
+classDiagram
+direction TB
+
+class Server {
+  -int _port
+  -string _password
+  -int _listenFd
+  -map~Client~ _clients
+  -map~Channel~ _channels
+  -AMultiplexer _mux
+  -CommandDispatcher _dispatcher
+  +run() void
+  +acceptClient() void
+  +disconnectClient(int fd) void
+  +getClientByNick(nick) Client
+  +getChannel(name) Channel
+  +getOrCreateChannel(name) Channel
+}
+class Client {
+  -int _fd
+  -string _inBuffer
+  -string _outBuffer
+  -string _nickname
+  -string _username
+  -State _state
+  -set~Channel~ _channels
+  +appendInput(data) void
+  +extractLine(out) bool
+  +queueReply(msg) void
+  +hasPendingOutput() bool
+  +isRegistered() bool
+  +prefix() string
+}
+class Channel {
+  -string _name
+  -string _topic
+  -string _key
+  -size_t _userLimit
+  -bool _inviteOnly
+  -bool _topicRestricted
+  -set~Client~ _members
+  -set~Client~ _operators
+  -set~Client~ _invited
+  +addMember(c) void
+  +removeMember(c) void
+  +isOperator(c) bool
+  +promote(c) void
+  +canJoin(c, key) bool
+  +broadcast(msg, except) void
+}
+class Message {
+  -string _prefix
+  -string _command
+  -vector~string~ _params
+  +getCommand() string
+  +getParam(i) string
+  +paramCount() size_t
+}
+class Parser {
+  +parse(rawLine)$ Message
+}
+class CommandDispatcher {
+  -map~ACommand~ _commands
+  +registerCommand(cmd) void
+  +dispatch(client, msg) void
+}
+class ACommand {
+  <<abstract>>
+  #Server _server
+  +execute(Client, Message)* void
+  +minParams() size_t
+  +requiresRegistration() bool
+}
+class JoinCommand {
+  +execute(Client, Message) void
+}
+class AMultiplexer {
+  <<abstract>>
+  +watch(fd)* void
+  +unwatch(fd)* void
+  +setWriteInterest(fd, on)* void
+  +wait(events)* int
+}
+class PollMultiplexer {
+  -vector~pollfd~ _fds
+  +watch(fd) void
+  +unwatch(fd) void
+  +setWriteInterest(fd, on) void
+  +wait(events) int
+}
+Server "1" *-- "0..n" Client : possede par fd
+Server "1" *-- "0..n" Channel : possede par nom
+Server "1" *-- "1" CommandDispatcher
+Server "1" o-- "1" AMultiplexer
+PollMultiplexer --|> AMultiplexer
+JoinCommand --|> ACommand : x11 commandes
+CommandDispatcher "1" o-- "n" ACommand : map nom vers handler
+Channel "0..n" o-- "0..n" Client : non possede
+Parser ..> Message : produit
+CommandDispatcher ..> Message : consomme
+      </script>
+    </div>
+  </section>
+
+  <!-- ===================== BOUCLES ===================== -->
+  <section id="sec-loops">
+    <h2><span class="num">2</span> Boucles logiques</h2>
+    <p class="sec-note">Le chemin complet d'un octet, du <code>poll()</code> unique à la réponse. La vue d'ensemble est cliquable (nœuds violets → ouvrent la phase correspondante). Chaque flowchart regroupe ses nœuds par classe propriétaire (cadres pointillés).</p>
+
+    <div class="diagram-card" data-card data-name="ft_irc-overview">
+      <div class="card-tools">
+        <button data-act="reset" title="recadrer">⤢</button>
+        <button data-act="svg" title="exporter en SVG">SVG</button>
+        <button data-act="full" title="plein écran">⛶</button>
+      </div>
+      <div class="mermaid-host"></div>
+      <script type="text/plain" class="diagram-src">
+flowchart TB
+subgraph MAIN["main()"]
+  start(["./ircserv &lt;port&gt; &lt;password&gt;"]):::data
+  fatal{{"FatalException → exit(1)"}}:::error
+end
+subgraph SRV["Server — boucle poll()"]
+  init["socket → bind → listen<br/>fds non-bloquants"]:::io
+  loop[/"poll() — le process DORT ici"/]:::ok
+  ev{"Event prêt"}:::ok
+  acc["acceptClient()"]:::io
+  disc["disconnectClient()"]:::io
+  rd["recv → appendInput → extractLine → parse"]:::io
+  wr["send(_outBuffer)"]:::io
+end
+subgraph MSG["Message (via Parser)"]
+  msg[/"Message { command, params }"/]:::data
+end
+subgraph CD["CommandDispatcher"]
+  disp["dispatch → execute"]:::logic
+end
+subgraph OUTB["Client / Channel — _outBuffer"]
+  out["queueReply / broadcast → _outBuffer"]:::data
+end
+start --> init
+init -->|"échec"| fatal
+init -->|"OK"| loop
+loop --> ev
+ev -->|"listenFd"| acc
+acc --> loop
+ev -->|"POLLHUP / POLLERR"| disc
+disc --> loop
+ev -->|"POLLIN"| rd
+ev -->|"POLLOUT"| wr
+wr --> loop
+rd --> msg
+msg --> disp
+disp --> out
+disp -. "exception → numeric" .-> out
+out --> loop
+click rd call jump("phase-read")
+click disp call jump("phase-dispatch")
+click out call jump("phase-write")
+click disc call jump("phase-disconnect")
+click init call jump("phase-start")
+      </script>
+    </div>
+
+    <details id="phase-start">
+      <summary>Démarrage &amp; initialisation <span class="tag">socket → run()</span></summary>
+      <div class="diagram-card" data-card data-name="ft_irc-startup">
+        <div class="card-tools">
+          <button data-act="reset" title="recadrer">⤢</button>
+          <button data-act="svg" title="exporter en SVG">SVG</button>
+          <button data-act="full" title="plein écran">⛶</button>
+        </div>
+        <div class="mermaid-host"></div>
+        <script type="text/plain" class="diagram-src">
+flowchart TB
+x{{"throw FatalException"}}:::error
+subgraph MAIN["main()"]
+  a(["main(argc, argv)"]):::data
+  b{"argc == 3 ?"}:::logic
+  berr["usage → exit(1)"]:::error
+  y["catch(FatalException)<br/>log + exit(1) — libération propre"]:::error
+end
+subgraph CFG["Config"]
+  c["Config { port, password }"]:::data
+end
+subgraph SRV["Server — création du socket d'écoute"]
+  d["socket(AF_INET, SOCK_STREAM)"]:::io
+  e["setsockopt SO_REUSEADDR"]:::io
+  f["fcntl(listenFd, O_NONBLOCK)"]:::io
+  g["bind(port)"]:::io
+  h["listen(backlog)"]:::io
+  j[/"entrée dans Server::run()"/]:::ok
+end
+subgraph MUX["AMultiplexer (PollMultiplexer)"]
+  i["mux.watch(listenFd, POLLIN)<br/>le socket d'écoute = un fd surveillé comme les autres"]:::io
+end
+a --> b
+b -->|"non"| berr
+b -->|"oui"| c
+c --> d
+d --> e
+e --> f
+f --> g
+g --> h
+h --> i
+i --> j
+d -. "échec" .-> x
+g -. "échec" .-> x
+h -. "échec" .-> x
+x --> y
+        </script>
+      </div>
+    </details>
+
+    <details>
+      <summary>Enregistrement du client <span class="tag">PASS · NICK · USER → 001</span></summary>
+      <div class="diagram-card" data-card data-name="ft_irc-registration">
+        <div class="card-tools">
+          <button data-act="reset" title="recadrer">⤢</button>
+          <button data-act="svg" title="exporter en SVG">SVG</button>
+          <button data-act="full" title="plein écran">⛶</button>
+        </div>
+        <div class="mermaid-host"></div>
+        <script type="text/plain" class="diagram-src">
+flowchart TB
+pe{{"ERR_PASSWDMISMATCH (464)"}}:::error
+pin{{"ERR_NICKNAMEINUSE (433)"}}:::error
+subgraph CLI["Client — _state, _nickname, _username"]
+  s(["connexion acceptée — _state = CONNECTING"]):::data
+  reg["_state = REGISTERED"]:::ok
+end
+subgraph CMD["Commandes d'enregistrement (PASS / NICK / USER)"]
+  p{"commande reçue"}:::logic
+  pa["compare au password serveur"]:::logic
+  pn["set _nickname"]:::logic
+  pu["set _username, _realname"]:::logic
+  chk{"PASS + NICK + USER reçus ?"}:::logic
+end
+subgraph SRV["Server — souhaite la bienvenue"]
+  wel["RPL_WELCOME 001<br/>002 / 003 / 004"]:::data
+  done[/"client prêt — commandes IRC autorisées"/]:::ok
+end
+s --> p
+p -->|"PASS"| pa
+pa -->|"mauvais"| pe
+pa -->|"ok"| chk
+p -->|"NICK"| pn
+pn -->|"déjà pris"| pin
+pn -->|"libre"| chk
+p -->|"USER"| pu
+pu --> chk
+chk -->|"non"| p
+chk -->|"oui"| reg
+reg --> wel
+wel --> done
+        </script>
+      </div>
+    </details>
+
+    <details id="phase-read">
+      <summary>Chemin de lecture <span class="tag">recv → Message</span></summary>
+      <div class="diagram-card" data-card data-name="ft_irc-read">
+        <div class="card-tools">
+          <button data-act="reset" title="recadrer">⤢</button>
+          <button data-act="svg" title="exporter en SVG">SVG</button>
+          <button data-act="full" title="plein écran">⛶</button>
+        </div>
+        <div class="mermaid-host"></div>
+        <script type="text/plain" class="diagram-src">
+flowchart TB
+subgraph SRV["Server::run() — gestion POLLIN"]
+  a[/"POLLIN sur fd"/]:::ok
+  b["n = recv(fd, buf, N)"]:::io
+  c["disconnectClient(fd)"]:::io
+  d["rien à lire pour l'instant → retour boucle"]:::ok
+end
+subgraph CLI["Client — _inBuffer"]
+  e["appendInput(buf, n)<br/>concatène dans _inBuffer"]:::data
+  f{"_inBuffer contient un CRLF ?"}:::logic
+  g["conserver le buffer → retour boucle"]:::ok
+  h["extractLine() : coupe la 1re ligne<br/>retire jusqu'au CRLF inclus"]:::data
+end
+subgraph PAR["Parser"]
+  i["Parser::parse(line)"]:::logic
+end
+subgraph MSGR["Message"]
+  j[/"Message { prefix, command, params }"/]:::data
+end
+subgraph CDR["CommandDispatcher"]
+  k["dispatch(client, msg)"]:::logic
+end
+a --> b
+b -->|"n == 0 (déconnexion propre)"| c
+b -->|"n &lt; 0 (EAGAIN / EWOULDBLOCK)"| d
+b -->|"n &gt; 0"| e
+e --> f
+f -->|"non — ligne partielle (fragmentation TCP)"| g
+f -->|"oui"| h
+h --> i
+i --> j
+j --> k
+k --> f
+        </script>
+      </div>
+    </details>
+
+    <details id="phase-dispatch">
+      <summary>Dispatch &amp; exceptions <span class="tag">421 / 451 / 461 / catch</span></summary>
+      <div class="diagram-card" data-card data-name="ft_irc-dispatch">
+        <div class="card-tools">
+          <button data-act="reset" title="recadrer">⤢</button>
+          <button data-act="svg" title="exporter en SVG">SVG</button>
+          <button data-act="full" title="plein écran">⛶</button>
+        </div>
+        <div class="mermaid-host"></div>
+        <script type="text/plain" class="diagram-src">
+flowchart TB
+subgraph MSGD["Message"]
+  a[/"Message { command, params }"/]:::data
+end
+subgraph CD["CommandDispatcher::dispatch()"]
+  b["_commands.find(command)"]:::logic
+  c{"requiresRegistration() et client non enregistré ?"}:::logic
+  d{"params.size() &lt; minParams() ?"}:::logic
+  ca["catch(ACommandError&amp; e)"]:::error
+  br["nick = client (ou '*' si non enregistré)<br/>reply = ':' + serverName + ' ' + e.buildReply(nick)"]:::data
+  cb["catch(std::exception&amp; e)<br/>log &amp; continue — ne tue JAMAIS le serveur"]:::error
+end
+subgraph CMD["ACommand::execute() — commande concrète"]
+  e["cmd.execute(client, msg)"]:::logic
+  ok["mutation d'état + broadcast"]:::ok
+end
+subgraph EXC["ACommandError (hiérarchie d'exceptions)"]
+  u{{"throw UnknownCommand (421)"}}:::error
+  nr{{"throw NotRegistered (451)"}}:::error
+  np{{"throw NeedMoreParams (461)"}}:::error
+  me{{"throw NoSuchChannel 403 / BadChannelKey 475<br/>ChanOPrivsNeeded 482 …"}}:::error
+end
+subgraph CLID["Client"]
+  q["queueReply(reply) → _outBuffer"]:::data
+end
+a --> b
+b -->|"absent"| u
+b -->|"présent"| c
+c -->|"oui"| nr
+c -->|"non"| d
+d -->|"oui"| np
+d -->|"non"| e
+e -->|"refus métier"| me
+e -->|"succès"| ok
+u --> ca
+nr --> ca
+np --> ca
+me --> ca
+ca --> br
+br --> q
+e -. "bug imprévu (bad_alloc, .at() hors borne)" .-> cb
+ok --> q
+        </script>
+      </div>
+    </details>
+
+    <details id="phase-write">
+      <summary>Chemin d'écriture <span class="tag">_outBuffer → send</span></summary>
+      <div class="diagram-card" data-card data-name="ft_irc-write">
+        <div class="card-tools">
+          <button data-act="reset" title="recadrer">⤢</button>
+          <button data-act="svg" title="exporter en SVG">SVG</button>
+          <button data-act="full" title="plein écran">⛶</button>
+        </div>
+        <div class="mermaid-host"></div>
+        <script type="text/plain" class="diagram-src">
+flowchart TB
+subgraph CLIW["Client / Channel — _outBuffer"]
+  a["queueReply(msg) / channel.broadcast(msg, except)"]:::data
+  b["concatène dans _outBuffer<br/>de chaque destinataire"]:::data
+  c{"hasPendingOutput() ?"}:::logic
+end
+subgraph MUXW["AMultiplexer (PollMultiplexer)"]
+  d["setWriteInterest(fd, true)"]:::io
+  i["setWriteInterest(fd, false)<br/>sinon poll() tourne à vide = 100% CPU"]:::ok
+end
+subgraph SRVW["Server::run() — gestion POLLOUT"]
+  e[/"prochain tour : POLLOUT sur fd"/]:::ok
+  f["n = send(fd, _outBuffer)"]:::io
+  g["retirer SEULEMENT les n octets partis<br/>garder le reste → réessayer au POLLOUT suivant"]:::io
+  h["_outBuffer vide"]:::ok
+end
+a --> b
+b --> c
+c -->|"oui"| d
+d --> e
+e --> f
+f -->|"n &lt; taille (buffer noyau plein)"| g
+g --> e
+f -->|"tout est parti"| h
+h --> i
+        </script>
+      </div>
+    </details>
+
+    <details id="phase-disconnect">
+      <summary>Déconnexion <span class="tag">ordre impératif</span></summary>
+      <div class="diagram-card" data-card data-name="ft_irc-disconnect">
+        <div class="card-tools">
+          <button data-act="reset" title="recadrer">⤢</button>
+          <button data-act="svg" title="exporter en SVG">SVG</button>
+          <button data-act="full" title="plein écran">⛶</button>
+        </div>
+        <div class="mermaid-host"></div>
+        <script type="text/plain" class="diagram-src">
+flowchart TB
+a{{"recv()==0 · POLLHUP/ERR · commande QUIT"}}:::error
+h[/"plus aucune référence pendante (pas de dangling ptr)"/]:::ok
+subgraph SRVD["Server::disconnectClient(fd)"]
+  b["disconnectClient(fd)"]:::io
+  c["1 · retirer le client de tous ses _channels"]:::logic
+  e["3 · close(fd)"]:::io
+  g["5 · delete client (libération mémoire)"]:::logic
+end
+subgraph CHD["Channel"]
+  d["2 · broadcast 'QUIT' aux channels concernés"]:::data
+end
+subgraph MUXD["AMultiplexer (PollMultiplexer)"]
+  f["4 · unwatch(fd)"]:::io
+end
+a --> b
+b --> c
+c --> d
+d --> e
+e --> f
+f --> g
+g --> h
+        </script>
+      </div>
+    </details>
+
+    <details>
+      <summary>Transit des données entre acteurs <span class="tag">séquence — JOIN #techno</span></summary>
+      <div class="diagram-card" data-card data-name="ft_irc-sequence">
+        <div class="card-tools">
+          <button data-act="reset" title="recadrer">⤢</button>
+          <button data-act="svg" title="exporter en SVG">SVG</button>
+          <button data-act="full" title="plein écran">⛶</button>
+        </div>
+        <div class="mermaid-host"></div>
+        <script type="text/plain" class="diagram-src">
+sequenceDiagram
+  autonumber
+  actor C as Client (fd 7)
+  box transparent Côté serveur — un seul process, un seul poll()
+    participant P as poll() / Server
+    participant D as Dispatcher
+    participant J as JoinCommand
+    participant Ch as Channel #techno
+  end
+  actor O as Autres membres
+  C->>P: "JOIN #techno" + CRLF (TCP)
+  Note over P: POLLIN → recv → appendInput<br/>extractLine → Parser::parse
+  P->>D: dispatch(client, Message)
+  D->>J: execute(client, msg)
+  J->>Ch: getOrCreateChannel("#techno")
+  J->>Ch: canJoin(client, key)
+  alt refus (+i / +k / +l)
+    Ch-->>D: throw ACommandError (473 / 475 / 471)
+    D->>C: queueReply(numeric) → _outBuffer
+  else autorisé
+    J->>Ch: addMember(client)
+    Ch->>O: broadcast(":nick JOIN #techno") → _outBuffer
+    Ch->>C: 332 topic · 353 names · 366 fin → _outBuffer
+  end
+  Note over P: POLLOUT → send(_outBuffer) pour chaque fd
+  P->>C: octets de réponse
+  P->>O: octets du broadcast
+        </script>
+      </div>
+    </details>
+  </section>
+
+  <!-- ===================== COMMANDES ===================== -->
+  <section id="sec-commands">
+    <h2><span class="num">3</span> Matrice des commandes <span class="badge">spec cible</span></h2>
+    <p class="sec-note">Une ligne par commande du sujet (<code>ARCHITECTURE.md §8</code>, base RFC 2812). <b>min</b> = nombre minimum de paramètres (sinon <code>461</code>) · <b>enr.</b> = nécessite un client enregistré (sinon <code>451</code>). Les commandes ne sont pas encore implémentées (jalons 3-5) : c'est la cible.</p>
+    <div class="table-scroll">
+      <table class="matrix">
+        <thead>
+          <tr><th>Cmd</th><th>min</th><th>enr.</th><th>Réponses (RPL)</th><th>Erreurs (ERR)</th><th>Effet de bord</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="cmd">PASS</td><td>1</td><td><span class="pill no">non</span></td><td>—</td><td><span class="num-err">461 · 462</span></td><td>vérifie le mot de passe serveur ; <code>CONNECTING → PASSWORD_OK</code></td></tr>
+          <tr><td class="cmd">NICK</td><td>1</td><td><span class="pill no">non</span></td><td>relaie <code>NICK</code> aux channels si déjà enregistré</td><td><span class="num-err">431 · 432 · 433</span></td><td>pose <code>_nickname</code> ; brique de l'enregistrement</td></tr>
+          <tr><td class="cmd">USER</td><td>4</td><td><span class="pill no">non</span></td><td>déclenche <span class="num-ok">001-004</span> si PASS+NICK ok</td><td><span class="num-err">461 · 462</span></td><td>pose <code>_username</code>/<code>_realname</code> ; complète l'enregistrement</td></tr>
+          <tr><td class="cmd">JOIN</td><td>1</td><td><span class="pill yes">oui</span></td><td><span class="num-ok">331/332 · 353 · 366</span></td><td><span class="num-err">461 · 471 · 473 · 475 · 403</span></td><td>ajoute aux <code>_members</code>, broadcast JOIN ; créateur = opérateur</td></tr>
+          <tr><td class="cmd">PART</td><td>1</td><td><span class="pill yes">oui</span></td><td>relaie <code>PART</code></td><td><span class="num-err">461 · 403 · 442</span></td><td>retire des <code>_members</code>, broadcast PART, supprime le channel si vide</td></tr>
+          <tr><td class="cmd">PRIVMSG</td><td>2</td><td><span class="pill yes">oui</span></td><td>relaie le message à la cible</td><td><span class="num-err">411 · 412 · 401 · 403 · 404</span></td><td>vers un user (1 fd) ou un channel (broadcast sauf émetteur)</td></tr>
+          <tr><td class="cmd">QUIT</td><td>0</td><td><span class="pill no">non</span></td><td>relaie <code>QUIT</code></td><td>—</td><td>broadcast QUIT aux channels puis <code>disconnectClient</code></td></tr>
+          <tr><td class="cmd">TOPIC</td><td>1</td><td><span class="pill yes">oui</span></td><td><span class="num-ok">331 · 332</span></td><td><span class="num-err">461 · 442 · 482 · 403</span></td><td>lit (1 arg) ou pose <code>_topic</code> (broadcast) ; <code>+t</code> ⇒ op requis</td></tr>
+          <tr><td class="cmd">INVITE</td><td>2</td><td><span class="pill yes">oui</span></td><td><span class="num-ok">341</span></td><td><span class="num-err">461 · 401 · 442 · 443 · 482</span></td><td>ajoute la cible à <code>_invited</code> et la notifie</td></tr>
+          <tr><td class="cmd">KICK</td><td>2</td><td><span class="pill yes">oui</span></td><td>relaie <code>KICK</code></td><td><span class="num-err">461 · 403 · 442 · 441 · 482</span></td><td>retire la cible des <code>_members</code>, broadcast KICK ; op requis</td></tr>
+          <tr><td class="cmd">MODE</td><td>1</td><td><span class="pill yes">oui</span></td><td><span class="num-ok">324</span></td><td><span class="num-err">461 · 403 · 442 · 482 · 472 · 467 · 441</span></td><td>flags <code>+i +t +k +l +o</code> ; args positionnels ; broadcast MODE ; op requis pour set</td></tr>
+          <tr><td class="cmd">PING</td><td>1</td><td><span class="pill no">non</span></td><td>répond <code>PONG &lt;token&gt;</code></td><td><span class="num-err">409 · 461</span></td><td>maintient la connexion (évite le timeout des vrais clients)</td></tr>
+          <tr><td class="cmd">PONG</td><td>1</td><td><span class="pill no">non</span></td><td>—</td><td>—</td><td>réponse du client à notre PING ; met à jour la liveness</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===================== ÉTATS ===================== -->
+  <section id="sec-states">
+    <h2><span class="num">4</span> Machine à états du client</h2>
+    <p class="sec-note">Enregistrement linéaire (<code>DECISIONS.md D9</code>) : <code>CONNECTING → PASSWORD_OK → REGISTERED</code>. <code>isRegistered()</code> ≡ <code>_state == REGISTERED</code>. À ce jour l'enum réel (<code>ft_irc.hpp</code>) ne contient que <code>CONNECTING</code> (stub) ; ce diagramme montre la cible.</p>
+    <div class="diagram-card" data-card data-name="ft_irc-states">
+      <div class="card-tools">
+        <button data-act="reset" title="recadrer">⤢</button>
+        <button data-act="svg" title="exporter en SVG">SVG</button>
+        <button data-act="full" title="plein écran">⛶</button>
+      </div>
+      <div class="mermaid-host"></div>
+      <script type="text/plain" class="diagram-src">
+stateDiagram-v2
+  direction LR
+  [*] --> CONNECTING : accept() — fd non-bloquant
+  CONNECTING --> CONNECTING : PASS faux → 464
+  CONNECTING --> PASSWORD_OK : PASS correct
+  CONNECTING --> [*] : QUIT / recv==0 / HUP
+  PASSWORD_OK --> PASSWORD_OK : NICK ou USER (un seul reçu)
+  PASSWORD_OK --> REGISTERED : NICK + USER complets
+  PASSWORD_OK --> [*] : QUIT / recv==0 / HUP
+  REGISTERED --> REGISTERED : JOIN · PRIVMSG · MODE · TOPIC …
+  REGISTERED --> [*] : QUIT / KICK / recv==0 / HUP
+  note right of REGISTERED : isRegistered() == true ici seulement (D9)
+      </script>
+    </div>
+  </section>
+
+  <!-- ===================== NUMERICS ===================== -->
+  <section id="sec-numerics">
+    <h2><span class="num">5</span> Numerics ↔ exceptions</h2>
+    <p class="sec-note">Côté erreurs : chaque <code>ERR_*</code> est porté par une dérivée d'<code>ACommandError</code> ; <code>buildReply(nick)</code> renvoie <code>&lt;code&gt; &lt;nick&gt; &lt;params&gt; :&lt;texte&gt;</code> — le préfixe <code>:server</code> est ajouté par le dispatcher (<code>D7/D12</code>). Côté succès : les <code>RPL_*</code> sont construits inline par les commandes, <b>pas</b> via exception.</p>
+
+    <div class="table-scroll" style="margin-bottom:16px">
+      <table class="matrix">
+        <thead>
+          <tr><th>Code</th><th>Nom</th><th>Classe ACommandError</th><th>Texte (buildReply)</th><th>Levé quand</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="num-err">421</td><td>ERR_UNKNOWNCOMMAND</td><td><code>UnknownCommand</code></td><td>&lt;cmd&gt; :Unknown command</td><td>commande absente de la map (dispatch)</td></tr>
+          <tr><td class="num-err">451</td><td>ERR_NOTREGISTERED</td><td><code>NotRegistered</code></td><td>:You have not registered</td><td>commande exigeant l'enregistrement avant REGISTERED</td></tr>
+          <tr><td class="num-err">461</td><td>ERR_NEEDMOREPARAMS</td><td><code>NeedMoreParams</code></td><td>&lt;cmd&gt; :Not enough parameters</td><td>params &lt; minParams (pré-check ou commande)</td></tr>
+          <tr><td class="num-err">462</td><td>ERR_ALREADYREGISTERED</td><td><code>AlreadyRegistered</code></td><td>:Unauthorized command (already registered)</td><td>PASS / USER après enregistrement</td></tr>
+          <tr><td class="num-err">464</td><td>ERR_PASSWDMISMATCH</td><td><code>PasswdMismatch</code></td><td>:Password incorrect</td><td>PASS incorrect</td></tr>
+          <tr><td class="num-err">431</td><td>ERR_NONICKNAMEGIVEN</td><td><code>NoNicknameGiven</code></td><td>:No nickname given</td><td>NICK sans argument</td></tr>
+          <tr><td class="num-err">432</td><td>ERR_ERRONEUSNICKNAME</td><td><code>ErroneusNickname</code></td><td>&lt;nick&gt; :Erroneus nickname</td><td>nick avec caractères invalides</td></tr>
+          <tr><td class="num-err">433</td><td>ERR_NICKNAMEINUSE</td><td><code>NicknameInUse</code></td><td>&lt;nick&gt; :Nickname is already in use</td><td>nick déjà pris</td></tr>
+          <tr><td class="num-err">401</td><td>ERR_NOSUCHNICK</td><td><code>NoSuchNick</code></td><td>&lt;nick&gt; :No such nick/channel</td><td>cible PRIVMSG/INVITE inexistante</td></tr>
+          <tr><td class="num-err">403</td><td>ERR_NOSUCHCHANNEL</td><td><code>NoSuchChannel</code></td><td>&lt;chan&gt; :No such channel</td><td>channel inexistant</td></tr>
+          <tr><td class="num-err">404</td><td>ERR_CANNOTSENDTOCHAN</td><td><code>CannotSendToChan</code></td><td>&lt;chan&gt; :Cannot send to channel</td><td>PRIVMSG vers un channel non rejoint</td></tr>
+          <tr><td class="num-err">411</td><td>ERR_NORECIPIENT</td><td><code>NoRecipient</code></td><td>:No recipient given (&lt;cmd&gt;)</td><td>PRIVMSG sans cible</td></tr>
+          <tr><td class="num-err">412</td><td>ERR_NOTEXTTOSEND</td><td><code>NoTextToSend</code></td><td>:No text to send</td><td>PRIVMSG sans message</td></tr>
+          <tr><td class="num-err">441</td><td>ERR_USERNOTINCHANNEL</td><td><code>UserNotInChannel</code></td><td>&lt;nick&gt; &lt;chan&gt; :They aren't on that channel</td><td>KICK/MODE +o sur un user absent du channel</td></tr>
+          <tr><td class="num-err">442</td><td>ERR_NOTONCHANNEL</td><td><code>NotOnChannel</code></td><td>&lt;chan&gt; :You're not on that channel</td><td>PART/TOPIC/KICK sur un channel non rejoint</td></tr>
+          <tr><td class="num-err">443</td><td>ERR_USERONCHANNEL</td><td><code>UserOnChannel</code></td><td>&lt;nick&gt; &lt;chan&gt; :is already on channel</td><td>INVITE d'un membre déjà présent</td></tr>
+          <tr><td class="num-err">471</td><td>ERR_CHANNELISFULL</td><td><code>ChannelIsFull</code></td><td>&lt;chan&gt; :Cannot join channel (+l)</td><td>JOIN, limite <code>+l</code> atteinte</td></tr>
+          <tr><td class="num-err">473</td><td>ERR_INVITEONLYCHAN</td><td><code>InviteOnlyChan</code></td><td>&lt;chan&gt; :Cannot join channel (+i)</td><td>JOIN <code>+i</code> sans invitation</td></tr>
+          <tr><td class="num-err">475</td><td>ERR_BADCHANNELKEY</td><td><code>BadChannelKey</code></td><td>&lt;chan&gt; :Cannot join channel (+k)</td><td>JOIN <code>+k</code>, mauvaise clé</td></tr>
+          <tr><td class="num-err">467</td><td>ERR_KEYSET</td><td><code>KeySet</code></td><td>&lt;chan&gt; :Channel key already set</td><td>MODE +k sur un channel ayant déjà une clé</td></tr>
+          <tr><td class="num-err">472</td><td>ERR_UNKNOWNMODE</td><td><code>UnknownMode</code></td><td>&lt;char&gt; :is unknown mode char to me</td><td>MODE avec un flag non géré</td></tr>
+          <tr><td class="num-err">482</td><td>ERR_CHANOPRIVSNEEDED</td><td><code>ChanOPrivsNeeded</code></td><td>&lt;chan&gt; :You're not channel operator</td><td>TOPIC(+t)/KICK/MODE sans statut d'op</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="sec-note">Réponses de succès (<code>RPL_*</code>) — construites directement, pas levées :</p>
+    <div class="table-scroll">
+      <table class="matrix">
+        <thead><tr><th>Code</th><th>Nom</th><th>Émis par</th></tr></thead>
+        <tbody>
+          <tr><td class="num-ok">001-004</td><td>RPL_WELCOME / YOURHOST / CREATED / MYINFO</td><td>fin d'enregistrement (PASS+NICK+USER)</td></tr>
+          <tr><td class="num-ok">331 / 332</td><td>RPL_NOTOPIC / RPL_TOPIC</td><td>JOIN, TOPIC (lecture)</td></tr>
+          <tr><td class="num-ok">353 / 366</td><td>RPL_NAMREPLY / RPL_ENDOFNAMES</td><td>JOIN (liste des membres)</td></tr>
+          <tr><td class="num-ok">341</td><td>RPL_INVITING</td><td>INVITE (accusé à l'invitant)</td></tr>
+          <tr><td class="num-ok">324</td><td>RPL_CHANNELMODEIS</td><td>MODE (lecture des modes)</td></tr>
+          <tr><td class="num-ok">PONG</td><td>—</td><td>réponse à un PING reçu</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    <strong>Trois invariants qui font passer l'éval :</strong><br/>
+    1. <strong>Jamais de crash.</strong> Deux seuls sites de <code>catch</code> : <code>main</code> (<code>FatalException</code> → arrêt propre) et <code>dispatch</code> (<code>ACommandError</code> → numeric, puis <code>std::exception</code> → log &amp; continue).<br/>
+    2. <strong>Fragmentation TCP.</strong> <code>appendInput</code> accumule ≠ <code>extractLine</code> ne libère que sur CRLF.<br/>
+    3. <strong>Envoi partiel.</strong> <code>send()</code> peut écrire moins que demandé — d'où la persistance du <code>_outBuffer</code> et le <code>POLLOUT</code> à la demande seulement.<br/>
+    <span class="hint">Sources : ARCHITECTURE.md · DECISIONS.md · EXCEPTIONS.md · FLOW.md</span>
+  </footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3/dist/svg-pan-zoom.min.js"></script>
+<script>
+  function cssVar(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+
+  function mermaidConfig() {
+    return {
+      startOnLoad: false,
+      securityLevel: 'loose',
+      theme: 'base',
+      fontFamily: cssVar('--mono'),
+      flowchart: { curve: 'basis', nodeSpacing: 45, rankSpacing: 55, htmlLabels: true },
+      themeVariables: {
+        lineColor: cssVar('--rel'),
+        textColor: cssVar('--ink'),
+        primaryColor: cssVar('--concrete'),
+        primaryBorderColor: cssVar('--concrete-border'),
+        primaryTextColor: cssVar('--concrete-ink'),
+        classText: cssVar('--concrete-ink'),
+        actorBkg: cssVar('--accent-soft'),
+        actorBorder: cssVar('--accent'),
+        actorTextColor: cssVar('--ink'),
+        signalColor: cssVar('--rel'),
+        signalTextColor: cssVar('--ink-soft'),
+        noteBkgColor: cssVar('--accent-soft'),
+        noteTextColor: cssVar('--ink'),
+        noteBorderColor: cssVar('--accent'),
+        labelBoxBkgColor: cssVar('--card'),
+        labelBoxBorderColor: cssVar('--line'),
+        labelTextColor: cssVar('--ink'),
+        fontSize: '13px'
+      }
+    };
+  }
+
+  // classDef flowchart depuis les variables CSS (suit le thème)
+  function classDefs() {
+    const d = (name, fill, stroke, ink) =>
+      'classDef ' + name + ' fill:' + cssVar(fill) + ',stroke:' + cssVar(stroke) +
+      ',color:' + cssVar(ink) + ',stroke-width:1.5px';
+    return [
+      d('io',    '--concrete',    '--concrete-border', '--concrete-ink'),
+      d('logic', '--abstract',    '--abstract-border', '--abstract-ink'),
+      d('data',  '--accent-soft', '--accent',          '--ink'),
+      d('error', '--error-soft',  '--error',           '--error-ink'),
+      d('ok',    '--ok-soft',     '--ok',              '--ok-ink')
+    ].join('\n');
+  }
+
+  // colorie les classes abstraites du diagramme de classes
+  function classAbstractStyles() {
+    const fill = cssVar('--abstract'), stroke = cssVar('--abstract-border'), ink = cssVar('--abstract-ink');
+    return ['ACommand', 'AMultiplexer']
+      .map((c) => 'style ' + c + ' fill:' + fill + ',stroke:' + stroke + ',color:' + ink + ',stroke-width:1.5px')
+      .join('\n');
+  }
+
+  // nœud cliquable → ouvre + scrolle vers la phase correspondante
+  window.jump = function (id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (el.tagName === 'DETAILS') el.open = true; // déclenche le rendu paresseux
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    el.classList.remove('flash');
+    void el.offsetWidth;
+    el.classList.add('flash');
+  };
+
+  let idc = 0;
+  async function renderCard(card) {
+    const host = card.querySelector('.mermaid-host');
+    let src = card.querySelector('.diagram-src').textContent.trim();
+    if (card._pz) { try { card._pz.destroy(); } catch (e) {} card._pz = null; }
+    if (src.indexOf('flowchart') === 0) src += '\n' + classDefs();
+    else if (src.indexOf('classDiagram') === 0) src += '\n' + classAbstractStyles();
+
+    try {
+      const { svg, bindFunctions } = await mermaid.render('mmd' + (++idc), src);
+      host.innerHTML = svg;
+      if (bindFunctions) bindFunctions(host);
+    } catch (e) {
+      host.innerHTML = '<p style="color:var(--error);font-family:var(--mono);font-size:12px">Erreur Mermaid : ' + e.message + '</p>';
+      return;
+    }
+
+    const svgEl = host.querySelector('svg');
+    if (svgEl && window.svgPanZoom) {
+      svgEl.removeAttribute('style');
+      svgEl.setAttribute('width', '100%');
+      svgEl.setAttribute('height', '100%');
+      card._pz = svgPanZoom(svgEl, {
+        controlIcons: true, fit: true, center: true,
+        minZoom: 0.2, maxZoom: 25, zoomScaleSensitivity: 0.3,
+        preventMouseEventsDefault: false
+      });
+    }
+    if (!host._wheelGuard) {
+      host._wheelGuard = true;
+      host.addEventListener('wheel', (e) => { e.preventDefault(); }, { passive: false });
+    }
+    card.dataset.rendered = '1';
+  }
+
+  function refit(card) {
+    if (!card._pz) return;
+    card._pz.resize(); card._pz.fit(); card._pz.center();
+  }
+
+  function exportSvg(card) {
+    const svg = card.querySelector('.mermaid-host svg');
+    if (!svg) return;
+    const data = '<?xml version="1.0" encoding="UTF-8"?>\n' + new XMLSerializer().serializeToString(svg);
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([data], { type: 'image/svg+xml' }));
+    a.download = (card.dataset.name || 'diagram') + '.svg';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-act]');
+    if (!btn) return;
+    const card = btn.closest('[data-card]');
+    const act = btn.dataset.act;
+    if (act === 'reset') refit(card);
+    else if (act === 'svg') exportSvg(card);
+    else if (act === 'full') {
+      if (document.fullscreenElement) document.exitFullscreen();
+      else if (card.requestFullscreen) card.requestFullscreen();
+    }
+  });
+
+  document.addEventListener('fullscreenchange', () => {
+    document.querySelectorAll('[data-card][data-rendered]').forEach(refit);
+  });
+
+  // rendu paresseux des diagrammes dans les <details>
+  document.querySelectorAll('details').forEach((d) => {
+    d.addEventListener('toggle', () => {
+      if (!d.open) return;
+      const card = d.querySelector('[data-card]');
+      if (card && !card.dataset.rendered) renderCard(card);
+    });
+  });
+
+  // toggle thème
+  const btn = document.getElementById('themeBtn');
+  btn.addEventListener('click', () => {
+    const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    document.documentElement.setAttribute('data-theme', dark ? 'light' : 'dark');
+    btn.textContent = dark ? 'mode sombre' : 'mode clair';
+    mermaid.initialize(mermaidConfig());
+    document.querySelectorAll('[data-card][data-rendered]').forEach(renderCard);
+  });
+
+  // scrollspy : surligne l'entrée de nav de la section visible
+  const navLinks = Array.prototype.slice.call(document.querySelectorAll('.nav a'));
+  const spy = new IntersectionObserver((entries) => {
+    entries.forEach((en) => {
+      if (!en.isIntersecting) return;
+      const id = '#' + en.target.id;
+      navLinks.forEach((a) => a.classList.toggle('active', a.getAttribute('href') === id));
+    });
+  }, { rootMargin: '-45% 0px -50% 0px' });
+  navLinks.forEach((a) => { const s = document.querySelector(a.getAttribute('href')); if (s) spy.observe(s); });
+
+  // démarrage : rendre les cartes hors <details> (classes, overview, états)
+  mermaid.initialize(mermaidConfig());
+  document.querySelectorAll('[data-card]').forEach((c) => { if (!c.closest('details')) renderCard(c); });
+</script>
+</body>
+</html>
