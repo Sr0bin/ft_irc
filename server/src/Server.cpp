@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:38:13 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/19 11:12:40 by prigaudi         ###   ########.fr       */
+/*   Updated: 2026/06/19 11:30:26 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,8 +114,7 @@ void Server::disconnectClient(int fd) {
 }
 
 Client *Server::getClientByNick(std::string nick) {
-	(void)nick;
-	return (0);
+	std::map<int, Client *>::iterator it;
 }
 
 Channel *Server::getChannelByName(std::string name) {

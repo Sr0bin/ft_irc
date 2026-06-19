@@ -3,24 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rorollin <rorollin@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:08:46 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/16 20:44:37 by rorollin         ###   ########.fr       */
+/*   Updated: 2026/06/19 11:24:37 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #ifndef CLIENT_HPP
-# define CLIENT_HPP
-# include "ft_irc.hpp"
-# include <set>
+#define CLIENT_HPP
+#include "ft_irc.hpp"
+#include <set>
 
 class Channel;
 
-class Client
-{
-public:
+class Client {
+  public:
 	Client(void);
 	Client(int fd);
 	~Client(void);
@@ -30,10 +28,9 @@ public:
 	bool hasPendingOutput(void) const;
 	bool isRegistered(void) const;
 	std::string prefix(void) const;
+	std::string getNickName(void) const;
 
-
-private:
-
+  private:
 	// No copy allowed
 	Client(const Client &other);
 	Client &operator=(const Client &other);
@@ -43,7 +40,6 @@ private:
 	std::string _outBuffer;
 	clientInfo _clientInfo;
 	std::set<Channel *> _channels;
-
 };
 
 #endif
