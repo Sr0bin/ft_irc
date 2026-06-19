@@ -653,6 +653,11 @@ sequenceDiagram
         preventMouseEventsDefault: false // sinon le pan-zoom avale le clic des nœuds
       });
     }
+    // la molette zoome le diagramme au lieu de scroller la page (une seule fois par host)
+    if (!host._wheelGuard) {
+      host._wheelGuard = true;
+      host.addEventListener('wheel', (e) => { e.preventDefault(); }, { passive: false });
+    }
     card.dataset.rendered = '1';
   }
 
