@@ -29,6 +29,7 @@ SOURCES_NAME = main.cpp \
 			   IrcException.cpp \
 			   FatalException.cpp \
 			   ACommandError.cpp \
+			   Utils.cpp \
 			   randomCmd.cpp     #FOR TESTING PURPOSE ONLY
 
 #---------------------------
