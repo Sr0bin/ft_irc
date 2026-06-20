@@ -96,3 +96,18 @@ void Client::setState(clientState state)
 {
 	_clientInfo._state = state;
 }
+
+void Client::addChannel(Channel *channel)
+{
+	_channels.insert(channel);
+}
+
+void Client::removeChannel(Channel *channel)
+{
+	_channels.erase(channel);
+}
+
+const std::set<Channel *> &Client::getChannels(void) const
+{
+	return (_channels);
+}

@@ -35,6 +35,9 @@ class Client {
 	void setRealName(const std::string &real);
 	clientState getState(void) const;
 	void setState(clientState state);
+	void addChannel(Channel *channel);
+	void removeChannel(Channel *channel);
+	const std::set<Channel *> &getChannels(void) const;
 
   private:
 	// No copy allowed

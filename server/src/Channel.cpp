@@ -87,3 +87,8 @@ void Channel::broadcast(std::string msg, Client &except)
 			(*it)->queueReply(msg);
 	}
 }
+
+bool Channel::isEmpty(void) const
+{
+	return (_members.empty());
+}

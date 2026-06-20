@@ -39,11 +39,18 @@ class Server {
 	Channel *getChannelByName(std::string name);
 	std::string getServerName(void) const;
 	std::string getPassword(void) const;
+	Channel *addClientToChannel(Client &client, const std::string &name);
+	void removeClientFromChannel(Client &client, const std::string &name);
+	void removeClientFromAllChannels(Client &client);
 
   private:
 	// No copy allowed
 	Server(const Server &other);
 	Server &operator=(const Server &other);
+
+	// Removes a channel from the registry by pointer (case-insensitive lookup
+	// means the map key may not match a caller's name), frees it.
+	void destroyChannel(Channel *channel);
 
 	serverConfig _config;
 	std::map<int, Client *> _clients;

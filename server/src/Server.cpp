@@ -17,7 +17,15 @@ Server::Server(void) : _mux(0), _dispatcher(0) {}
 Server::Server(serverConfig config)
 	: _config(config), _mux(0), _dispatcher(0) {}
 
-Server::~Server(void) { delete _mux; }
+Server::~Server(void) {
+	delete _mux;
+	for (std::map<int, Client *>::iterator it = _clients.begin();
+		 it != _clients.end(); ++it)
+		delete it->second;
+	for (std::map<std::string, Channel *>::iterator it = _channels.begin();
+		 it != _channels.end(); ++it)
+		delete it->second;
+}
 
 void Server::run() {
 	_mux = new PollMultiplexer();
@@ -109,6 +117,9 @@ void Server::disconnectClient(int fd) {
 	_mux->unwatch(fd);
 	close(fd);
 
+	// Remove from every channel first, otherwise channels keep a dangling
+	// Client* in their member/operator/invite sets after the delete below.
+	removeClientFromAllChannels(*it->second);
 	delete it->second;
 	_clients.erase(it);
 }
@@ -144,4 +155,56 @@ std::string Server::getServerName(void) const
 std::string Server::getPassword(void) const
 {
 	return (_config._password);
+}
+
+Channel *Server::addClientToChannel(Client &client, const std::string &name) {
+	Channel *ch = getChannelByName(name);
+	bool created = false;
+
+	if (ch == 0) {
+		ch = new Channel(name);
+		_channels[name] = ch;
+		created = true;
+	}
+	ch->addMember(client);
+	client.addChannel(ch);
+	if (created) // first joiner of a brand-new channel becomes its operator
+		ch->promote(client);
+	return (ch);
+}
+
+void Server::removeClientFromChannel(Client &client, const std::string &name) {
+	Channel *ch = getChannelByName(name);
+	if (ch == 0)
+		return;
+
+	ch->removeMember(client);
+	client.removeChannel(ch);
+	if (ch->isEmpty())
+		destroyChannel(ch);
+}
+
+void Server::removeClientFromAllChannels(Client &client) {
+	// Copy: removeChannel() mutates the client's channel set as we iterate.
+	std::set<Channel *> channels = client.getChannels();
+
+	for (std::set<Channel *>::iterator it = channels.begin();
+		 it != channels.end(); ++it) {
+		Channel *ch = *it;
+		ch->removeMember(client);
+		client.removeChannel(ch);
+		if (ch->isEmpty())
+			destroyChannel(ch);
+	}
+}
+
+void Server::destroyChannel(Channel *channel) {
+	for (std::map<std::string, Channel *>::iterator it = _channels.begin();
+		 it != _channels.end(); ++it) {
+		if (it->second == channel) {
+			delete channel;
+			_channels.erase(it);
+			return;
+		}
+	}
 }

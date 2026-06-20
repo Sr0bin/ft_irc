@@ -30,6 +30,7 @@ class Channel {
 	bool canJoin(Client &client, std::string pass);
 	void broadcast(std::string msg, Client &except);
 	std::string getName(void) const;
+	bool isEmpty(void) const;
 
   private:
 	// No copy allowed
