@@ -6,7 +6,7 @@
 #    By: rorollin <rorollin@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/01/19 15:44:49 by rorollin          #+#    #+#              #
-#    Updated: 2026/06/17 19:50:04 by rorollin         ###   ########.fr        #
+#    Updated: 2026/06/20 16:20:55 by rorollin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -58,7 +58,7 @@ INCLUDES = $(addprefix -I , $(HEADERS_DIR))
 
 COMPILER = c++
 
-CFLAGS_PROD = -Wall -Wextra -Werror -MMD -MP -std=c++98 -ggdb
+CFLAGS_PROD = -Wall -Wextra -Werror -MMD -MP -std=c++98 -ggdb -fno-eliminate-unused-debug-types
 
 CFLAGS = $(CFLAGS_PROD)
 
