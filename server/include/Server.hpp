@@ -3,27 +3,32 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rorollin <rorollin@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 15:58:43 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/16 20:39:29 by rorollin         ###   ########.fr       */
+/*   Updated: 2026/06/19 14:47:50 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #ifndef SERVER_HPP
-# define SERVER_HPP
-# include "ft_irc.hpp"
-# include <map>
-# include "Client.hpp"
-# include "Channel.hpp"
-# include "CommandDispatcher.hpp"
+#define SERVER_HPP
+#include "Channel.hpp"
+#include "Client.hpp"
+#include "CommandDispatcher.hpp"
+#include "IrcException.hpp"
+#include "Parser.hpp"
+#include "PollMultiplexer.hpp"
+#include "Utils.hpp"
+#include "ft_irc.hpp"
+#include <map>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <unistd.h>
 
 class AMultiplexer;
 
-class Server
-{
-public:
+class Server {
+  public:
 	Server(void);
 	Server(serverConfig config);
 	~Server(void);
@@ -35,15 +40,14 @@ public:
 	std::string getServerName(void) const;
 	std::string getPassword(void) const;
 
-private:
-
+  private:
 	// No copy allowed
 	Server(const Server &other);
 	Server &operator=(const Server &other);
 
 	serverConfig _config;
-	std::map<int, Client*> _clients;
-	std::map<std::string, Channel*> _channels;
+	std::map<int, Client *> _clients;
+	std::map<std::string, Channel *> _channels;
 	AMultiplexer *_mux;
 	CommandDispatcher *_dispatcher;
 };

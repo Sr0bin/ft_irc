@@ -3,13 +3,12 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rorollin <rorollin@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:38:10 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/16 16:38:23 by rorollin         ###   ########.fr       */
+/*   Updated: 2026/06/20 17:41:55 by rorollin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #include "Client.hpp"
 
@@ -23,9 +22,7 @@ Client::Client(int fd) : _fd(fd)
 	_clientInfo._state = CONNECTING;
 }
 
-Client::~Client(void)
-{
-}
+Client::~Client(void) {}
 
 void Client::appendInput(const std::string &input)
 {
