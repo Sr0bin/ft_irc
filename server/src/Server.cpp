@@ -6,11 +6,12 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:38:13 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/20 17:42:49 by rorollin         ###   ########.fr       */
+/*   Updated: 2026/06/20 19:41:22 by rorollin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
+#include "CommandDispatcher.hpp"
 
 Server::Server(void) : _mux(0), _dispatcher(0) {}
 
@@ -19,6 +20,7 @@ Server::Server(serverConfig config)
 
 Server::~Server(void) {
 	delete _mux;
+	delete _dispatcher;
 	for (std::map<int, Client *>::iterator it = _clients.begin();
 		 it != _clients.end(); ++it)
 		delete it->second;
@@ -29,6 +31,7 @@ Server::~Server(void) {
 
 void Server::run() {
 	_mux = new PollMultiplexer();
+	_dispatcher = new CommandDispatcher(*this);
 
 	_config._listenFd = socket(AF_INET, SOCK_STREAM, 0);
 	if (_config._listenFd == -1)
