@@ -64,3 +64,38 @@ std::string Client::prefix(void) const
 	// ponytail: hardcoded host, replace once Server captures the peer address (getpeername)
 	return (_clientInfo._nickname + "!" + _clientInfo._username + "@localhost");
 }
+
+std::string Client::getNickName(void) const
+{
+	return (_clientInfo._nickname);
+}
+
+std::string Client::getUserName(void) const
+{
+	return (_clientInfo._username);
+}
+
+void Client::setNickName(const std::string &nick)
+{
+	_clientInfo._nickname = nick;
+}
+
+void Client::setUserName(const std::string &user)
+{
+	_clientInfo._username = user;
+}
+
+void Client::setRealName(const std::string &real)
+{
+	_clientInfo._realname = real;
+}
+
+clientState Client::getState(void) const
+{
+	return (_clientInfo._state);
+}
+
+void Client::setState(clientState state)
+{
+	_clientInfo._state = state;
+}

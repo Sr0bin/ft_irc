@@ -30,6 +30,13 @@ public:
 	bool hasPendingOutput(void) const;
 	bool isRegistered(void) const;
 	std::string prefix(void) const;
+	std::string getNickName(void) const;
+	std::string getUserName(void) const;
+	void setNickName(const std::string &nick);
+	void setUserName(const std::string &user);
+	void setRealName(const std::string &real);
+	clientState getState(void) const;
+	void setState(clientState state);
 
 
 private:

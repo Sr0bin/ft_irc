@@ -18,11 +18,12 @@
 # include <map>
 # include <vector>
 
-typedef struct serverConfig 
+typedef struct serverConfig
 {
 	int	_port;
 	std::string _password;
 	int	_listenFd;
+	std::string _serverName;
 
 } serverConfig;
 

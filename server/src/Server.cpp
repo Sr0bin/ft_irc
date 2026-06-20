@@ -49,3 +49,13 @@ Channel *Server::getChannelByName(std::string name)
 	(void)name;
 	return (0);
 }
+
+std::string Server::getServerName(void) const
+{
+	return (_config._serverName);
+}
+
+std::string Server::getPassword(void) const
+{
+	return (_config._password);
+}
