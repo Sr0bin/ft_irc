@@ -70,3 +70,24 @@ Le « comment/pourquoi » complet de la gestion d'erreurs vit dans `EXCEPTIONS.m
 Pas d'implémentation dans les headers (cf. §3). Les 3 sous-classes numériques témoins sont **groupées** dans `ACommandError.hpp/.cpp` (déclarations + impls), au lieu d'un header + un .cpp chacune. Option « header-only inline » rejetée (impl en header interdite).
 **Pourquoi :** sous-classes triviales (un ctor) → un fichier par classe = boilerplate quasi vide + entrées Makefile inutiles. Compromis assumé vs « 1 classe/fichier » de §3.
 *(2026-06-18)*
+
+### D14 — Lookup de commande insensible à la casse via `Utils::toLower` ; clés en minuscules
+`dispatch` fait `_commands.find(Utils::toLower(msg.getCommand()))` ; les commandes sont enregistrées sous clé minuscule (`"pass"`, `"nick"`, …). `Utils` est **récupéré de la branche PA** (`toLower`/`ircEquals`) plutôt que réécrit.
+**Pourquoi :** les commandes IRC sont insensibles à la casse (RFC) ; le `Parser` ne normalise pas. Réutiliser le helper de PA évite un doublon qui divergerait au merge.
+*(2026-06-20)*
+
+### D15 — Fin d'enregistrement centralisée dans `ACommand::completeRegistrationIfReady` (protected)
+Helper partagé appelé par PASS, NICK **et** USER après leur mutation : si `PASSWORD_OK` + nick + user → `REGISTERED` + burst de bienvenue 001-004. Ordre d'arrivée des 3 commandes indifférent.
+**Pourquoi :** une seule définition de « quand l'enregistrement est complet », pas dupliquée dans 3 commandes ; `ACommand` a déjà `_server`, c'est le point de partage naturel.
+*(2026-06-20)*
+
+### D16 — Registre de channels possédé par `Server` ; synchro des deux côtés ; suppression quand vide
+`Server` possède les `Channel*` (map `_channels`). `addClientToChannel` crée le channel si absent (**1er joiner = opérateur**, `promote`), `removeClientFromChannel` le `delete` quand `isEmpty()`. Les deux maintiennent `Channel._members` **et** `Client._channels` cohérents. La **policy** (`canJoin`/clé/limite + numerics) reste dans la commande JOIN, pas dans le registre.
+**Invariant fragile :** « membre ⟺ a le channel dans son set » ne tient que si on passe **toujours** par `Server` ; ne jamais appeler `Channel::addMember`/`removeMember` en direct depuis une commande (sinon `Client*`/`Channel*` dangling).
+**Pourquoi :** ownership clair (un seul propriétaire), pas de fuite ni de dangling, séparation data/policy.
+*(2026-06-20)*
+
+### D17 — Validation de nick : RFC 2812 stricte
+`nickname = (letter / special) *8(letter / digit / special / "-")` → 1er char lettre/spécial, suivants alphanum/spécial/`-`, **max 9 caractères**. `431` si vide, `432` si charset invalide, `433` si déjà pris.
+**Pourquoi :** suivre la RFC à la lettre (consigne explicite), pas d'entorse « permissive ». Caveat connu : un client peut envoyer un nick par défaut > 9 → `432` ; un vrai serveur annoncerait `NICKLEN` via RPL_ISUPPORT (hors sujet).
+*(2026-06-20)*
