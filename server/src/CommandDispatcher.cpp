@@ -6,7 +6,7 @@
 /*   By: rorollin <rorollin@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:38:12 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/16 16:38:23 by rorollin         ###   ########.fr       */
+/*   Updated: 2026/06/20 16:31:59 by rorollin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,10 @@ CommandDispatcher::CommandDispatcher(Server &server) : _server(server)
 
 CommandDispatcher::~CommandDispatcher(void)
 {
+	for (std::map<std::string, ACommand *>::iterator it = _commands.begin(); it != _commands.end(); ++it)
+	{
+		delete it->second;
+	}
 }
 
 void CommandDispatcher::registerCommand(const std::string &name, ACommand *cmd)
