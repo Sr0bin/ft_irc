@@ -86,4 +86,16 @@ public:
 	NicknameInUse(const std::string &nick) throw();
 };
 
+class NoNicknameGiven : public ACommandError
+{
+public:
+	NoNicknameGiven(void) throw();
+};
+
+class ErroneousNickname : public ACommandError
+{
+public:
+	ErroneousNickname(const std::string &nick) throw();
+};
+
 #endif

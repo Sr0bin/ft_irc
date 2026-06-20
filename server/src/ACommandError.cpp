@@ -79,3 +79,13 @@ NicknameInUse::NicknameInUse(const std::string &nick) throw()
 	: ACommandError(433, nick, "Nickname is already in use")
 {
 }
+
+NoNicknameGiven::NoNicknameGiven(void) throw()
+	: ACommandError(431, "No nickname given")
+{
+}
+
+ErroneousNickname::ErroneousNickname(const std::string &nick) throw()
+	: ACommandError(432, nick, "Erroneous nickname")
+{
+}
