@@ -30,6 +30,11 @@ public:
 	virtual size_t minParams(void) const;
 
 protected:
+	// Shared by PASS/NICK/USER: flips the client to REGISTERED and sends the
+	// 001-004 welcome burst once PASS+NICK+USER are all in. Each command calls
+	// it after its own mutation, so the order they arrive in doesn't matter.
+	void completeRegistrationIfReady(Client &client);
+
 	Server &_server;
 
 private:

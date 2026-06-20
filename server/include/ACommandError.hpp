@@ -56,4 +56,34 @@ public:
 	NoSuchChannel(const std::string &channel) throw();
 };
 
+class UnknownCommand : public ACommandError
+{
+public:
+	UnknownCommand(const std::string &command) throw();
+};
+
+class NotRegistered : public ACommandError
+{
+public:
+	NotRegistered(void) throw();
+};
+
+class AlreadyRegistered : public ACommandError
+{
+public:
+	AlreadyRegistered(void) throw();
+};
+
+class PasswordMismatch : public ACommandError
+{
+public:
+	PasswordMismatch(void) throw();
+};
+
+class NicknameInUse : public ACommandError
+{
+public:
+	NicknameInUse(const std::string &nick) throw();
+};
+
 #endif

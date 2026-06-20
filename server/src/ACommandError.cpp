@@ -54,3 +54,28 @@ NoSuchChannel::NoSuchChannel(const std::string &channel) throw()
 	: ACommandError(403, channel, "No such channel")
 {
 }
+
+UnknownCommand::UnknownCommand(const std::string &command) throw()
+	: ACommandError(421, command, "Unknown command")
+{
+}
+
+NotRegistered::NotRegistered(void) throw()
+	: ACommandError(451, "You have not registered")
+{
+}
+
+AlreadyRegistered::AlreadyRegistered(void) throw()
+	: ACommandError(462, "You may not reregister")
+{
+}
+
+PasswordMismatch::PasswordMismatch(void) throw()
+	: ACommandError(464, "Password incorrect")
+{
+}
+
+NicknameInUse::NicknameInUse(const std::string &nick) throw()
+	: ACommandError(433, nick, "Nickname is already in use")
+{
+}

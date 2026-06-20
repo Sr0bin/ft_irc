@@ -30,6 +30,9 @@ SOURCES_NAME = main.cpp \
 			   FatalException.cpp \
 			   ACommandError.cpp \
 			   Utils.cpp \
+			   PassCommand.cpp \
+			   NickCommand.cpp \
+			   UserCommand.cpp \
 			   randomCmd.cpp     #FOR TESTING PURPOSE ONLY
 
 #---------------------------
