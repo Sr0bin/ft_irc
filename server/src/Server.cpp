@@ -122,8 +122,13 @@ void Server::acceptClient() {
 
 	int clientFd =
 		accept(_config._listenFd, (struct sockaddr *)&clientAddr, &clientLen);
+	// poll() reporting the listen fd readable is a point-in-time hint, not a
+	// guarantee: the pending connection may be aborted (ECONNABORTED) or gone
+	// (EAGAIN) by the time we accept, or we may be out of fds (EMFILE). None of
+	// these is fatal — skip and retry on the next poll cycle instead of killing
+	// the server. (errno can't be checked here per the subject anyway.)
 	if (clientFd == -1)
-		throw IrcException("accept() failed");
+		return;
 	fcntl(clientFd, F_SETFL, O_NONBLOCK);
 
 	_clients[clientFd] = new Client(clientFd);
