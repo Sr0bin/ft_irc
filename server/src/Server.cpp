@@ -85,9 +85,6 @@ void Server::run() {
 						// Parser => Renvoyer un Message
 						_dispatcher->dispatch(*client, msg);
 					}
-
-					if (client->hasPendingOutput())
-						_mux->setWriteInterest(e.fd, true);
 				}
 			} else if (e.writable) {
 				std::map<int, Client *>::iterator it = _clients.find(e.fd);
@@ -100,13 +97,21 @@ void Server::run() {
 				ssize_t dataOut = send(e.fd, out.c_str(), out.size(), 0);
 				if (dataOut == -1)
 					disconnectClient(e.fd);
-				else {
+				else
 					out.erase(0, static_cast<size_t>(dataOut));
-					if (!client->hasPendingOutput())
-						_mux->setWriteInterest(e.fd, false);
-				}
 			}
 		}
+
+		// A command may have queued output on clients other than the one we
+		// just read from (e.g. broadcast to channel members). Single pass:
+		// (re)arm POLLOUT for every client with pending output, disarm the
+		// rest. Covers broadcasts and direct replies with one mechanism.
+		// NOTE: O(n^2) per cycle (setWriteInterest scans _fds linearly for
+		// each client) — fine at our scale, worth revisiting if client count
+		// grows (e.g. an fd->index map in PollMultiplexer).
+		for (std::map<int, Client *>::iterator it = _clients.begin();
+			 it != _clients.end(); ++it)
+			_mux->setWriteInterest(it->first, it->second->hasPendingOutput());
 	}
 }
 
