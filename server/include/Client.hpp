@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:08:46 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/19 11:24:37 by prigaudi         ###   ########.fr       */
+/*   Updated: 2026/06/22 10:10:18 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ class Client {
 	bool isRegistered(void) const;
 	std::string prefix(void) const;
 	std::string getNickName(void) const;
+	std::string &getOutBuffer(void);
 
   private:
 	// No copy allowed

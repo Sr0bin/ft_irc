@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:38:10 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/19 12:20:31 by prigaudi         ###   ########.fr       */
+/*   Updated: 2026/06/22 10:10:34 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,12 @@ bool Client::extractLine(std::string &out) {
 
 void Client::queueReply(const std::string &msg) { (void)msg; }
 
-bool Client::hasPendingOutput(void) const { return (false); }
+bool Client::hasPendingOutput(void) const { return (!_outBuffer.empty()); }
 
 bool Client::isRegistered(void) const { return (false); }
 
 std::string Client::prefix(void) const { return (std::string()); }
 
 std::string Client::getNickName(void) const { return (_clientInfo._nickname); }
+
+std::string &Client::getOutBuffer(void) { return (_outBuffer); }

@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:38:13 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/19 15:01:36 by prigaudi         ###   ########.fr       */
+/*   Updated: 2026/06/22 10:10:06 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ Server::~Server(void) { delete _mux; }
 
 void Server::run() {
 	_mux = new PollMultiplexer();
+	_dispatcher = new CommandDispatcher(*this);
 
 	_config._listenFd = socket(AF_INET, SOCK_STREAM, 0);
 	if (_config._listenFd == -1)
@@ -67,7 +68,16 @@ void Server::run() {
 					std::string sDataIn(buffer, dataIn);
 					client->appendInput(sDataIn);
 
-					// gestion input???
+					std::string line;
+
+					while (client->extractLine(line)) {
+						Message msg = Parser::parseRawMessage(line);
+						// Parser => Renvoyer un Message
+						_dispatcher->dispatch(*client, msg);
+					}
+
+					if (client->hasPendingOutput())
+						_mux->setWriteInterest(e.fd, true);
 				}
 			} else if (e.writable) {
 				std::map<int, Client *>::iterator it = _clients.find(e.fd);
@@ -75,12 +85,15 @@ void Server::run() {
 					continue;
 
 				Client *client = it->second;
-				char buffer[512];
-				ssize_t dataOut = send(e.fd, buffer, sizeof(buffer), 0);
+				std::string &out = client->getOutBuffer();
+
+				ssize_t dataOut = send(e.fd, out.c_str(), out.size(), 0);
 				if (dataOut == -1)
 					disconnectClient(e.fd);
 				else {
-					// gestion outPut
+					out.erase(0, static_cast<size_t>(dataOut));
+					if (!client->hasPendingOutput())
+						_mux->setWriteInterest(e.fd, false);
 				}
 			}
 		}
