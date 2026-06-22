@@ -13,13 +13,13 @@ Légende : `[ ]` à faire · `[~]` en cours · `[x]` fait
 - [x] Makefile liste les 11 sources, pas de relink inutile (`all`/`clean`/`fclean`/`re`)
 - [x] Signatures conformes à la spec, corps vides
 
-## Jalon 1 — Tuyauterie réseau seule (echo, zéro IRC) — *partiel (PA), à finir*
-- [ ] `main` parse `<port> <password>`, instancie le `Server` *(main = scratch ; `_serverName` pas posé)*
-- [~] `Server` : `socket` + `bind` + `listen` faits ; **manquent `SO_REUSEADDR` + fd non-bloquant (`fcntl`)**
-- [~] `PollMultiplexer` : `watch`/`unwatch`/`wait` utilisés par `run()` (internes non audités)
-- [~] `Server::run()` : boucle `poll` + `acceptClient` + `recv`→`appendInput` OK ; **input jamais dispatché** (`extractLine`/Parser/`_dispatcher` non branchés, `_dispatcher` NULL)
-- [~] `recv()<=0` → `disconnectClient` OK ; **write path cassé** (envoie un buffer non initialisé, ne flush pas `_outBuffer`) ; send partiel non géré
-- [ ] Testé avec `nc`, y compris commande fragmentée en deux paquets
+## Jalon 1 — Tuyauterie réseau seule (echo, zéro IRC) — *fait*
+- [x] `main` parse `<port> <password>` (+ check `argc`), instancie le `Server`, pose `_serverName`
+- [~] `Server` : `socket` + `bind` + `listen` + fd **non-bloquant** (`fcntl O_NONBLOCK`) faits ; **reste `SO_REUSEADDR`**
+- [x] `PollMultiplexer` : `watch`/`unwatch`/`setWriteInterest`/`wait` utilisés par `run()`
+- [x] `Server::run()` : `poll` + `acceptClient` (accept `-1` → retry, pas de crash) + `recv`→`appendInput`→`extractLine`→`Parser`→`_dispatcher` branchés
+- [x] `recv()<=0` → `disconnectClient` ; write path OK (flush `_outBuffer`, send partiel géré) ; POLLOUT (ré)armé pour tout client avec sortie en attente (broadcast inclus)
+- [~] Testé `nc` (register / JOIN / PART / erreurs / 2 clients) ; **fragmentation 2 paquets pas encore testée**
 
 ## Jalon 2 — Squelette OOP + dispatch
 - [~] `Parser::parse()` renvoie un vrai `Message` *(fonctionne via `parseRawMessage` ; pas renommé, `std::cout` de debug à retirer)*
@@ -27,13 +27,13 @@ Légende : `[ ]` à faire · `[~]` en cours · `[x]` fait
 - [x] Hiérarchie d'exceptions : `FatalException`/`ACommandError` + dérivées, **câblées** dans `dispatch` (421/451/461/462/464/433/431/432) ; câblage `main`/`FatalException` en attente de `run()`
 - [x] Une commande bidon (`random`) enregistrée — routage validé bout-en-bout (harness standalone)
 
-## Jalon 3 — Enregistrement *(couche commandes faite ; intestable e2e tant que `run()` ne dispatch pas)*
-- [~] PASS / NICK / USER (états `CONNECTING → PASSWORD_OK → REGISTERED`, burst 001-004) + **validation nick RFC 2812** (431/432/433)
-- [ ] PING / PONG
-- [ ] Un vrai client (irssi/HexChat) peut se connecter *(bloqué par `run()`)*
+## Jalon 3 — Enregistrement *(testable e2e : `run()` dispatch)*
+- [x] PASS / NICK / USER (états `CONNECTING → PASSWORD_OK → REGISTERED`, burst 001-004) + **validation nick RFC 2812** (431/432/433) — vérifié e2e via `nc`
+- [ ] PING / PONG *(prochain : sans ça les vrais clients timeout)*
+- [~] Un vrai client (irssi/HexChat) peut se connecter *(`run()` OK ; testé `nc`, pas encore irssi ; bloqué par PING/PONG)*
 
 ## Jalon 4 — Channels & messagerie
-- [ ] JOIN / PART *(registre `Server` prêt ; reste la commande : policy `canJoin` + numerics)*
+- [x] JOIN / PART (enregistrés, broadcast OK, RPL 331/332/353/366) — vérifié e2e ; **reste** : numerics de refus 471/473/475 (avec MODE) + consommation de l'invitation
 - [ ] PRIVMSG (user + channel)
 - [ ] QUIT (broadcast + retrait propre des channels)
 - [ ] TOPIC

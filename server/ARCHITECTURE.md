@@ -65,11 +65,11 @@ Principe directeur : **on abstrait les comportements qui varient, pas les donné
 
 ### Server
 Orchestrateur. Tient la boucle d'événements.
-- `_port`, `_password`, `_listenFd`
+- `serverConfig _config` (`_port`, `_password`, `_listenFd`, `_serverName`)
 - `std::map<int, Client*> _clients` — indexé par fd (car `poll()` parle en fds ; lookup en O(log n)).
-- `std::map<std::string, Channel*> _channels` — indexé par nom.
-- `AMultiplexer* _mux`, `CommandDispatcher _dispatcher`
-- `run()`, `acceptClient()`, `disconnectClient(fd)`, `getClientByNick(nick)` (scan linéaire, acceptable à cette échelle), `getChannel(name)`, `getOrCreateChannel(name)`, `removeChannelIfEmpty(chan)`.
+- `std::map<std::string, Channel*> _channels` — indexé par nom **en minuscules** (`find(toLower)` en O(log n), cf. D14).
+- `AMultiplexer* _mux`, `CommandDispatcher* _dispatcher`
+- `run()`, `acceptClient()`, `disconnectClient(fd)`, `getClientByNick(nick)` (scan linéaire, acceptable à cette échelle), `getChannelByName(name)`, `addClientToChannel(c, name)` (crée si absent, 1er = op), `removeClientFromChannel(c, name)`, `removeClientFromAllChannels(c)`, `getServerName()`, `getPassword()` ; `destroyChannel(chan)` privé.
 
 ### Client
 Représente une connexion. Possède ses buffers.
