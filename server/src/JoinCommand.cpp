@@ -23,18 +23,17 @@ void JoinCommand::execute(Client &client, Message &msg) {
 	if (ch != 0 && !ch->canJoin(client, pass))
 		throw NoSuchChannel(name);
 
-	_server.addClientToChannel(client, name);
+	ch = _server.addClientToChannel(client, name);
 
-	Channel *safeCh = _server.getChannelByName(name);
 	const std::string joinMsg =
 		":" + client.prefix() + " JOIN " + name + "\r\n";
-	safeCh->broadcast(joinMsg, client);
+	ch->broadcast(joinMsg, client);
 	client.queueReply(joinMsg);
 
 	const std::string serverPrefix = ":" + _server.getServerName() + " ";
 
-	sendTopic(client, safeCh, name, serverPrefix);
-	sendNames(client, safeCh, name, serverPrefix);
+	sendTopic(client, ch, name, serverPrefix);
+	sendNames(client, ch, name, serverPrefix);
 }
 
 void JoinCommand::sendTopic(Client &client, Channel *ch,
