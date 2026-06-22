@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/randomCmd.hpp"
+#include "randomCmd.hpp"
 
 #include <iostream>
 #include <ostream>

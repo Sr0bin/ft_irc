@@ -22,21 +22,21 @@ SOURCES_NAME = main.cpp \
 			   Channel.cpp \
 			   Message.cpp \
 			   Parser.cpp \
-			   ACommand.cpp \
-			   CommandDispatcher.cpp \
 			   AMultiplexer.cpp \
 			   PollMultiplexer.cpp \
 			   IrcException.cpp \
 			   FatalException.cpp \
-			   ACommandError.cpp \
 			   Utils.cpp \
-			   PassCommand.cpp \
-			   NickCommand.cpp \
-			   UserCommand.cpp \
-			   JoinCommand.cpp \
-			   PartCommand.cpp \
-			   ACommandReply.cpp \
-			   randomCmd.cpp     #FOR TESTING PURPOSE ONLY
+			   commands/ACommand.cpp \
+			   commands/CommandDispatcher.cpp \
+			   commands/ACommandError.cpp \
+			   commands/ACommandReply.cpp \
+			   commands/PassCommand.cpp \
+			   commands/NickCommand.cpp \
+			   commands/UserCommand.cpp \
+			   commands/JoinCommand.cpp \
+			   commands/PartCommand.cpp \
+			   commands/randomCmd.cpp     #FOR TESTING PURPOSE ONLY
 
 #---------------------------
 
@@ -56,7 +56,7 @@ DEPS = $(SOURCES:%.cpp=$(OBJ_DIR)/%.d)
 
 #INCLUDES#######################
 
-HEADERS_DIR = include/
+HEADERS_DIR = include/ include/commands/
 
 INCLUDES = $(addprefix -I , $(HEADERS_DIR)) 
 

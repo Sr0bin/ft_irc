@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 
-#include "../include/Message.hpp"
+#include "Message.hpp"
 #include <iomanip>
 #include <iostream>
 #include <sstream>

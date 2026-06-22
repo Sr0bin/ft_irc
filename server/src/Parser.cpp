@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 // #include "ft_irc.hpp"
-#include "../include/Parser.hpp"
+#include "Parser.hpp"
 #include <iostream>
 #include <ostream>
 #include <sstream>
