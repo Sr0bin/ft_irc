@@ -86,9 +86,10 @@ Représente une connexion. Possède ses buffers.
 - `addMember`, `removeMember`, `isMember`, `isOperator`, `promote`, `demote`, `canJoin(c, key)` (vérifie +i/+k/+l, lève l'exception adéquate si refus), `broadcast(msg, except)` (empile dans le `_outBuffer` de chaque membre sauf l'émetteur).
 
 ### Message
-Résultat du parsing d'une ligne IRC. Objet temporaire (durée de vie = traitement d'une ligne).
-- `_prefix`, `_command`, `std::vector<std::string> _params`
-- `getCommand()`, `getParam(i)`, `paramCount()`
+La ligne IRC en tant que donnée, dans **les deux sens**. Objet valeur.
+- `_prefix`, `_command`, `std::vector<std::string> _params`, `bool _trailing`
+- entrée : `getCommand()`, `getParam(i)`, `paramCount()`
+- sortie : `serialize()` (réciproque de `Parser::parse` → `[:prefix ]cmd params :trailing\r\n`) + fabrique `static numeric(server, code, nick, middle[, text])`. Point unique de formatage du fil. Cf. D5 (amendé) / D18.
 
 ### Parser
 Sans état. `static Message parse(const std::string& rawLine)`. Découpe préfixe optionnel / commande / paramètres, gère le trailing (`:` introduit le dernier paramètre qui peut contenir des espaces).
@@ -135,10 +136,10 @@ IrcException (abstrait, hérite de std::exception)
     └── ...               // une dérivée par numeric utilisé
 ```
 
-- `ACommandError` expose `virtual std::string buildReply(const Client&) const` qui formate le numeric complet (ex. `:server 461 nick JOIN :Not enough parameters`).
+- `ACommandError` expose `Message toMessage(const std::string& server, const std::string& nick) const` qui bâtit le `Message` numeric ; `Message::serialize()` produit la ligne complète (ex. `:server 461 nick JOIN :Not enough parameters`).
 - **Seulement deux sites de catch dans tout le programme :**
   1. `main()` : `catch (FatalException&)` → log + arrêt propre (libération de toutes les ressources).
-  2. `CommandDispatcher::dispatch()` autour de `execute()` : `catch (ACommandError& e)` → `client.queueReply(e.buildReply(client))`. Le serveur ne bronche pas.
+  2. `CommandDispatcher::dispatch()` autour de `execute()` : `catch (ACommandError& e)` → `client.queueReply(e.toMessage(serverName, nick).serialize())`. Le serveur ne bronche pas.
 - Résultat : le corps des commandes est déclaratif — `if (!chan) throw NoSuchChannel(name);` et rien d'autre. La plomberie d'envoi est centralisée.
 - **Piège C++98 :** si une exception stocke une `std::string`, son destructeur doit être déclaré `throw()` pour matcher `std::exception` sous `-std=c++98`.
 

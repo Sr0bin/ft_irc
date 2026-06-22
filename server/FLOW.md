@@ -21,7 +21,7 @@ Puis boucle : `_inBuffer` contient CRLF ? **non** → garder (fragmentation TCP)
 `_commands.find(command)` absent ⇒ `throw UnknownCommand (421)`.
 Pré-checks : `requiresRegistration() && !registered` ⇒ `451` · `params < minParams()` ⇒ `461`.
 `cmd.execute()` : refus métier ⇒ `throw NoSuchChannel 403 / BadChannelKey 475 / ChanOPrivsNeeded 482…` · succès ⇒ mutation + broadcast.
-`catch(ACommandError&)` → `reply = ":" + serverName + " " + e.buildReply(nick)` → `queueReply` (nick = `*` si pas enregistré).
+`catch(ACommandError&)` → `queueReply(e.toMessage(serverName, nick).serialize())` (nick = `*` si pas enregistré).
 `catch(std::exception&)` → log & continue (**never crash**).
 
 ## Write path
@@ -51,8 +51,8 @@ PASS + NICK + USER reçus ⇒ `_state = REGISTERED` → welcome `001/002/003/004
 | `AMultiplexer`/`PollMultiplexer` | `watch`/`unwatch`/`setWriteInterest`/`wait` |
 | `Client` | `_inBuffer`/`_outBuffer`, `appendInput`/`extractLine`/`queueReply`, `_state`/`_nickname` |
 | `Parser` | `parse` → `Message` (syntaxe seule) |
-| `Message` | `command`/`params` (donnée pure) |
-| `CommandDispatcher` | lookup, pré-checks, catch, préfixe serveur de la reply |
+| `Message` | `command`/`params`/`_trailing` (donnée) ; `serialize()` = format fil sortant |
+| `CommandDispatcher` | lookup, pré-checks, catch, sérialise la reply d'erreur |
 | `ACommand` | `execute`, mutation d'état |
-| `ACommandError` | porte le numeric (`buildReply`) |
+| `ACommandError` | porte le numeric (`toMessage` → `Message::numeric`) |
 | `Channel` | `_members`/`_operators`, `broadcast`/`canJoin` |

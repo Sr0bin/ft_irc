@@ -39,7 +39,7 @@ std::exception
         └── …                    // une dérivée par numeric, ajoutée au besoin
 ```
 
-- `ACommandError` est **data-driven** : un seul `buildReply` pour tous les numerics.
+- `ACommandError` est **data-driven** : il porte `_code`/`_params`/`_text` et les passe à `Message::numeric` via `toMessage(server, nick)`. Le formatage est mutualisé dans `Message::serialize` (partagé avec `ACommandReply`, cf. D18).
   Les sous-classes sont des **constructeurs fins** qui figent code + texte
   (`throw NoSuchChannel(name)`), pour des sites de throw lisibles et un texte
   cohérent partout.
@@ -61,7 +61,7 @@ CommandDispatcher::dispatch(client, msg):
         // pré-checks (requiresRegistration, minParams) — peuvent throw NeedMoreParams
         cmd.execute(client, msg);                     // peut throw n'importe quel ACommandError
     }
-    catch (ACommandError &e)  → client.queueReply(":" + serverName + " " + e.buildReply(nick))
+    catch (ACommandError &e)  → client.queueReply(e.toMessage(serverName, nick).serialize())
     catch (std::exception &e) → log ; on continue     // FILET : ne tue jamais le serveur
 ```
 
@@ -88,30 +88,31 @@ Garantit le « never crash » du sujet sans masquer les vrais problèmes.
 `ACommandError` ne connaît **ni `Server` ni `Client`** — découplage volontaire.
 
 ```
-buildReply(nick)  renvoie   "<code> <nick> <params> :<text>"
-                            ex: "403 bob #x :No such channel"
+toMessage(server, nick)  renvoie   un Message numeric (donnée, pas une string)
+                                   code "403", params ["bob","#x"], trailing "No such channel"
 ```
 
-Le préfixe `:<server>` n'est **pas** dans l'exception : c'est le `dispatch` qui le
-préfixe, car lui seul connaît le nom du serveur. L'exception reste une donnée pure.
+L'exception ne formate pas et ne préfixe pas : `toMessage` prend `server` + `nick`
+en simples `std::string` et bâtit un `Message` ; c'est `Message::serialize()` (point
+unique) qui pose le préfixe `:<server>`, le `:` du trailing et le `\r\n`. L'exception
+reste une donnée pure.
 
 ```
 commande lève NoSuchChannel("#x")
         │
         ▼
 dispatch catch (ACommandError& e)
-        │   nick   = client (nick courant, ou "*" si pas encore enregistré)
-        │   prefix = ":" + serverName + " "
+        │   nick = client (nick courant, ou "*" si pas encore enregistré)
         ▼
-client.queueReply(":irc.server 403 bob #x :No such channel\r\n")
-        │
+client.queueReply(e.toMessage(serverName, nick).serialize())
+        │   → ":irc.server 403 bob #x :No such channel\r\n"
         ▼
 boucle poll() : POLLOUT → send()   (envoi réel, géré par la couche réseau)
 ```
 
-Même logique que `Client`, qui est une file d'octets passive : le formatage
-(préfixe compris) est fait en amont, l'envoi en aval. L'exception décrit l'erreur,
-elle ne l'envoie pas.
+Même logique que `Client`, file d'octets passive : le formatage (préfixe compris)
+est fait en amont — désormais centralisé dans `Message::serialize` — l'envoi en
+aval. L'exception décrit l'erreur, elle ne l'envoie pas.
 
 ---
 
@@ -121,4 +122,4 @@ elle ne l'envoie pas.
   pour matcher `std::exception` sous `-std=c++98`. Toute la hiérarchie respecte ça.
 - Exceptions levées **par valeur**, attrapées **par référence** (`catch (X& e)`),
   jamais par valeur (slicing).
-- `buildReply` n'est **pas** `throw()` : il alloue (`std::ostringstream`).
+- `toMessage` / `Message::serialize` ne sont **pas** `throw()` : ils allouent (`std::ostringstream`, `std::string`).

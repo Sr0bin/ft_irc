@@ -30,6 +30,7 @@ Pour `Server`, `Client`, `Channel`, `PollMultiplexer`, `CommandDispatcher` : dé
 `Message` ne `#include` plus `ACommand.hpp` et n'a pas de méthode renvoyant un `ACommand*`. Il porte juste `_prefix`, `_command`, `_params` + getters `const`. C'est le `CommandDispatcher` qui fait le lien commande↔string.
 **Pourquoi :** séparation des couches. Les données parsées ne doivent rien savoir de la logique de dispatch. Évite une dépendance circulaire `Message` ↔ `ACommand`.
 *(2026-06-17)*
+**Amendé le 2026-06-22 (cf. D18) :** `Message` gagne la **symétrie sortante** — une méthode `serialize()` (réciproque de `Parser::parse`) et une fabrique `Message::numeric(...)`. Ça ne réintroduit ni dépendance à `ACommand` ni sous-typage : `serialize`/`numeric` ne manipulent que des `std::string`. Le cœur de D5 (objet valeur, aucun couplage au dispatch) tient.
 
 ### D6 — `IrcException` : destructeur et méthodes `throw()`
 `IrcException` hérite de `std::exception`, stocke un `std::string _msg`, et déclare tous ses membres pertinents `throw()` (dont le destructeur).
@@ -65,6 +66,7 @@ Convention : une limite à 0 signifie « illimité ». `canJoin` refuse si invit
 Le « comment/pourquoi » complet de la gestion d'erreurs vit dans `EXCEPTIONS.md` (doc partagé, branche `doc`). Calls non triviaux : (1) erreurs I/O **par-client** (recv/send/accept, recv==0) = **pas d'exception**, juste `disconnectClient(fd)` — c'est attendu, pas exceptionnel ; (2) filet `catch(std::exception&)` dans `dispatch` = **log & continue** (on ne tue pas le serveur, on ne drop pas le client ; si c'est grave ça remontera au `catch` de `main`) ; (3) `buildReply(nick)` renvoie `"<code> <nick> <params> :<text>"` sans `:<server>` → préfixé par le dispatcher, donc l'exception ignore `Server`/`Client`.
 **Pourquoi :** ne lever que pour le vraiment exceptionnel (anti sur-catch) ; garantir « never crash » sans masquer les vrais bugs ; découplage de couches.
 *(2026-06-18)*
+**Amendé le 2026-06-22 (cf. D18) :** le point (3) tient (l'exception reste découplée de `Server`/`Client`), mais le mécanisme a changé : plus de `buildReply` ni de préfixe ajouté par le dispatcher — l'exception expose `toMessage(server, nick)` → `Message::numeric`, et `Message::serialize()` pose préfixe/`:`/`\r\n`.
 
 ### D13 — Layout des exceptions : pas d'impl en header → numerics groupés
 Pas d'implémentation dans les headers (cf. §3). Les 3 sous-classes numériques témoins sont **groupées** dans `ACommandError.hpp/.cpp` (déclarations + impls), au lieu d'un header + un .cpp chacune. Option « header-only inline » rejetée (impl en header interdite).
@@ -91,3 +93,8 @@ Helper partagé appelé par PASS, NICK **et** USER après leur mutation : si `PA
 `nickname = (letter / special) *8(letter / digit / special / "-")` → 1er char lettre/spécial, suivants alphanum/spécial/`-`, **max 9 caractères**. `431` si vide, `432` si charset invalide, `433` si déjà pris.
 **Pourquoi :** suivre la RFC à la lettre (consigne explicite), pas d'entorse « permissive ». Caveat connu : un client peut envoyer un nick par défaut > 9 → `432` ; un vrai serveur annoncerait `NICKLEN` via RPL_ISUPPORT (hors sujet).
 *(2026-06-20)*
+
+### D18 — Tout le sortant passe par `Message::serialize()` ; erreurs et replies partagent `Message::numeric`
+Avant, le formatage d'une ligne IRC (`[:prefix ]cmd params :trailing\r\n`) était recopié à plusieurs endroits : `ACommandError::buildReply`, `ACommandReply::buildReply`, le welcome burst, les echoes JOIN/PART, et le préfixe ajouté à la main par le dispatcher — avec une incohérence `\r\n`/préfixe entre les deux chemins. Désormais **un seul** formateur : `Message::serialize()` (le préfixe, le `:` du trailing et le `\r\n` n'existent qu'ici). Les classes descriptrices (`ACommandError`, `ACommandReply` + sous-classes `Rpl*`) ne construisent plus de string : elles produisent un `Message` via `toMessage(server, nick)` → `Message::numeric`. Les echoes utilisent le ctor sortant `Message(prefix, command, params, trailing)`. `Message` porte un `bool _trailing` (le dernier param est-il un trailing → préfixé d'un `:`).
+**Pourquoi :** un seul point de vérité pour le format fil (fini les divergences `\r\n`/préfixe), symétrique de `Parser::parse`, et zéro concat à recopier pour les 8 commandes restantes (§8). La distinction reply/erreur reste réelle mais purement dans le **flux de contrôle** (throw/catch vs `queueReply`), pas dans le format. Hiérarchie `Rpl*` de PA **conservée** (seul `buildReply` → `toMessage`) pour ne rien casser de son design.
+*(2026-06-22)*

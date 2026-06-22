@@ -211,9 +211,7 @@ classDiagram
 direction TB
 
 class Server {
-  -int _port
-  -string _password
-  -int _listenFd
+  -serverConfig _config
   -map~Client~ _clients
   -map~Channel~ _channels
   -AMultiplexer _mux
@@ -222,16 +220,16 @@ class Server {
   +acceptClient() void
   +disconnectClient(int fd) void
   +getClientByNick(nick) Client
-  +getChannel(name) Channel
-  +getOrCreateChannel(name) Channel
+  +getChannelByName(name) Channel
+  +addClientToChannel(c, name) Channel
+  +removeClientFromChannel(c, name) void
+  +getServerName() string
 }
 class Client {
   -int _fd
   -string _inBuffer
   -string _outBuffer
-  -string _nickname
-  -string _username
-  -State _state
+  -clientInfo _clientInfo
   -set~Channel~ _channels
   +appendInput(data) void
   +extractLine(out) bool
@@ -239,31 +237,44 @@ class Client {
   +hasPendingOutput() bool
   +isRegistered() bool
   +prefix() string
+  +getNickName() string
+  +getState() State
+  +setState(s) void
+  +addChannel(ch) void
+  +removeChannel(ch) void
+  +getOutBuffer() string&
 }
 class Channel {
   -string _name
   -string _topic
-  -string _key
-  -size_t _userLimit
-  -bool _inviteOnly
-  -bool _topicRestricted
+  -channelParam _parameters
   -set~Client~ _members
   -set~Client~ _operators
   -set~Client~ _invited
   +addMember(c) void
   +removeMember(c) void
+  +isMember(c) bool
   +isOperator(c) bool
   +promote(c) void
-  +canJoin(c, key) bool
+  +demote(c) void
+  +canJoin(c, pass) bool
   +broadcast(msg, except) void
+  +getName() string
+  +getTopic() string
+  +getMembers() set
+  +getOperators() set
+  +isEmpty() bool
 }
 class Message {
   -string _prefix
   -string _command
   -vector~string~ _params
+  -bool _trailing
   +getCommand() string
   +getParam(i) string
   +paramCount() size_t
+  +serialize() string
+  +numeric(server, code, nick, middle, text)$ Message
 }
 class Parser {
   +parse(rawLine)$ Message
@@ -532,7 +543,7 @@ subgraph CD["CommandDispatcher::dispatch()"]
   c{"requiresRegistration() et client non enregistré ?"}:::logic
   d{"params.size() &lt; minParams() ?"}:::logic
   ca["catch(ACommandError&amp; e)"]:::error
-  br["nick = client (ou '*' si non enregistré)<br/>reply = ':' + serverName + ' ' + e.buildReply(nick)"]:::data
+  br["nick = client (ou '*' si non enregistré)<br/>reply = e.toMessage(serverName, nick).serialize()"]:::data
   cb["catch(std::exception&amp; e)<br/>log &amp; continue — ne tue JAMAIS le serveur"]:::error
 end
 subgraph CMD["ACommand::execute() — commande concrète"]
@@ -668,13 +679,13 @@ sequenceDiagram
   Note over P: POLLIN → recv → appendInput<br/>extractLine → Parser::parse
   P->>D: dispatch(client, Message)
   D->>J: execute(client, msg)
-  J->>Ch: getOrCreateChannel("#techno")
-  J->>Ch: canJoin(client, key)
+  J->>P: getChannelByName("#techno")
+  J->>Ch: canJoin(client, pass)
   alt refus (+i / +k / +l)
     Ch-->>D: throw ACommandError (473 / 475 / 471)
     D->>C: queueReply(numeric) → _outBuffer
   else autorisé
-    J->>Ch: addMember(client)
+    J->>P: addClientToChannel(client) — crée si absent, addMember + 1er=op
     Ch->>O: broadcast(":nick JOIN #techno") → _outBuffer
     Ch->>C: 332 topic · 353 names · 366 fin → _outBuffer
   end
@@ -745,12 +756,12 @@ stateDiagram-v2
   <!-- ===================== NUMERICS ===================== -->
   <section id="sec-numerics">
     <h2><span class="num">5</span> Numerics ↔ exceptions</h2>
-    <p class="sec-note">Côté erreurs : chaque <code>ERR_*</code> est porté par une dérivée d'<code>ACommandError</code> ; <code>buildReply(nick)</code> renvoie <code>&lt;code&gt; &lt;nick&gt; &lt;params&gt; :&lt;texte&gt;</code> — le préfixe <code>:server</code> est ajouté par le dispatcher (<code>D7/D12</code>). Côté succès : les <code>RPL_*</code> sont construits inline par les commandes, <b>pas</b> via exception.</p>
+    <p class="sec-note">Côté erreurs : chaque <code>ERR_*</code> est porté par une dérivée d'<code>ACommandError</code>. Côté succès : les <code>RPL_*</code> sont des <code>ACommandReply</code>/<code>Rpl*</code>, construits inline (<b>pas</b> via exception). Les deux produisent un <code>Message</code> via <code>toMessage(server, nick)</code> → <code>Message::numeric</code> ; <code>Message::serialize()</code> pose le préfixe <code>:server</code>, le <code>:</code> du trailing et le <code>\r\n</code> — point unique (<code>D18</code>).</p>
 
     <div class="table-scroll" style="margin-bottom:16px">
       <table class="matrix">
         <thead>
-          <tr><th>Code</th><th>Nom</th><th>Classe ACommandError</th><th>Texte (buildReply)</th><th>Levé quand</th></tr>
+          <tr><th>Code</th><th>Nom</th><th>Classe ACommandError</th><th>Texte (trailing)</th><th>Levé quand</th></tr>
         </thead>
         <tbody>
           <tr><td class="num-err">421</td><td>ERR_UNKNOWNCOMMAND</td><td><code>UnknownCommand</code></td><td>&lt;cmd&gt; :Unknown command</td><td>commande absente de la map (dispatch)</td></tr>
