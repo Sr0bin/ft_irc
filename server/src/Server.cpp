@@ -139,7 +139,7 @@ void Server::disconnectClient(int fd) {
 	_clients.erase(it);
 }
 
-Client *Server::getClientByNick(std::string nick) {
+Client *Server::getClientByNick(const std::string &nick) {
 	std::map<int, Client *>::iterator it;
 
 	for (it = _clients.begin(); it != _clients.end(); ++it) {
@@ -152,14 +152,15 @@ Client *Server::getClientByNick(std::string nick) {
 	return (0);
 }
 
-Channel *Server::getChannelByName(std::string name) {
-	std::map<std::string, Channel *>::iterator it;
+Channel *Server::getChannelByName(const std::string &name) {
+	// Keys are stored lower-cased (see addClientToChannel) so an O(log n)
+	// map lookup is enough for case-insensitive matching.
+	std::map<std::string, Channel *>::iterator it =
+		_channels.find(Utils::toLower(name));
 
-	for (it = _channels.begin(); it != _channels.end(); ++it)
-		if (Utils::ircEquals(it->first, name))
-			return (it->second);
-
-	return (0);
+	if (it == _channels.end())
+		return (0);
+	return (it->second);
 }
 
 std::string Server::getServerName(void) const { return (_config._serverName); }
@@ -172,7 +173,7 @@ Channel *Server::addClientToChannel(Client &client, const std::string &name) {
 
 	if (ch == 0) {
 		ch = new Channel(name);
-		_channels[name] = ch;
+		_channels[Utils::toLower(name)] = ch;
 		created = true;
 	}
 	ch->addMember(client);

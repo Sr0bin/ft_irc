@@ -35,8 +35,8 @@ class Server {
 	void run();
 	void acceptClient();
 	void disconnectClient(int fd);
-	Client *getClientByNick(std::string nick);
-	Channel *getChannelByName(std::string name);
+	Client *getClientByNick(const std::string &nick);
+	Channel *getChannelByName(const std::string &name);
 	std::string getServerName(void) const;
 	std::string getPassword(void) const;
 	Channel *addClientToChannel(Client &client, const std::string &name);
