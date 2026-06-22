@@ -22,6 +22,8 @@
 #include "PassCommand.hpp"
 #include "NickCommand.hpp"
 #include "UserCommand.hpp"
+#include "JoinCommand.hpp"
+#include "PartCommand.hpp"
 
 CommandDispatcher::CommandDispatcher(Server &server) : _server(server)
 {
@@ -31,6 +33,8 @@ CommandDispatcher::CommandDispatcher(Server &server) : _server(server)
 	registerCommand("pass", new PassCommand(_server));
 	registerCommand("nick", new NickCommand(_server));
 	registerCommand("user", new UserCommand(_server));
+	registerCommand("join", new JoinCommand(_server));
+	registerCommand("part", new PartCommand(_server));
 }
 
 CommandDispatcher::~CommandDispatcher(void)

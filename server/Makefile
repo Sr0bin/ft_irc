@@ -33,6 +33,9 @@ SOURCES_NAME = main.cpp \
 			   PassCommand.cpp \
 			   NickCommand.cpp \
 			   UserCommand.cpp \
+			   JoinCommand.cpp \
+			   PartCommand.cpp \
+			   ACommandReply.cpp \
 			   randomCmd.cpp     #FOR TESTING PURPOSE ONLY
 
 #---------------------------
