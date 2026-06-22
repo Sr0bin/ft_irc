@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:15:56 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/22 14:25:42 by prigaudi         ###   ########.fr       */
+/*   Updated: 2026/06/22 15:50:22 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@ class Channel {
 	void broadcast(std::string msg, Client &except);
 	bool isEmpty(void) const;
 	std::string getTopic(void) const;
+	const std::set<Client *> &getMembers(void) const;
+	const std::set<Client *> &getOperators(void) const;
 
   private:
 	// No copy allowed

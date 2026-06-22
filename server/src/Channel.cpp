@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:38:07 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/22 14:25:30 by prigaudi         ###   ########.fr       */
+/*   Updated: 2026/06/22 15:53:13 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,3 +71,9 @@ void Channel::broadcast(std::string msg, Client &except) {
 bool Channel::isEmpty(void) const { return (_members.empty()); }
 
 std::string Channel::getTopic(void) const { return (_topic); }
+
+const std::set<Client *> &Channel::getMembers(void) const { return (_members); }
+
+const std::set<Client *> &Channel::getOperators(void) const {
+	return (_operators);
+}

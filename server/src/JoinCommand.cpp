@@ -25,14 +25,22 @@ void JoinCommand::execute(Client &client, Message &msg) {
 
 	_server.addClientToChannel(client, name);
 
-	Channel *safeCh = _server.getChannelByName(name); // re-fetch après création
+	Channel *safeCh = _server.getChannelByName(name);
 	const std::string joinMsg =
 		":" + client.prefix() + " JOIN " + name + "\r\n";
 	safeCh->broadcast(joinMsg, client);
 	client.queueReply(joinMsg);
 
-	std::string topic = safeCh->getTopic();
 	const std::string serverPrefix = ":" + _server.getServerName() + " ";
+
+	sendTopic(client, safeCh, name, serverPrefix);
+	sendNames(client, safeCh, name, serverPrefix);
+}
+
+void JoinCommand::sendTopic(Client &client, Channel *ch,
+							const std::string &name,
+							const std::string &serverPrefix) {
+	std::string topic = ch->getTopic();
 	if (topic.empty())
 		client.queueReply(serverPrefix +
 						  RplNoTopic(name).buildReply(client.getNickName()));
@@ -40,6 +48,27 @@ void JoinCommand::execute(Client &client, Message &msg) {
 		client.queueReply(
 			serverPrefix +
 			RplTopic(name, topic).buildReply(client.getNickName()));
+}
 
-	// IL FAUT GERER LES REPONSES 353 et 366 !!!
+void JoinCommand::sendNames(Client &client, Channel *ch,
+							const std::string &name,
+							const std::string &serverPrefix) {
+	std::string namesList = "";
+	const std::set<Client *> &members = ch->getMembers();
+	const std::set<Client *> &operators = ch->getOperators();
+
+	for (std::set<Client *>::const_iterator it = members.begin();
+		 it != members.end(); ++it) {
+		if (!namesList.empty())
+			namesList += " ";
+		if (operators.count(*it))
+			namesList += "@";
+		namesList += (*it)->getNickName();
+	}
+
+	client.queueReply(
+		serverPrefix +
+		RplNamReply(name, namesList).buildReply(client.getNickName()));
+	client.queueReply(serverPrefix +
+					  RplEndOfNames(name).buildReply(client.getNickName()));
 }

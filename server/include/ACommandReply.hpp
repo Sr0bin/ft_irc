@@ -1,11 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ACommandError.hpp                                  :+:      :+:    :+:   */
+/*   ACommandReply.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rorollin <rorollin@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/18 by rorollin                  #+#    #+#             */
+/*   Created: 2026/06/22 16:17:35 by prigaudi          #+#    #+#             */
+/*   Updated: 2026/06/22 16:17:39 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +20,9 @@ class ACommandReply {
 	ACommandReply(int code, const std::string &text) throw();
 	ACommandReply(int code, const std::string &param,
 				  const std::string &text) throw();
+	ACommandReply(int code, const std::string &param1,
+				  const std::string &param2, const std::string &text) throw();
+
 	virtual ~ACommandReply(void) throw();
 
 	std::string buildReply(const std::string &nick) const;
@@ -42,13 +46,15 @@ class RplTopic : public ACommandReply {
 };
 
 // 353
-//  class RplNamReply : public ACommandReply {
-//  	...
-//  };
+class RplNamReply : public ACommandReply {
+  public:
+	RplNamReply(const std::string &channel, const std::string &names) throw();
+};
 
 // 366
-//  class RplEndOfNames : public ACommandReply {
-//  	...
-//  };
+class RplEndOfNames : public ACommandReply {
+  public:
+	RplEndOfNames(const std::string &channel) throw();
+};
 
 #endif
