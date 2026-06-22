@@ -15,9 +15,6 @@
 #include "ft_irc.hpp"
 #include <cstdlib>
 #include <iostream>
-#include "CommandDispatcher.hpp"
-#include "../include/Parser.hpp"
-#include "../include/Message.hpp"
 
 // int main()
 // {
@@ -67,40 +64,32 @@
 
 int main(int argc, char ** argv)
 {
-	{	
-	(void) argc;
-		Message test;
-		std::string raw16 = "random :hello world";
-		Server server;
-		CommandDispatcher dispatcher(server);
-		Client client;
-
-		test = Parser::parseRawMessage(raw16);
-		dispatcher.dispatch(client, test);
-		// std::cout << test << std::endl;
+	if (argc != 3) {
+		std::cerr << "Usage: ./ircserv <port> <password>" << std::endl;
+		return (1);
 	}
-	{
-		  serverConfig config;
 
-		  config._port = atoi(argv[1]);
-		  config._password = argv[2];
-		  config._listenFd = -1;
+	serverConfig config;
 
-		  if (config._port <= 0 || config._port > 65535) {
-			std::cout << "Error: invalid port" << std::endl;
-			return (1);
-		  }
+	config._port = atoi(argv[1]);
+	config._password = argv[2];
+	config._listenFd = -1;
+	config._serverName = "ircserv.42.fr";
 
-		  try {
-			Server server(config);
-			server.run();
-		  } catch (const IrcException &e) {
-			std::cout << "IRC Error: " << e.what() << std::endl;
-			return (1);
-		  } catch (const std::exception &e) {
-			std::cout << "Error: " << e.what() << std::endl;
-			return (1);
-		  }
-		  std::cout << "ft_irc\n";
-	 }
+	if (config._port <= 0 || config._port > 65535) {
+		std::cout << "Error: invalid port" << std::endl;
+		return (1);
+	}
+
+	try {
+		Server server(config);
+		server.run();
+	} catch (const IrcException &e) {
+		std::cout << "IRC Error: " << e.what() << std::endl;
+		return (1);
+	} catch (const std::exception &e) {
+		std::cout << "Error: " << e.what() << std::endl;
+		return (1);
+	}
+	std::cout << "ft_irc\n";
 }
