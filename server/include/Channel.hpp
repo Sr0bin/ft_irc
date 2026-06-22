@@ -18,7 +18,7 @@
 class Channel {
   public:
 	Channel(void);
-	Channel(std::string name);
+	Channel(const std::string &name);
 	~Channel(void);
 
 	void addMember(Client &client);
@@ -27,8 +27,8 @@ class Channel {
 	bool isOperator(Client &client) const;
 	void promote(Client &client);
 	void demote(Client &client);
-	bool canJoin(Client &client, std::string pass);
-	void broadcast(std::string msg, Client &except);
+	bool canJoin(Client &client, const std::string &pass);
+	void broadcast(const std::string &msg, Client &except);
 	std::string getName(void) const;
 	bool isEmpty(void) const;
 	std::string getTopic(void) const;

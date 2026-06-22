@@ -24,7 +24,8 @@ static channelParam defaultParam(void) {
 
 Channel::Channel(void) : _parameters(defaultParam()) {}
 
-Channel::Channel(std::string name) : _name(name), _parameters(defaultParam()) {}
+Channel::Channel(const std::string &name)
+	: _name(name), _parameters(defaultParam()) {}
 
 Channel::~Channel(void) {}
 
@@ -48,7 +49,7 @@ void Channel::promote(Client &client) { _operators.insert(&client); }
 
 void Channel::demote(Client &client) { _operators.erase(&client); }
 
-bool Channel::canJoin(Client &client, std::string pass) {
+bool Channel::canJoin(Client &client, const std::string &pass) {
 	// IL FAUT RETOURNER PLUSIEURS CODES DEFAUTS SUIVANT LES CAS
 	if (_parameters._inviteOnly && _invited.count(&client) == 0)
 		return (false);
@@ -60,7 +61,7 @@ bool Channel::canJoin(Client &client, std::string pass) {
 	return (true);
 }
 
-void Channel::broadcast(std::string msg, Client &except) {
+void Channel::broadcast(const std::string &msg, Client &except) {
 	for (std::set<Client *>::iterator it = _members.begin();
 		 it != _members.end(); ++it) {
 		if (*it != &except)
@@ -69,6 +70,8 @@ void Channel::broadcast(std::string msg, Client &except) {
 }
 
 bool Channel::isEmpty(void) const { return (_members.empty()); }
+
+std::string Channel::getName(void) const { return (_name); }
 
 std::string Channel::getTopic(void) const { return (_topic); }
 
