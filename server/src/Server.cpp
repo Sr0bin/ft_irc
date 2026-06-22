@@ -36,6 +36,7 @@ void Server::run() {
 	_config._listenFd = socket(AF_INET, SOCK_STREAM, 0);
 	if (_config._listenFd == -1)
 		throw IrcException("socket() failed");
+	fcntl(_config._listenFd, F_SETFL, O_NONBLOCK);
 
 	struct sockaddr_in addr = {};
 	addr.sin_family = AF_INET;
@@ -123,6 +124,7 @@ void Server::acceptClient() {
 		accept(_config._listenFd, (struct sockaddr *)&clientAddr, &clientLen);
 	if (clientFd == -1)
 		throw IrcException("accept() failed");
+	fcntl(clientFd, F_SETFL, O_NONBLOCK);
 
 	_clients[clientFd] = new Client(clientFd);
 

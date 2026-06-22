@@ -20,6 +20,7 @@
 #include "PollMultiplexer.hpp"
 #include "Utils.hpp"
 #include "ft_irc.hpp"
+#include <fcntl.h>
 #include <map>
 #include <netinet/in.h>
 #include <sys/socket.h>
