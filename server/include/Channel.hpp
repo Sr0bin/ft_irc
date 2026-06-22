@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:15:56 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/19 14:53:19 by prigaudi         ###   ########.fr       */
+/*   Updated: 2026/06/22 13:05:53 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ class Channel {
 	bool canJoin(Client &client, std::string pass);
 	void broadcast(std::string msg, Client &except);
 	std::string getName(void) const;
+	bool isEmpty(void) const;
 
   private:
 	// No copy allowed

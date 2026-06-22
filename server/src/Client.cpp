@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:38:10 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/22 11:50:19 by prigaudi         ###   ########.fr       */
+/*   Updated: 2026/06/22 12:54:04 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,3 +69,5 @@ void Client::setState(clientState state) { _clientInfo._state = state; }
 std::string &Client::getOutBuffer(void) { return (_outBuffer); }
 
 void Client::addChannel(Channel *channel) { _channels.insert(channel); }
+
+void Client::removeChannel(Channel *channel) { _channels.erase(channel); }

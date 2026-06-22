@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:38:13 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/22 11:51:11 by prigaudi         ###   ########.fr       */
+/*   Updated: 2026/06/22 13:16:00 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,4 +164,18 @@ void Server::addClientToChannel(Client &client, const std::string &name) {
 
 	channel->addMember(client);
 	client.addChannel(channel);
+}
+
+void Server::removeClientFromChannel(Client &client, const std::string &name) {
+	Channel *channel = getChannelByName(name);
+	if (channel == 0)
+		return;
+
+	channel->removeMember(client);
+	client.removeChannel(channel);
+
+	if (channel->isEmpty()) {
+		_channels.erase(name);
+		delete channel;
+	}
 }

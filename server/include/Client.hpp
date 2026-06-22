@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:08:46 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/22 11:47:16 by prigaudi         ###   ########.fr       */
+/*   Updated: 2026/06/22 12:52:26 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ class Client {
 	std::string getNickName(void) const;
 	std::string &getOutBuffer(void);
 	void addChannel(Channel *channel);
+	void removeChannel(Channel *channel);
 
   private:
 	// No copy allowed

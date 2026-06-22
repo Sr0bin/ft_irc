@@ -13,24 +13,18 @@
 #include <sstream>
 
 ACommandError::ACommandError(int code, const std::string &text) throw()
-	: IrcException(text), _code(code), _text(text)
-{
-}
+	: IrcException(text), _code(code), _text(text) {}
 
 ACommandError::ACommandError(int code, const std::string &param,
-		const std::string &text) throw()
-	: IrcException(text), _code(code), _text(text)
-{
+							 const std::string &text) throw()
+	: IrcException(text), _code(code), _text(text) {
 	_params.push_back(param);
 }
 
-ACommandError::~ACommandError(void) throw()
-{
-}
+ACommandError::~ACommandError(void) throw() {}
 
 // "<code> <nick> <params...> :<text>" — the dispatcher prepends ":<server> ".
-std::string ACommandError::buildReply(const std::string &nick) const
-{
+std::string ACommandError::buildReply(const std::string &nick) const {
 	std::ostringstream os;
 
 	os << _code << " " << nick;
@@ -41,16 +35,13 @@ std::string ACommandError::buildReply(const std::string &nick) const
 }
 
 NeedMoreParams::NeedMoreParams(const std::string &command) throw()
-	: ACommandError(461, command, "Not enough parameters")
-{
-}
+	: ACommandError(461, command, "Not enough parameters") {}
 
 NoSuchNick::NoSuchNick(const std::string &nick) throw()
-	: ACommandError(401, nick, "No such nick/channel")
-{
-}
+	: ACommandError(401, nick, "No such nick/channel") {}
 
 NoSuchChannel::NoSuchChannel(const std::string &channel) throw()
-	: ACommandError(403, channel, "No such channel")
-{
-}
+	: ACommandError(403, channel, "No such channel") {}
+
+NotOnChannel::NotOnChannel(const std::string &channel) throw()
+	: ACommandError(442, channel, "You're not on that channel") {}
