@@ -6,31 +6,21 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:38:10 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/20 17:41:55 by rorollin         ###   ########.fr       */
+/*   Updated: 2026/06/22 16:49:47 by rorollin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Client.hpp"
 
-Client::Client(void) : _fd(-1)
-{
-	_clientInfo._state = CONNECTING;
-}
+Client::Client(void) : _fd(-1) { _clientInfo._state = CONNECTING; }
 
-Client::Client(int fd) : _fd(fd)
-{
-	_clientInfo._state = CONNECTING;
-}
+Client::Client(int fd) : _fd(fd) { _clientInfo._state = CONNECTING; }
 
 Client::~Client(void) {}
 
-void Client::appendInput(const std::string &input)
-{
-	_inBuffer += input;
-}
+void Client::appendInput(const std::string &input) { _inBuffer += input; }
 
-bool Client::extractLine(std::string &out)
-{
+bool Client::extractLine(std::string &out) {
 	std::string::size_type pos = _inBuffer.find("\r\n");
 
 	if (pos == std::string::npos)
@@ -40,74 +30,49 @@ bool Client::extractLine(std::string &out)
 	return (true);
 }
 
-void Client::queueReply(const std::string &msg)
-{
-	_outBuffer += msg;
-}
+void Client::queueReply(const std::string &msg) { _outBuffer += msg; }
 
-bool Client::hasPendingOutput(void) const
-{
-	return (!_outBuffer.empty());
-}
+bool Client::hasPendingOutput(void) const { return (!_outBuffer.empty()); }
 
-bool Client::isRegistered(void) const
-{
-	// ponytail: stays false until the command layer sets _state = REGISTERED (PASS+NICK+USER)
+bool Client::isRegistered(void) const {
+	// ponytail: stays false until the command layer sets _state = REGISTERED
+	// (PASS+NICK+USER)
 	return (_clientInfo._state == REGISTERED);
 }
 
-std::string Client::prefix(void) const
-{
-	// ponytail: hardcoded host, replace once Server captures the peer address (getpeername)
+std::string Client::prefix(void) const {
+	// ponytail: hardcoded host, replace once Server captures the peer address
+	// (getpeername)
 	return (_clientInfo._nickname + "!" + _clientInfo._username + "@localhost");
 }
 
-std::string Client::getNickName(void) const
-{
-	return (_clientInfo._nickname);
-}
+std::string Client::getNickName(void) const { return (_clientInfo._nickname); }
 
-std::string Client::getUserName(void) const
-{
-	return (_clientInfo._username);
-}
+std::string Client::getUserName(void) const { return (_clientInfo._username); }
 
-void Client::setNickName(const std::string &nick)
-{
+void Client::setNickName(const std::string &nick) {
 	_clientInfo._nickname = nick;
 }
 
-void Client::setUserName(const std::string &user)
-{
+void Client::setUserName(const std::string &user) {
 	_clientInfo._username = user;
 }
 
-void Client::setRealName(const std::string &real)
-{
+void Client::setRealName(const std::string &real) {
 	_clientInfo._realname = real;
 }
 
-clientState Client::getState(void) const
-{
-	return (_clientInfo._state);
-}
+clientState Client::getState(void) const { return (_clientInfo._state); }
 
-void Client::setState(clientState state)
-{
-	_clientInfo._state = state;
-}
-
-void Client::addChannel(Channel *channel)
-{
-	_channels.insert(channel);
-}
-
-void Client::removeChannel(Channel *channel)
-{
-	_channels.erase(channel);
-}
 
 const std::set<Channel *> &Client::getChannels(void) const
 {
 	return (_channels);
 }
+void Client::setState(clientState state) { _clientInfo._state = state; }
+
+std::string &Client::getOutBuffer(void) { return (_outBuffer); }
+
+void Client::addChannel(Channel *channel) { _channels.insert(channel); }
+
+void Client::removeChannel(Channel *channel) { _channels.erase(channel); }

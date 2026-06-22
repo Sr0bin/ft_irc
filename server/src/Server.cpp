@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:38:13 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/20 19:41:22 by rorollin         ###   ########.fr       */
+/*   Updated: 2026/06/22 16:50:24 by rorollin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,20 +78,32 @@ void Server::run() {
 					std::string sDataIn(buffer, dataIn);
 					client->appendInput(sDataIn);
 
-					// gestion input???
+					std::string line;
+
+					while (client->extractLine(line)) {
+						Message msg = Parser::parseRawMessage(line);
+						// Parser => Renvoyer un Message
+						_dispatcher->dispatch(*client, msg);
+					}
+
+					if (client->hasPendingOutput())
+						_mux->setWriteInterest(e.fd, true);
 				}
 			} else if (e.writable) {
 				std::map<int, Client *>::iterator it = _clients.find(e.fd);
 				if (it == _clients.end())
 					continue;
 
-				// Client *client = it->second;
-				char buffer[512];
-				ssize_t dataOut = send(e.fd, buffer, sizeof(buffer), 0);
+				Client *client = it->second;
+				std::string &out = client->getOutBuffer();
+
+				ssize_t dataOut = send(e.fd, out.c_str(), out.size(), 0);
 				if (dataOut == -1)
 					disconnectClient(e.fd);
 				else {
-					// gestion outPut
+					out.erase(0, static_cast<size_t>(dataOut));
+					if (!client->hasPendingOutput())
+						_mux->setWriteInterest(e.fd, false);
 				}
 			}
 		}
@@ -150,15 +162,9 @@ Channel *Server::getChannelByName(std::string name) {
 	return (0);
 }
 
-std::string Server::getServerName(void) const
-{
-	return (_config._serverName);
-}
+std::string Server::getServerName(void) const { return (_config._serverName); }
 
-std::string Server::getPassword(void) const
-{
-	return (_config._password);
-}
+std::string Server::getPassword(void) const { return (_config._password); }
 
 Channel *Server::addClientToChannel(Client &client, const std::string &name) {
 	Channel *ch = getChannelByName(name);

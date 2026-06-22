@@ -10,26 +10,26 @@
 /* ************************************************************************** */
 
 #ifndef ACOMMANDERROR_HPP
-# define ACOMMANDERROR_HPP
-# include "IrcException.hpp"
-# include <string>
-# include <vector>
+#define ACOMMANDERROR_HPP
+#include "IrcException.hpp"
+#include <string>
+#include <vector>
 
 // Base for all IRC numeric-reply errors. Thrown from command execution, caught
 // in CommandDispatcher::dispatch. Carries the numeric code + its params + the
 // trailing text. buildReply formats "<code> <nick> <params> :<text>"; the
 // dispatcher prepends ":<server> " (it owns the server name), so this class
 // stays decoupled from Server and Client.
-class ACommandError : public IrcException
-{
-public:
+class ACommandError : public IrcException {
+  public:
 	ACommandError(int code, const std::string &text) throw();
-	ACommandError(int code, const std::string &param, const std::string &text) throw();
+	ACommandError(int code, const std::string &param,
+				  const std::string &text) throw();
 	virtual ~ACommandError(void) throw();
 
 	std::string buildReply(const std::string &nick) const;
 
-protected:
+  protected:
 	int _code;
 	std::vector<std::string> _params;
 	std::string _text;
@@ -38,21 +38,18 @@ protected:
 // Thin, readable throw sites: `throw NoSuchChannel(name)`. The code + text are
 // baked in here, so they stay consistent across every command that throws them.
 // Add one subclass per numeric as commands start needing it.
-class NeedMoreParams : public ACommandError
-{
-public:
+class NeedMoreParams : public ACommandError {
+  public:
 	NeedMoreParams(const std::string &command) throw();
 };
 
-class NoSuchNick : public ACommandError
-{
-public:
+class NoSuchNick : public ACommandError {
+  public:
 	NoSuchNick(const std::string &nick) throw();
 };
 
-class NoSuchChannel : public ACommandError
-{
-public:
+class NoSuchChannel : public ACommandError {
+  public:
 	NoSuchChannel(const std::string &channel) throw();
 };
 
@@ -96,6 +93,12 @@ class ErroneousNickname : public ACommandError
 {
 public:
 	ErroneousNickname(const std::string &nick) throw();
+};
+
+class NotOnChannel : public ACommandError {
+  public:
+	NotOnChannel(const std::string &channel) throw();
+ 
 };
 
 #endif
