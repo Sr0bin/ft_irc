@@ -1,29 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Parser.hpp                                         :+:      :+:    :+:   */
+/*   FatalException.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rorollin <rorollin@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/17 19:46:39 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/17 19:48:30 by rorollin         ###   ########.fr       */
+/*   Created: 2026/06/18 by rorollin                  #+#    #+#             */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "FatalException.hpp"
 
-#ifndef PARSER_HPP
-# define PARSER_HPP
-# include "ft_irc.hpp"
-#include "Message.hpp"
-
-class Parser
+FatalException::FatalException(const std::string &msg) throw() : IrcException(msg)
 {
-public:
-	static std::vector<std::string>
-	parseParams(const std::string& params, const std::string& last_param, bool);
-	static Message parseRawMessage(const std::string& raw);
+}
 
-	
-};
-
-#endif
+FatalException::~FatalException(void) throw()
+{
+}

@@ -6,7 +6,7 @@
 #    By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/01/19 15:44:49 by rorollin          #+#    #+#              #
-#    Updated: 2026/06/19 14:49:26 by prigaudi         ###   ########.fr        #
+#    Updated: 2026/06/22 10:46:48 by prigaudi         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,8 +26,11 @@ SOURCES_NAME = main.cpp \
 			   CommandDispatcher.cpp \
 			   AMultiplexer.cpp \
 			   PollMultiplexer.cpp \
-			   IrcException.cpp	\
-			   Utils.cpp
+			   IrcException.cpp \
+			   FatalException.cpp \
+			   ACommandError.cpp \
+			   Utils.cpp \
+			   randomCmd.cpp     #FOR TESTING PURPOSE ONLY
 
 #---------------------------
 
@@ -57,7 +60,7 @@ INCLUDES = $(addprefix -I , $(HEADERS_DIR))
 
 COMPILER = c++
 
-CFLAGS_PROD = -Wall -Wextra -Werror -MMD -MP -std=c++98 -ggdb
+CFLAGS_PROD = -Wall -Wextra -Werror -MMD -MP -std=c++98 -ggdb -fno-eliminate-unused-debug-types
 
 CFLAGS = $(CFLAGS_PROD)
 

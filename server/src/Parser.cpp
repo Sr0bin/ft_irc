@@ -10,34 +10,50 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_irc.hpp"
-#include "Parser.hpp"
-#include <cstring>
+// #include "ft_irc.hpp"
+#include "../include/Parser.hpp"
 #include <iostream>
 #include <ostream>
 #include <sstream>
 #include <vector>
 
-std::vector<std::string> Parser::parseParams(const std::string& params, const std::string& last_param)
+std::vector<std::string> Parser::parseParams(const std::string& params, const std::string& last_param, bool lptrue)
 {
 	std::vector<std::string> result;
 	std::string token;
 	std::stringstream ss(params);
 
-	while (ss >> token)
-		result.push_back(token);
-
-	if (!last_param.empty())
+	if (lptrue)
+	{
+		while (ss >> token)
+			result.push_back(token);
 		result.push_back(last_param);
-
+	}
+	else
+	{
+		while (ss >> token)
+			result.push_back(token);
+		if (!last_param.empty())
+			result.push_back(last_param);
+	}
 	return result;
 }
 
-void Parser::parseRawMessage(const std::string& raw)
+static bool findLastParam(std::string line)
+{
+	int j = 0;
+	while (line[j] != 0 && line[j] != ':')
+		j++;
+	if (line[j] == 0)
+		return false;
+	return true;
+}
+
+Message Parser::parseRawMessage(const std::string& raw)
 {
 	std::cout<<raw<<std::endl;
 	if (raw.empty())
-		return;
+		return Message();
 
 	std::string newRaw = raw;
 	std::string prefix;
@@ -45,7 +61,6 @@ void Parser::parseRawMessage(const std::string& raw)
 	std::string last_param;
 	std::vector<std::string> params;
 
-	newRaw.erase(newRaw.find("\r\n"));
 	if (newRaw[0] == ':')
 	{
 		int i = 0;
@@ -60,20 +75,26 @@ void Parser::parseRawMessage(const std::string& raw)
 	int i = 0;
 	while (newRaw[i] != 0 && newRaw[i] != ' ')
 		i++;
-	cmd = newRaw.substr(0, i);
-	newRaw.erase(newRaw.begin(), newRaw.begin() + i + 1);
-	last_param = &newRaw[newRaw.find(':') + 1];
-	size_t len = last_param.length();
-	newRaw.erase(newRaw.find(':'), newRaw.find(':') + len);
-	params = parseParams(newRaw, last_param);
-
-	// testing for ":Bob!bob@localhost PRIVMSG Alice Param1 Param2 Param3 :Salut\r\n tetstststtstst"
-	// std::cout<< "prefix | " << prefix<< std::endl;
-	// std::cout<< "cmd | " <<cmd<<std::endl;
-	// std::cout<< "last param | " << last_param<<std::endl;
-	// std::cout<< "param | " << params[0] <<std::endl;
-	// std::cout<< "param | " << params[1] <<std::endl;
-	// std::cout<< "param | " << params[2] <<std::endl;
-	// std::cout<< "param | " << params[3] <<std::endl;
-	// std::cout<< "param | " << params[4] <<std::endl;
+	if (newRaw[i] == 0)
+	{
+		cmd = newRaw.substr(0, i);
+		return (Message(prefix, cmd, params));
+	}
+	else if (findLastParam(newRaw) == true)
+	{
+		cmd = newRaw.substr(0, i);
+		newRaw.erase(newRaw.begin(), newRaw.begin() + i + 1);
+		last_param = &newRaw[newRaw.find(':') + 1];
+		size_t len = last_param.length();
+		newRaw.erase(newRaw.find(':'), newRaw.find(':') + len + 1);
+		// std::cout<< "+" <<newRaw<< "+" <<std::endl;
+		params = parseParams(newRaw, last_param, true);
+	}
+	else
+	{
+		cmd = newRaw.substr(0, i);
+		newRaw.erase(newRaw.begin(), newRaw.begin() + i + 1);
+		params = parseParams(newRaw, last_param, false);
+	}
+	return (Message(prefix, cmd, params));
 }

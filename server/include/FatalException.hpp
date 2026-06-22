@@ -1,29 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Parser.hpp                                         :+:      :+:    :+:   */
+/*   FatalException.hpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rorollin <rorollin@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/17 19:46:39 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/17 19:48:30 by rorollin         ###   ########.fr       */
+/*   Created: 2026/06/18 by rorollin                  #+#    #+#             */
 /*                                                                            */
 /* ************************************************************************** */
 
+#ifndef FATALEXCEPTION_HPP
+# define FATALEXCEPTION_HPP
+# include "IrcException.hpp"
 
-#ifndef PARSER_HPP
-# define PARSER_HPP
-# include "ft_irc.hpp"
-#include "Message.hpp"
-
-class Parser
+// Unrecoverable failure (socket/bind/listen/poll). Caught only in main() to
+// shut the whole server down cleanly. Never thrown from command execution.
+class FatalException : public IrcException
 {
 public:
-	static std::vector<std::string>
-	parseParams(const std::string& params, const std::string& last_param, bool);
-	static Message parseRawMessage(const std::string& raw);
-
-	
+	FatalException(const std::string &msg) throw();
+	virtual ~FatalException(void) throw();
 };
 
 #endif

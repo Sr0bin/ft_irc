@@ -37,6 +37,8 @@ class Server {
 	void disconnectClient(int fd);
 	Client *getClientByNick(std::string nick);
 	Channel *getChannelByName(std::string name);
+	std::string getServerName(void) const;
+	std::string getPassword(void) const;
 
   private:
 	// No copy allowed

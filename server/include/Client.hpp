@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:08:46 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/22 10:10:18 by prigaudi         ###   ########.fr       */
+/*   Updated: 2026/06/22 10:47:35 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,13 @@ class Client {
 	bool hasPendingOutput(void) const;
 	bool isRegistered(void) const;
 	std::string prefix(void) const;
+	std::string getNickName(void) const;
+	std::string getUserName(void) const;
+	void setNickName(const std::string &nick);
+	void setUserName(const std::string &user);
+	void setRealName(const std::string &real);
+	clientState getState(void) const;
+	void setState(clientState state);
 	std::string getNickName(void) const;
 	std::string &getOutBuffer(void);
 

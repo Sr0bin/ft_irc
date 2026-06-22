@@ -11,7 +11,8 @@
 /* ************************************************************************** */
 
 
-#include "Message.hpp"
+#include "../include/Message.hpp"
+#include <iostream>
 
 Message::Message(void)
 {
@@ -43,6 +44,11 @@ Message::~Message(void)
 {
 }
 
+std::string Message::getPrefix() const
+{
+	return (_prefix);
+}
+
 std::string Message::getCommand(void) const
 {
 	return (_command);
@@ -56,4 +62,23 @@ std::string Message::getParam(size_t i) const
 size_t Message::paramCount(void) const
 {
 	return (_params.size());
+}
+
+std::ostream& operator<<(std::ostream &os, const Message &msg)
+{
+	os << "Message {\n";
+	os << "  prefix  : " << msg.getPrefix() << "\n";
+	os << "  command : " << msg.getCommand() << "\n";
+	os << "  params  : [";
+
+	for (size_t i = 0; i < msg.paramCount(); i++)
+	{
+		os << "\"" << msg.getParam(i) << "\"";
+
+		if (i + 1 < msg.paramCount())
+			os << ", ";
+	}
+
+	os << "]\n}";
+	return os;
 }

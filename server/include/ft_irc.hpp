@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 14:19:43 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/18 16:55:03 by prigaudi         ###   ########.fr       */
+/*   Updated: 2026/06/22 10:48:26 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,9 @@ typedef struct serverConfig {
 } serverConfig;
 
 enum clientState {
-	CONNECTING
-
+	CONNECTING,	 // socket accepted, nothing validated yet
+	PASSWORD_OK, // valid PASS received
+	REGISTERED	 // PASS + NICK + USER complete
 };
 
 typedef struct clientInfo {

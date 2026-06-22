@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:38:13 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/22 10:13:34 by prigaudi         ###   ########.fr       */
+/*   Updated: 2026/06/22 10:50:29 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,3 +148,7 @@ Channel *Server::getChannelByName(std::string name) {
 
 	return (0);
 }
+
+std::string Server::getServerName(void) const { return (_config._serverName); }
+
+std::string Server::getPassword(void) const { return (_config._password); }
