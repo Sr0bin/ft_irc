@@ -12,6 +12,7 @@
 
 #ifndef ACOMMANDREPLY_HPP
 #define ACOMMANDREPLY_HPP
+#include "Message.hpp"
 #include <string>
 #include <vector>
 
@@ -25,7 +26,9 @@ class ACommandReply {
 
 	virtual ~ACommandReply(void) throw();
 
-	std::string buildReply(const std::string &nick) const;
+	// Same data → Message path as ACommandError: the formatting lives in
+	// Message::serialize, this just hands its code/params/text over.
+	Message toMessage(const std::string &server, const std::string &nick) const;
 
   protected:
 	int _code;

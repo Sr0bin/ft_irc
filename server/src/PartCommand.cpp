@@ -23,10 +23,12 @@ void PartCommand::execute(Client &client, Message &msg) {
 	if (!ch->isMember(client))
 		throw NotOnChannel(name);
 
-	std::string partMsg = ":" + client.prefix() + " PART " + name;
+	std::vector<std::string> p;
+	p.push_back(name);
 	if (!reason.empty())
-		partMsg += " :" + reason;
-	partMsg += "\r\n";
+		p.push_back(reason);
+	const std::string partMsg =
+		Message(client.prefix(), "PART", p, !reason.empty()).serialize();
 
 	ch->broadcast(partMsg, client);
 	client.queueReply(partMsg);

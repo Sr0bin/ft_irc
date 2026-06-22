@@ -12,15 +12,17 @@
 
 
 #include "../include/Message.hpp"
+#include <iomanip>
 #include <iostream>
+#include <sstream>
 
-Message::Message(void)
+Message::Message(void) : _trailing(false)
 {
 }
 
 Message::Message(const std::string &prefix, const std::string &command,
-	const std::vector<std::string> &params)
-	: _prefix(prefix), _command(command), _params(params)
+	const std::vector<std::string> &params, bool trailing)
+	: _prefix(prefix), _command(command), _params(params), _trailing(trailing)
 {
 }
 
@@ -36,6 +38,7 @@ Message &Message::operator=(const Message &other)
 		_prefix = other._prefix;
 		_command = other._command;
 		_params = other._params;
+		_trailing = other._trailing;
 	}
 	return (*this);
 }
@@ -62,6 +65,53 @@ std::string Message::getParam(size_t i) const
 size_t Message::paramCount(void) const
 {
 	return (_params.size());
+}
+
+std::string Message::serialize(void) const
+{
+	std::string out;
+
+	if (!_prefix.empty())
+		out += ":" + _prefix + " ";
+	out += _command;
+	for (size_t i = 0; i < _params.size(); ++i)
+	{
+		out += " ";
+		if (_trailing && i + 1 == _params.size())
+			out += ":";
+		out += _params[i];
+	}
+	return (out + "\r\n");
+}
+
+Message Message::numeric(const std::string &server, int code,
+	const std::string &nick, const std::vector<std::string> &middle,
+	const std::string &text)
+{
+	std::ostringstream codeStr;
+	codeStr << std::setw(3) << std::setfill('0') << code;
+
+	std::vector<std::string> params;
+	params.push_back(nick);
+	for (size_t i = 0; i < middle.size(); ++i)
+		params.push_back(middle[i]);
+	params.push_back(text);
+
+	return (Message(server, codeStr.str(), params, true));
+}
+
+Message Message::numeric(const std::string &server, int code,
+	const std::string &nick, const std::vector<std::string> &middle)
+{
+	std::ostringstream codeStr;
+	codeStr << std::setw(3) << std::setfill('0') << code;
+
+	std::vector<std::string> params;
+	params.push_back(nick);
+	for (size_t i = 0; i < middle.size(); ++i)
+		params.push_back(middle[i]);
+
+	return (Message(server, codeStr.str(), params, false));
 }
 
 std::ostream& operator<<(std::ostream &os, const Message &msg)

@@ -74,8 +74,8 @@ void CommandDispatcher::dispatch(Client& client, Message& msg)
 		std::string nick = client.getNickName();
 		if (nick.empty())
 			nick = "*";
-		client.queueReply(":" + _server.getServerName() + " "
-			+ e.buildReply(nick) + "\r\n");
+		client.queueReply(
+			e.toMessage(_server.getServerName(), nick).serialize());
 	}
 	catch (std::exception& e)
 	{

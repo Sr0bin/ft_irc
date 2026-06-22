@@ -25,33 +25,33 @@ void JoinCommand::execute(Client &client, Message &msg) {
 
 	ch = _server.addClientToChannel(client, name);
 
-	const std::string joinMsg =
-		":" + client.prefix() + " JOIN " + name + "\r\n";
+	std::vector<std::string> p;
+	p.push_back(name);
+	const std::string joinMsg = Message(client.prefix(), "JOIN", p).serialize();
 	ch->broadcast(joinMsg, client);
 	client.queueReply(joinMsg);
 
-	const std::string serverPrefix = ":" + _server.getServerName() + " ";
+	const std::string serverName = _server.getServerName();
 
-	sendTopic(client, ch, name, serverPrefix);
-	sendNames(client, ch, name, serverPrefix);
+	sendTopic(client, ch, name, serverName);
+	sendNames(client, ch, name, serverName);
 }
 
 void JoinCommand::sendTopic(Client &client, Channel *ch,
 							const std::string &name,
-							const std::string &serverPrefix) {
+							const std::string &serverName) {
 	std::string topic = ch->getTopic();
+	const std::string &nick = client.getNickName();
 	if (topic.empty())
-		client.queueReply(serverPrefix +
-						  RplNoTopic(name).buildReply(client.getNickName()));
+		client.queueReply(RplNoTopic(name).toMessage(serverName, nick).serialize());
 	else
 		client.queueReply(
-			serverPrefix +
-			RplTopic(name, topic).buildReply(client.getNickName()));
+			RplTopic(name, topic).toMessage(serverName, nick).serialize());
 }
 
 void JoinCommand::sendNames(Client &client, Channel *ch,
 							const std::string &name,
-							const std::string &serverPrefix) {
+							const std::string &serverName) {
 	std::string namesList = "";
 	const std::set<Client *> &members = ch->getMembers();
 	const std::set<Client *> &operators = ch->getOperators();
@@ -65,9 +65,9 @@ void JoinCommand::sendNames(Client &client, Channel *ch,
 		namesList += (*it)->getNickName();
 	}
 
+	const std::string &nick = client.getNickName();
 	client.queueReply(
-		serverPrefix +
-		RplNamReply(name, namesList).buildReply(client.getNickName()));
-	client.queueReply(serverPrefix +
-					  RplEndOfNames(name).buildReply(client.getNickName()));
+		RplNamReply(name, namesList).toMessage(serverName, nick).serialize());
+	client.queueReply(
+		RplEndOfNames(name).toMessage(serverName, nick).serialize());
 }

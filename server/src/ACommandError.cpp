@@ -10,7 +10,6 @@
 /* ************************************************************************** */
 
 #include "ACommandError.hpp"
-#include <sstream>
 
 ACommandError::ACommandError(int code, const std::string &text) throw()
 	: IrcException(text), _code(code), _text(text) {}
@@ -23,15 +22,9 @@ ACommandError::ACommandError(int code, const std::string &param,
 
 ACommandError::~ACommandError(void) throw() {}
 
-// "<code> <nick> <params...> :<text>" — the dispatcher prepends ":<server> ".
-std::string ACommandError::buildReply(const std::string &nick) const {
-	std::ostringstream os;
-
-	os << _code << " " << nick;
-	for (size_t i = 0; i < _params.size(); ++i)
-		os << " " << _params[i];
-	os << " :" << _text;
-	return (os.str());
+Message ACommandError::toMessage(const std::string &server,
+								 const std::string &nick) const {
+	return (Message::numeric(server, _code, nick, _params, _text));
 }
 
 NeedMoreParams::NeedMoreParams(const std::string &command) throw()

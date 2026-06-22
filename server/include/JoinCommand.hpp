@@ -10,9 +10,9 @@ class JoinCommand : public ACommand {
 
 	void execute(Client &client, Message &msg);
 	void sendTopic(Client &client, Channel *ch, const std::string &name,
-				   const std::string &serverPrefix);
+				   const std::string &serverName);
 	void sendNames(Client &client, Channel *ch, const std::string &name,
-				   const std::string &serverPrefix);
+				   const std::string &serverName);
 	size_t minParams(void) const;
 };
 

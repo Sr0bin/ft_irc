@@ -43,13 +43,23 @@ void ACommand::completeRegistrationIfReady(Client &client)
 
 	const std::string server = _server.getServerName();
 	const std::string nick = client.getNickName();
+	// ponytail: version/creation/mode strings are cosmetic placeholders; refine if the reference client complains
+	std::vector<std::string> none;
 	std::string welcome;
 
-	// TODO: this 001-004 string-building is ugly, rework later (helper/formatter?).
-	// ponytail: version/creation/mode strings are cosmetic placeholders; refine if the reference client complains
-	welcome += ":" + server + " 001 " + nick + " :Welcome to the Internet Relay Network " + client.prefix() + "\r\n";
-	welcome += ":" + server + " 002 " + nick + " :Your host is " + server + ", running version ft_irc-1.0\r\n";
-	welcome += ":" + server + " 003 " + nick + " :This server was created at startup\r\n";
-	welcome += ":" + server + " 004 " + nick + " " + server + " ft_irc-1.0 o itkol\r\n";
+	welcome += Message::numeric(server, 1, nick, none,
+		"Welcome to the Internet Relay Network " + client.prefix()).serialize();
+	welcome += Message::numeric(server, 2, nick, none,
+		"Your host is " + server + ", running version ft_irc-1.0").serialize();
+	welcome += Message::numeric(server, 3, nick, none,
+		"This server was created at startup").serialize();
+
+	std::vector<std::string> p004;
+	p004.push_back(server);
+	p004.push_back("ft_irc-1.0");
+	p004.push_back("o");
+	p004.push_back("itkol");
+	welcome += Message::numeric(server, 4, nick, p004).serialize();
+
 	client.queueReply(welcome);
 }

@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "ACommandReply.hpp"
-#include <sstream>
 
 ACommandReply::ACommandReply(int code, const std::string &text) throw()
 	: _code(code), _text(text) {}
@@ -32,15 +31,9 @@ ACommandReply::ACommandReply(int code, const std::string &param1,
 
 ACommandReply::~ACommandReply(void) throw() {}
 
-// "<code> <nick> <params...> :<text>" — the dispatcher prepends ":<server> ".
-std::string ACommandReply::buildReply(const std::string &nick) const {
-	std::ostringstream os;
-
-	os << _code << " " << nick;
-	for (size_t i = 0; i < _params.size(); ++i)
-		os << " " << _params[i];
-	os << " :" << _text << "\r\n";
-	return (os.str());
+Message ACommandReply::toMessage(const std::string &server,
+								 const std::string &nick) const {
+	return (Message::numeric(server, _code, nick, _params, _text));
 }
 
 RplNoTopic::RplNoTopic(const std::string &channel) throw()

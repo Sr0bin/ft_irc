@@ -12,14 +12,15 @@
 #ifndef ACOMMANDERROR_HPP
 #define ACOMMANDERROR_HPP
 #include "IrcException.hpp"
+#include "Message.hpp"
 #include <string>
 #include <vector>
 
 // Base for all IRC numeric-reply errors. Thrown from command execution, caught
 // in CommandDispatcher::dispatch. Carries the numeric code + its params + the
-// trailing text. buildReply formats "<code> <nick> <params> :<text>"; the
-// dispatcher prepends ":<server> " (it owns the server name), so this class
-// stays decoupled from Server and Client.
+// trailing text. toMessage(server, nick) turns that data into a Message; the
+// dispatcher serializes it. server/nick are passed in (plain strings), so this
+// class stays decoupled from Server and Client.
 class ACommandError : public IrcException {
   public:
 	ACommandError(int code, const std::string &text) throw();
@@ -27,7 +28,10 @@ class ACommandError : public IrcException {
 				  const std::string &text) throw();
 	virtual ~ACommandError(void) throw();
 
-	std::string buildReply(const std::string &nick) const;
+	// Pure data: builds the numeric Message from code/params/text. The caller
+	// (dispatcher) supplies server + nick, so the exception stays decoupled
+	// from Server/Client. Formatting itself lives in Message::serialize.
+	Message toMessage(const std::string &server, const std::string &nick) const;
 
   protected:
 	int _code;
