@@ -25,8 +25,21 @@ void JoinCommand::execute(Client &client, Message &msg) {
 
 	_server.addClientToChannel(client, name);
 
+	Channel *safeCh = _server.getChannelByName(name); // re-fetch après création
 	const std::string joinMsg =
 		":" + client.prefix() + " JOIN " + name + "\r\n";
-	ch->broadcast(joinMsg, client);
+	safeCh->broadcast(joinMsg, client);
 	client.queueReply(joinMsg);
+
+	std::string topic = safeCh->getTopic();
+	const std::string serverPrefix = ":" + _server.getServerName() + " ";
+	if (topic.empty())
+		client.queueReply(serverPrefix +
+						  RplNoTopic(name).buildReply(client.getNickName()));
+	else
+		client.queueReply(
+			serverPrefix +
+			RplTopic(name, topic).buildReply(client.getNickName()));
+
+	// IL FAUT GERER LES REPONSES 353 et 366 !!!
 }

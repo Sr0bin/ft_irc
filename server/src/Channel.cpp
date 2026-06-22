@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:38:07 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/22 13:11:01 by prigaudi         ###   ########.fr       */
+/*   Updated: 2026/06/22 14:25:30 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ void Channel::promote(Client &client) { _operators.insert(&client); }
 void Channel::demote(Client &client) { _operators.erase(&client); }
 
 bool Channel::canJoin(Client &client, std::string pass) {
+	// IL FAUT RETOURNER PLUSIEURS CODES DEFAUTS SUIVANT LES CAS
 	if (_parameters._inviteOnly && _invited.count(&client) == 0)
 		return (false);
 	if (!_parameters._pass.empty() && pass != _parameters._pass)
@@ -68,3 +69,5 @@ void Channel::broadcast(std::string msg, Client &except) {
 }
 
 bool Channel::isEmpty(void) const { return (_members.empty()); }
+
+std::string Channel::getTopic(void) const { return (_topic); }
