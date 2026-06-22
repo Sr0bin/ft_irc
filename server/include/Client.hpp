@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:08:46 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/22 10:47:35 by prigaudi         ###   ########.fr       */
+/*   Updated: 2026/06/22 11:47:16 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ class Client {
 	void setState(clientState state);
 	std::string getNickName(void) const;
 	std::string &getOutBuffer(void);
+	void addChannel(Channel *channel);
 
   private:
 	// No copy allowed

@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:38:13 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/22 10:50:29 by prigaudi         ###   ########.fr       */
+/*   Updated: 2026/06/22 11:51:11 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,3 +152,16 @@ Channel *Server::getChannelByName(std::string name) {
 std::string Server::getServerName(void) const { return (_config._serverName); }
 
 std::string Server::getPassword(void) const { return (_config._password); }
+
+void Server::addClientToChannel(Client &client, const std::string &name) {
+	Channel *channel = getChannelByName(name);
+
+	if (channel == 0) {
+		channel = new Channel(name);
+		_channels[name] = channel;
+		channel->promote(client);
+	}
+
+	channel->addMember(client);
+	client.addChannel(channel);
+}

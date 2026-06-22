@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 14:19:43 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/22 10:48:26 by prigaudi         ###   ########.fr       */
+/*   Updated: 2026/06/22 11:38:05 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ typedef struct serverConfig {
 	int _port;
 	std::string _password;
 	int _listenFd;
+	std::string _serverName;
 
 } serverConfig;
 

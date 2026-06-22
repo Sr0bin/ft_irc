@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 15:58:43 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/22 09:53:43 by prigaudi         ###   ########.fr       */
+/*   Updated: 2026/06/22 11:36:45 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ class Server {
 	Channel *getChannelByName(std::string name);
 	std::string getServerName(void) const;
 	std::string getPassword(void) const;
+	void addClientToChannel(Client &client, const std::string &name);
 
   private:
 	// No copy allowed
