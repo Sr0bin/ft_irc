@@ -47,7 +47,9 @@ void PollMultiplexer::setWriteInterest(int fd, bool on) {
 
 int PollMultiplexer::wait(std::vector<Event> &out) {
 	(void)out;
-	int ret = poll(_fds.data(), _fds.size(), -1);
+	// std::vector::data() is C++11; &_fds[0] is the C++98 equivalent. Safe here:
+	// poll() is never reached with an empty set (the listen fd is always watched).
+	int ret = poll(&_fds[0], _fds.size(), -1);
 	if (ret == -1)
 		return (-1);
 
