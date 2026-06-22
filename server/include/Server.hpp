@@ -48,8 +48,7 @@ class Server {
 	Server(const Server &other);
 	Server &operator=(const Server &other);
 
-	// Removes a channel from the registry by pointer (case-insensitive lookup
-	// means the map key may not match a caller's name), frees it.
+	// Erases a channel from the registry by its lower-cased name key, frees it.
 	void destroyChannel(Channel *channel);
 
 	serverConfig _config;

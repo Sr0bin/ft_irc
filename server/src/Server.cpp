@@ -209,12 +209,6 @@ void Server::removeClientFromAllChannels(Client &client) {
 }
 
 void Server::destroyChannel(Channel *channel) {
-	for (std::map<std::string, Channel *>::iterator it = _channels.begin();
-		 it != _channels.end(); ++it) {
-		if (it->second == channel) {
-			delete channel;
-			_channels.erase(it);
-			return;
-		}
-	}
+	_channels.erase(Utils::toLower(channel->getName()));
+	delete channel;
 }
