@@ -42,6 +42,10 @@ RplNoTopic::RplNoTopic(const std::string &channel) throw()
 RplTopic::RplTopic(const std::string &channel, const std::string &topic) throw()
 	: ACommandReply(332, channel, topic) {}
 
+RplChannelModeIs::RplChannelModeIs(const std::string &channel,
+								   const std::string &modes) throw()
+	: ACommandReply(324, channel, modes) {}
+
 RplNamReply::RplNamReply(const std::string &channel,
 						 const std::string &names) throw()
 	: ACommandReply(353, "=", channel, names) {}

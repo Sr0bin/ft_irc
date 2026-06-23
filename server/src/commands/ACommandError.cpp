@@ -75,3 +75,15 @@ ErroneousNickname::ErroneousNickname(const std::string &nick) throw()
 
 NotOnChannel::NotOnChannel(const std::string &channel) throw()
 	: ACommandError(442, channel, "You're not on that channel") {}
+
+UnknownMode::UnknownMode(const std::string &mode) throw()
+	: ACommandError(472, mode, "is unknown mode char to me") {}
+
+ChanOPrivsNeeded::ChanOPrivsNeeded(const std::string &channel) throw()
+	: ACommandError(482, channel, "You're not channel operator") {}
+
+UserNotInChannel::UserNotInChannel(const std::string &nick,
+								   const std::string &channel) throw()
+	: ACommandError(441, channel, "They aren't on that channel") {
+	_params.insert(_params.begin(), nick);
+}

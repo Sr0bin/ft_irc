@@ -48,6 +48,13 @@ class RplTopic : public ACommandReply {
 	RplTopic(const std::string &channel, const std::string &topic) throw();
 };
 
+// 324
+class RplChannelModeIs : public ACommandReply {
+  public:
+	RplChannelModeIs(const std::string &channel,
+					 const std::string &modes) throw();
+};
+
 // 353
 class RplNamReply : public ACommandReply {
   public:

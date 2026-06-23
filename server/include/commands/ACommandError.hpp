@@ -102,7 +102,22 @@ public:
 class NotOnChannel : public ACommandError {
   public:
 	NotOnChannel(const std::string &channel) throw();
- 
+
+};
+
+class UnknownMode : public ACommandError {
+  public:
+	UnknownMode(const std::string &mode) throw();
+};
+
+class ChanOPrivsNeeded : public ACommandError {
+  public:
+	ChanOPrivsNeeded(const std::string &channel) throw();
+};
+
+class UserNotInChannel : public ACommandError {
+  public:
+	UserNotInChannel(const std::string &nick, const std::string &channel) throw();
 };
 
 #endif
