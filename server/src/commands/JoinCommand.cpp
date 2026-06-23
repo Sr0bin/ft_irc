@@ -16,14 +16,15 @@ void JoinCommand::execute(Client &client, Message &msg) {
 		pass = msg.getParam(1);
 
 	Channel *ch = _server.getChannelByName(name);
+	if (!ch)
+		ch = _server.addClientToChannel(client, name);
 
-	if (ch != 0 && ch->isMember(client))
+	if (ch->isMember(client))
 		return;
 
-	if (ch != 0 && !ch->canJoin(client, pass))
-		throw NoSuchChannel(name);
+	ch->canJoin(client, pass);
 
-	ch = _server.addClientToChannel(client, name);
+	_server.addClientToChannel(client, name);
 
 	std::vector<std::string> p;
 	p.push_back(name);
@@ -43,7 +44,8 @@ void JoinCommand::sendTopic(Client &client, Channel *ch,
 	std::string topic = ch->getTopic();
 	const std::string &nick = client.getNickName();
 	if (topic.empty())
-		client.queueReply(RplNoTopic(name).toMessage(serverName, nick).serialize());
+		client.queueReply(
+			RplNoTopic(name).toMessage(serverName, nick).serialize());
 	else
 		client.queueReply(
 			RplTopic(name, topic).toMessage(serverName, nick).serialize());

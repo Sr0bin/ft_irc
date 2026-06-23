@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:38:13 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/23 11:04:23 by prigaudi         ###   ########.fr       */
+/*   Updated: 2026/06/23 17:17:59 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,7 +182,7 @@ Channel *Server::addClientToChannel(Client &client, const std::string &name) {
 	Channel *ch = getChannelByName(name);
 	bool created = false;
 
-	if (ch == 0) {
+	if (!ch) {
 		ch = new Channel(name);
 		_channels[Utils::toLower(name)] = ch;
 		created = true;
