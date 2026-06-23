@@ -54,6 +54,7 @@ class Server {
 
 	// run() broken into its logical phases (see run() for the boot sequence).
 	void setupListenSocket();      // socket -> bind -> listen -> watch
+	void installSignalHandlers();  // SIGINT/SIGTERM -> clean stop, SIGPIPE ignored
 	void eventLoop();              // the single poll() loop
 	void handleReadable(int fd);   // recv -> buffer -> extract lines -> dispatch
 	void handleWritable(int fd);   // flush a client's pending output

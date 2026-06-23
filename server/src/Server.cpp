@@ -13,7 +13,16 @@
 #include "Server.hpp"
 #include "CommandDispatcher.hpp"
 #include <arpa/inet.h>
+#include <csignal>
 #include <sstream>
+
+namespace {
+// Set from the signal handler, polled by the event loop. sig_atomic_t +
+// volatile is the only state it is safe to touch from a handler.
+volatile sig_atomic_t g_stop = 0;
+
+void requestStop(int) { g_stop = 1; }
+} // namespace
 
 Server::Server(void) : _mux(0), _dispatcher(0) {}
 
@@ -23,12 +32,18 @@ Server::Server(serverConfig config)
 Server::~Server(void) {
 	delete _mux;
 	delete _dispatcher;
+	// Close every client socket before freeing the object, then the listen
+	// socket: a clean shutdown leaves no fd open.
 	for (std::map<int, Client *>::iterator it = _clients.begin();
-		 it != _clients.end(); ++it)
+		 it != _clients.end(); ++it) {
+		close(it->first);
 		delete it->second;
+	}
 	for (std::map<std::string, Channel *>::iterator it = _channels.begin();
 		 it != _channels.end(); ++it)
 		delete it->second;
+	if (_config._listenFd != -1)
+		close(_config._listenFd);
 }
 
 void Server::run() {
@@ -42,9 +57,28 @@ void Server::run() {
 	Utils::log(LOG_BOOT, "poll multiplexer + command dispatcher ready");
 
 	setupListenSocket();
+	installSignalHandlers();
 
 	Utils::log(LOG_BOOT, "entering event loop");
 	eventLoop();
+
+	Utils::log(LOG_BOOT, "event loop stopped, cleaning up");
+}
+
+void Server::installSignalHandlers() {
+	struct sigaction sa;
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = 0; // no SA_RESTART: poll() must return (EINTR) so we can stop
+	sa.sa_handler = requestStop;
+	sigaction(SIGINT, &sa, 0);
+	sigaction(SIGTERM, &sa, 0);
+
+	// Writing to a peer that closed its socket raises SIGPIPE, which would kill
+	// the process. Ignore it; send() returning -1 is handled in handleWritable.
+	signal(SIGPIPE, SIG_IGN);
+
+	Utils::log(LOG_BOOT,
+			   "signal handlers ready (SIGINT/SIGTERM stop, SIGPIPE ignored)");
 }
 
 void Server::setupListenSocket() {
@@ -75,11 +109,14 @@ void Server::setupListenSocket() {
 }
 
 void Server::eventLoop() {
-	while (1) {
+	while (!g_stop) {
 		std::vector<Event> events;
 
-		if (_mux->wait(events) == -1)
+		if (_mux->wait(events) == -1) {
+			if (g_stop)
+				break; // interrupted by a shutdown signal, not a real failure
 			throw IrcException("poll() failed");
+		}
 
 		for (size_t i = 0; i < events.size(); i++) {
 			Event &e = events[i];
