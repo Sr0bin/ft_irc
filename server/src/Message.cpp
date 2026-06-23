@@ -59,6 +59,8 @@ std::string Message::getCommand(void) const
 
 std::string Message::getParam(size_t i) const
 {
+	if (i >= _params.size())
+		return ("");
 	return (_params[i]);
 }
 
