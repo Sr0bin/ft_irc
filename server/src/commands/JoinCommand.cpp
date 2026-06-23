@@ -18,13 +18,13 @@ void JoinCommand::execute(Client &client, Message &msg) {
 	Channel *ch = _server.getChannelByName(name);
 	if (!ch)
 		ch = _server.addClientToChannel(client, name);
-
-	if (ch->isMember(client))
+	else if (ch->isMember(client))
 		return;
+	else {
+		ch->canJoin(client, pass);
 
-	ch->canJoin(client, pass);
-
-	_server.addClientToChannel(client, name);
+		_server.addClientToChannel(client, name);
+	}
 
 	std::vector<std::string> p;
 	p.push_back(name);
