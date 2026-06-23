@@ -10,90 +10,74 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-// #include "ft_irc.hpp"
 #include "Parser.hpp"
-#include <iostream>
-#include <ostream>
-#include <sstream>
-#include <vector>
 
-std::vector<std::string> Parser::parseParams(const std::string& params, const std::string& last_param, bool lptrue)
-{
-	std::vector<std::string> result;
-	std::string token;
-	std::stringstream ss(params);
-
-	if (lptrue)
-	{
-		while (ss >> token)
-			result.push_back(token);
-		result.push_back(last_param);
-	}
-	else
-	{
-		while (ss >> token)
-			result.push_back(token);
-		if (!last_param.empty())
-			result.push_back(last_param);
-	}
-	return result;
-}
-
-static bool findLastParam(std::string line)
-{
-	int j = 0;
-	while (line[j] != 0 && line[j] != ':')
-		j++;
-	if (line[j] == 0)
-		return false;
-	return true;
-}
-
+// Parses one IRC line (already stripped of CRLF by Client::extractLine) into a
+// Message, following RFC 1459/2812:
+//   [ ":" prefix SPACE ] command *( SPACE middle ) [ SPACE ":" trailing ]
+// Index-based with bounds checks throughout: no operator[] past the end, no
+// assumption that a separating space exists. Malformed input yields an empty
+// Message rather than undefined behaviour.
 Message Parser::parseRawMessage(const std::string& raw)
 {
-	if (raw.empty())
-		return Message();
-
-	std::string newRaw = raw;
 	std::string prefix;
-	std::string cmd;
-	std::string last_param;
+	std::string command;
 	std::vector<std::string> params;
+	bool trailing = false;
 
-	if (newRaw[0] == ':')
-	{
-		int i = 0;
-		while (newRaw[i] != 0 && newRaw[i] != ' ')
-			i++;
+	const std::string::size_type len = raw.size();
+	std::string::size_type pos = 0;
 
-		prefix = newRaw.substr(1, i);
-		newRaw.erase(newRaw.begin(), newRaw.begin() + i + 1);
-	}
-	else
-		prefix = "";
-	int i = 0;
-	while (newRaw[i] != 0 && newRaw[i] != ' ')
-		i++;
-	if (newRaw[i] == 0)
+	// Optional ":prefix" terminated by a space.
+	if (pos < len && raw[pos] == ':')
 	{
-		cmd = newRaw.substr(0, i);
-		return (Message(prefix, cmd, params));
+		std::string::size_type sp = raw.find(' ', pos);
+		if (sp == std::string::npos)
+			return Message(); // prefix with no command: malformed
+		prefix = raw.substr(pos + 1, sp - pos - 1);
+		pos = sp;
 	}
-	else if (findLastParam(newRaw) == true)
+
+	while (pos < len && raw[pos] == ' ')
+		++pos;
+
+	// Command (one word). An empty / space-only line has none.
+	if (pos >= len)
+		return Message();
 	{
-		cmd = newRaw.substr(0, i);
-		newRaw.erase(newRaw.begin(), newRaw.begin() + i + 1);
-		last_param = &newRaw[newRaw.find(':') + 1];
-		size_t len = last_param.length();
-		newRaw.erase(newRaw.find(':'), newRaw.find(':') + len + 1);
-		// std::cout<< "+" <<newRaw<< "+" <<std::endl;
-		params = parseParams(newRaw, last_param, true);
+		std::string::size_type sp = raw.find(' ', pos);
+		if (sp == std::string::npos)
+		{
+			command = raw.substr(pos);
+			return Message(prefix, command, params);
+		}
+		command = raw.substr(pos, sp - pos);
+		pos = sp;
 	}
-	else
+
+	// Params: middles split on spaces, until a param starting with ':' which is
+	// the trailing param (the rest of the line, spaces included).
+	while (pos < len)
 	{
-		cmd = newRaw.substr(0, i);
-		newRaw.erase(newRaw.begin(), newRaw.begin() + i + 1);
-		params = parseParams(newRaw, last_param, false);
+		while (pos < len && raw[pos] == ' ')
+			++pos;
+		if (pos >= len)
+			break;
+		if (raw[pos] == ':')
+		{
+			params.push_back(raw.substr(pos + 1));
+			trailing = true;
+			break;
+		}
+		std::string::size_type sp = raw.find(' ', pos);
+		if (sp == std::string::npos)
+		{
+			params.push_back(raw.substr(pos));
+			break;
+		}
+		params.push_back(raw.substr(pos, sp - pos));
+		pos = sp;
 	}
-	return (Message(prefix, cmd, params));
+
+	return Message(prefix, command, params, trailing);
 }

@@ -19,11 +19,7 @@
 class Parser
 {
 public:
-	static std::vector<std::string>
-	parseParams(const std::string& params, const std::string& last_param, bool);
 	static Message parseRawMessage(const std::string& raw);
-
-	
 };
 
 #endif
