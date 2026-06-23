@@ -27,6 +27,20 @@ class Channel {
 	bool isOperator(Client &client) const;
 	void promote(Client &client);
 	void demote(Client &client);
+
+	// Mode setters: return true if the channel state actually changed (used to
+	// build the RFC "changes which resulted" echo). Setters never do any I/O.
+	bool setInviteOnly(bool v);
+	bool setTopicRestricted(bool v);
+	bool setKey(const std::string &key);
+	bool removeKey(void);
+	bool setUserLimit(size_t limit);
+	bool removeUserLimit(void);
+
+	bool isInviteOnly(void) const;
+	bool isTopicRestricted(void) const;
+	const std::string &getKey(void) const;
+	size_t getUserLimit(void) const;
 	bool canJoin(Client &client, const std::string &pass);
 	void broadcast(const std::string &msg, Client &except);
 	std::string getName(void) const;

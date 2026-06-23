@@ -49,6 +49,58 @@ void Channel::promote(Client &client) { _operators.insert(&client); }
 
 void Channel::demote(Client &client) { _operators.erase(&client); }
 
+bool Channel::setInviteOnly(bool v) {
+	if (_parameters._inviteOnly == v)
+		return (false);
+	_parameters._inviteOnly = v;
+	return (true);
+}
+
+bool Channel::setTopicRestricted(bool v) {
+	if (_parameters._topicRestricted == v)
+		return (false);
+	_parameters._topicRestricted = v;
+	return (true);
+}
+
+bool Channel::setKey(const std::string &key) {
+	if (_parameters._pass == key)
+		return (false);
+	_parameters._pass = key;
+	return (true);
+}
+
+bool Channel::removeKey(void) {
+	if (_parameters._pass.empty())
+		return (false);
+	_parameters._pass = "";
+	return (true);
+}
+
+bool Channel::setUserLimit(size_t limit) {
+	if (_parameters._userLimit == limit)
+		return (false);
+	_parameters._userLimit = limit;
+	return (true);
+}
+
+bool Channel::removeUserLimit(void) {
+	if (_parameters._userLimit == 0)
+		return (false);
+	_parameters._userLimit = 0;
+	return (true);
+}
+
+bool Channel::isInviteOnly(void) const { return (_parameters._inviteOnly); }
+
+bool Channel::isTopicRestricted(void) const {
+	return (_parameters._topicRestricted);
+}
+
+const std::string &Channel::getKey(void) const { return (_parameters._pass); }
+
+size_t Channel::getUserLimit(void) const { return (_parameters._userLimit); }
+
 bool Channel::canJoin(Client &client, const std::string &pass) {
 	// IL FAUT RETOURNER PLUSIEURS CODES DEFAUTS SUIVANT LES CAS
 	if (_parameters._inviteOnly && _invited.count(&client) == 0)
