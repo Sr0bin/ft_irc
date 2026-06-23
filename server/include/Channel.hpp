@@ -6,12 +6,13 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:15:56 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/22 16:43:41 by rorollin         ###   ########.fr       */
+/*   Updated: 2026/06/23 18:28:14 by rorollin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CHANNEL_HPP
 #define CHANNEL_HPP
+#include "ACommandError.hpp"
 #include "Client.hpp"
 #include "ft_irc.hpp"
 
@@ -41,7 +42,7 @@ class Channel {
 	bool isTopicRestricted(void) const;
 	const std::string &getKey(void) const;
 	size_t getUserLimit(void) const;
-	bool canJoin(Client &client, const std::string &pass);
+	void canJoin(Client &client, const std::string &pass);
 	void broadcast(const std::string &msg, Client &except);
 	std::string getName(void) const;
 	bool isEmpty(void) const;

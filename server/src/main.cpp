@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 14:17:32 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/22 16:51:08 by rorollin         ###   ########.fr       */
+/*   Updated: 2026/06/23 15:47:49 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,8 +63,7 @@
 // 	return 0;
 // }
 
-int main(int argc, char ** argv)
-{
+int main(int argc, char **argv) {
 	if (argc != 3) {
 		std::cerr << "Usage: ./ircserv <port> <password>" << std::endl;
 		return (1);

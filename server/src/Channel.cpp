@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:38:07 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/22 16:48:22 by rorollin         ###   ########.fr       */
+/*   Updated: 2026/06/23 18:28:47 by rorollin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,16 +101,14 @@ const std::string &Channel::getKey(void) const { return (_parameters._pass); }
 
 size_t Channel::getUserLimit(void) const { return (_parameters._userLimit); }
 
-bool Channel::canJoin(Client &client, const std::string &pass) {
-	// IL FAUT RETOURNER PLUSIEURS CODES DEFAUTS SUIVANT LES CAS
-	if (_parameters._inviteOnly && _invited.count(&client) == 0)
-		return (false);
-	if (!_parameters._pass.empty() && pass != _parameters._pass)
-		return (false);
+void Channel::canJoin(Client &client, const std::string &pass) {
 	if (_parameters._userLimit != 0 &&
 		_members.size() >= _parameters._userLimit)
-		return (false);
-	return (true);
+		throw(ChannelIsFull(_name));
+	if (_parameters._inviteOnly && _invited.count(&client) == 0)
+		throw(InviteOnly(_name));
+	if (!_parameters._pass.empty() && pass != _parameters._pass)
+		throw(BadChannelKey(_name));
 }
 
 void Channel::broadcast(const std::string &msg, Client &except) {
