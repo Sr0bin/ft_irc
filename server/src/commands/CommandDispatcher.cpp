@@ -6,12 +6,13 @@
 /*   By: rorollin <rorollin@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:38:12 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/20 16:31:59 by rorollin         ###   ########.fr       */
+/*   Updated: 2026/06/23 16:27:46 by rorollin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "CommandDispatcher.hpp"
+#include "ModeCommand.hpp"
 #include "Server.hpp"
 #include  "ACommandError.hpp"
 #include "Utils.hpp"
@@ -35,6 +36,7 @@ CommandDispatcher::CommandDispatcher(Server &server) : _server(server)
 	registerCommand("user", new UserCommand(_server));
 	registerCommand("join", new JoinCommand(_server));
 	registerCommand("part", new PartCommand(_server));
+	registerCommand("mode", new ModeCommand(_server));
 }
 
 CommandDispatcher::~CommandDispatcher(void)
