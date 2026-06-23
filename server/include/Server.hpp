@@ -52,6 +52,13 @@ class Server {
 	// Erases a channel from the registry by its lower-cased name key, frees it.
 	void destroyChannel(Channel *channel);
 
+	// run() broken into its logical phases (see run() for the boot sequence).
+	void setupListenSocket();      // socket -> bind -> listen -> watch
+	void eventLoop();              // the single poll() loop
+	void handleReadable(int fd);   // recv -> buffer -> extract lines -> dispatch
+	void handleWritable(int fd);   // flush a client's pending output
+	void updateWriteInterest();    // (re)arm POLLOUT for clients with output
+
 	serverConfig _config;
 	std::map<int, Client *> _clients;
 	std::map<std::string, Channel *> _channels;
