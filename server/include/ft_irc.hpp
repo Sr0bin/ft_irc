@@ -32,6 +32,16 @@ enum clientState {
 	REGISTERED	 // PASS + NICK + USER complete
 };
 
+// Log categories — used purely as a visual/greppable tag (logging is always on,
+// no threshold). See Utils::log.
+enum LogLevel {
+	LOG_IN,	  // inbound line read from a client
+	LOG_OUT,  // outbound message queued to a client
+	LOG_CONN, // connection lifecycle (connect / disconnect)
+	LOG_ERR,  // errors and warnings
+	LOG_BOOT  // server setup steps before the event loop
+};
+
 typedef struct clientInfo {
 	std::string _nickname;
 	std::string _username;

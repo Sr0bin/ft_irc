@@ -51,7 +51,6 @@ static bool findLastParam(std::string line)
 
 Message Parser::parseRawMessage(const std::string& raw)
 {
-	std::cout<<raw<<std::endl;
 	if (raw.empty())
 		return Message();
 

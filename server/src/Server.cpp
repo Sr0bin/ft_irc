@@ -12,6 +12,8 @@
 
 #include "Server.hpp"
 #include "CommandDispatcher.hpp"
+#include <arpa/inet.h>
+#include <sstream>
 
 Server::Server(void) : _mux(0), _dispatcher(0) {}
 
@@ -30,13 +32,24 @@ Server::~Server(void) {
 }
 
 void Server::run() {
+	std::ostringstream boot;
+	boot << "starting '" << _config._serverName << "' on port "
+		 << _config._port;
+	Utils::log(LOG_BOOT, boot.str());
+
 	_mux = new PollMultiplexer();
 	_dispatcher = new CommandDispatcher(*this);
+	Utils::log(LOG_BOOT, "poll multiplexer + command dispatcher ready");
 
 	_config._listenFd = socket(AF_INET, SOCK_STREAM, 0);
 	if (_config._listenFd == -1)
 		throw IrcException("socket() failed");
 	fcntl(_config._listenFd, F_SETFL, O_NONBLOCK);
+
+	std::ostringstream sock;
+	sock << "listen socket created (fd " << _config._listenFd
+		 << "), non-blocking";
+	Utils::log(LOG_BOOT, sock.str());
 
 	struct sockaddr_in addr = {};
 	addr.sin_family = AF_INET;
@@ -45,11 +58,14 @@ void Server::run() {
 
 	if (bind(_config._listenFd, (struct sockaddr *)&addr, sizeof(addr)) == -1)
 		throw IrcException("bind() failed");
+	Utils::log(LOG_BOOT, "bound to 0.0.0.0");
 
 	if (listen(_config._listenFd, 10) == -1)
 		throw IrcException("listen() failed");
+	Utils::log(LOG_BOOT, "listening (backlog 10)");
 
 	_mux->watch(_config._listenFd);
+	Utils::log(LOG_BOOT, "entering event loop");
 
 	while (1) {
 		std::vector<Event> events;
@@ -82,6 +98,7 @@ void Server::run() {
 					std::string line;
 
 					while (client->extractLine(line)) {
+						Utils::log(LOG_IN, client->tag() + " " + line);
 						Message msg = Parser::parseRawMessage(line);
 						// Parser => Renvoyer un Message
 						_dispatcher->dispatch(*client, msg);
@@ -134,12 +151,19 @@ void Server::acceptClient() {
 	_clients[clientFd] = new Client(clientFd);
 
 	_mux->watch(clientFd);
+
+	std::ostringstream tag;
+	tag << "[fd " << clientFd << "]";
+	Utils::log(LOG_CONN, tag.str() + " connect from " +
+							  inet_ntoa(clientAddr.sin_addr));
 }
 
 void Server::disconnectClient(int fd) {
 	std::map<int, Client *>::iterator it = _clients.find(fd);
 	if (it == _clients.end())
 		return;
+
+	Utils::log(LOG_CONN, it->second->tag() + " disconnect");
 
 	_mux->unwatch(fd);
 	close(fd);

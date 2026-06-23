@@ -86,6 +86,6 @@ void CommandDispatcher::dispatch(Client& client, Message& msg)
 		// `catch (FatalException&) { throw; }` before this net so a real fatal
 		// error propagates up instead of being logged & ignored here.
 		// Safety net: a non-ACommandError must not kill the server. Log & continue.
-		std::cerr << "dispatch: " << e.what() << std::endl;
+		Utils::log(LOG_ERR, client.tag() + " dispatch: " + e.what());
 	}
 }

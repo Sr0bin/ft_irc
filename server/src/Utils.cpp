@@ -1,6 +1,7 @@
 #include "Utils.hpp"
 #include <algorithm>
 #include <cctype>
+#include <iostream>
 
 static int safeTolower(int c) {
 	return (std::tolower(static_cast<unsigned char>(c)));
@@ -14,4 +15,11 @@ std::string Utils::toLower(const std::string &s) {
 
 bool Utils::ircEquals(const std::string &a, const std::string &b) {
 	return (toLower(a) == toLower(b));
+}
+
+void Utils::log(LogLevel level, const std::string &msg) {
+	// Fixed-width tags so every header lines up vertically when scanning.
+	static const char *tag[] = {" IN  ", " OUT ", " CONN", " ERR ", " BOOT"};
+
+	std::cerr << "=[" << tag[level] << "]=> " << msg << "\n";
 }

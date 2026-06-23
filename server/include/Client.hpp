@@ -28,6 +28,8 @@ class Client {
 	bool hasPendingOutput(void) const;
 	bool isRegistered(void) const;
 	std::string prefix(void) const;
+	// Short context label for logs, e.g. "[fd 5 | alice]" (or "[fd 5]" pre-nick).
+	std::string tag(void) const;
 	std::string getNickName(void) const;
 	std::string getUserName(void) const;
 	void setNickName(const std::string &nick);

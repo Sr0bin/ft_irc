@@ -11,6 +11,8 @@
 /* ************************************************************************** */
 
 #include "Client.hpp"
+#include "Utils.hpp"
+#include <sstream>
 
 Client::Client(void) : _fd(-1) { _clientInfo._state = CONNECTING; }
 
@@ -30,7 +32,31 @@ bool Client::extractLine(std::string &out) {
 	return (true);
 }
 
-void Client::queueReply(const std::string &msg) { _outBuffer += msg; }
+std::string Client::tag(void) const {
+	std::ostringstream os;
+	os << "[fd " << _fd;
+	if (!_clientInfo._nickname.empty())
+		os << " | " << _clientInfo._nickname;
+	os << "]";
+	return (os.str());
+}
+
+void Client::queueReply(const std::string &msg) {
+	_outBuffer += msg;
+
+	// queueReply is the single chokepoint for everything we send (direct replies
+	// and channel broadcasts), so log here. A burst may carry several CRLF lines
+	// (e.g. the 001-004 welcome): frame each one on its own.
+	std::istringstream stream(msg);
+	std::string line;
+	while (std::getline(stream, line)) {
+		std::string::size_type end = line.find_last_not_of("\r\n");
+		if (end == std::string::npos)
+			continue; // blank line
+		line.erase(end + 1);
+		Utils::log(LOG_OUT, tag() + " " + line);
+	}
+}
 
 bool Client::hasPendingOutput(void) const { return (!_outBuffer.empty()); }
 
