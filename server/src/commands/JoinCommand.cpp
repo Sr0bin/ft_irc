@@ -12,6 +12,11 @@ void JoinCommand::execute(Client &client, Message &msg) {
 	const std::string &name = msg.getParam(0);
 	std::string pass = "";
 
+	// Channel names must start with '#' (subject scope). Reject otherwise so a
+	// non-'#' channel can never be created — MODE/PART assume the '#' prefix.
+	if (name.empty() || name[0] != '#')
+		throw NoSuchChannel(name);
+
 	if (msg.paramCount() >= 2)
 		pass = msg.getParam(1);
 
