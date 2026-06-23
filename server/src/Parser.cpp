@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 // #include "ft_irc.hpp"
-#include "Parser.hpp"
+#include "../include/Parser.hpp"
 #include <iostream>
 #include <ostream>
 #include <sstream>
@@ -82,6 +82,15 @@ Message Parser::parseRawMessage(const std::string& raw)
 	}
 	else if (findLastParam(newRaw) == true)
 	{
+		std::string fail_case = &newRaw[i];
+		if (fail_case.find(':') == std::string::npos)
+		{
+			params.push_back(fail_case);
+			cmd = newRaw.substr(0, newRaw.find(':'));
+			return (Message(prefix, cmd, params));
+		}
+		std::cout<<"fail case :" <<fail_case<<std::endl;
+		std::cout<<"newRaw :" <<newRaw<<std::endl;
 		cmd = newRaw.substr(0, i);
 		newRaw.erase(newRaw.begin(), newRaw.begin() + i + 1);
 		last_param = &newRaw[newRaw.find(':') + 1];
