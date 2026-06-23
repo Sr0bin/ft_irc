@@ -12,6 +12,7 @@
 
 #include "Server.hpp"
 #include "CommandDispatcher.hpp"
+#include "FatalException.hpp"
 #include <arpa/inet.h>
 #include <csignal>
 #include <sstream>
@@ -84,12 +85,19 @@ void Server::installSignalHandlers() {
 void Server::setupListenSocket() {
 	_config._listenFd = socket(AF_INET, SOCK_STREAM, 0);
 	if (_config._listenFd == -1)
-		throw IrcException("socket() failed");
+		throw FatalException("socket() failed");
 	fcntl(_config._listenFd, F_SETFL, O_NONBLOCK);
+
+	// SO_REUSEADDR lets bind() reuse a port still in TIME_WAIT from a previous
+	// run, so a quick restart doesn't fail with "address already in use".
+	int yes = 1;
+	if (setsockopt(_config._listenFd, SOL_SOCKET, SO_REUSEADDR, &yes,
+				   sizeof(yes)) == -1)
+		throw FatalException("setsockopt(SO_REUSEADDR) failed");
 
 	std::ostringstream sock;
 	sock << "listen socket created (fd " << _config._listenFd
-		 << "), non-blocking";
+		 << "), non-blocking, SO_REUSEADDR";
 	Utils::log(LOG_BOOT, sock.str());
 
 	struct sockaddr_in addr = {};
@@ -98,11 +106,14 @@ void Server::setupListenSocket() {
 	addr.sin_addr.s_addr = INADDR_ANY;
 
 	if (bind(_config._listenFd, (struct sockaddr *)&addr, sizeof(addr)) == -1)
-		throw IrcException("bind() failed");
-	Utils::log(LOG_BOOT, "bound to 0.0.0.0");
+		throw FatalException("bind() failed");
+
+	std::ostringstream bound;
+	bound << "bound to 0.0.0.0:" << _config._port;
+	Utils::log(LOG_BOOT, bound.str());
 
 	if (listen(_config._listenFd, 10) == -1)
-		throw IrcException("listen() failed");
+		throw FatalException("listen() failed");
 	Utils::log(LOG_BOOT, "listening (backlog 10)");
 
 	_mux->watch(_config._listenFd);
@@ -115,7 +126,7 @@ void Server::eventLoop() {
 		if (_mux->wait(events) == -1) {
 			if (g_stop)
 				break; // interrupted by a shutdown signal, not a real failure
-			throw IrcException("poll() failed");
+			throw FatalException("poll() failed");
 		}
 
 		for (size_t i = 0; i < events.size(); i++) {
@@ -156,6 +167,11 @@ void Server::handleReadable(int fd) {
 		Utils::log(LOG_IN, client->tag() + " " + line);
 		Message msg = Parser::parseRawMessage(line);
 		_dispatcher->dispatch(*client, msg);
+
+		// A command may disconnect this very client (e.g. a future QUIT/KICK),
+		// freeing it. Stop touching `client` if it is gone from the registry.
+		if (_clients.find(fd) == _clients.end())
+			return;
 	}
 }
 

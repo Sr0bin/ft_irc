@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "FatalException.hpp"
 #include "IrcException.hpp"
 #include "Server.hpp"
 #include "ft_irc.hpp"
@@ -77,19 +78,22 @@ int main(int argc, char ** argv)
 	config._serverName = "ircserv.42.fr";
 
 	if (config._port <= 0 || config._port > 65535) {
-		std::cout << "Error: invalid port" << std::endl;
+		std::cerr << "Error: invalid port" << std::endl;
 		return (1);
 	}
 
 	try {
 		Server server(config);
 		server.run();
+	} catch (const FatalException &e) {
+		std::cerr << "Fatal: " << e.what() << std::endl;
+		return (1);
 	} catch (const IrcException &e) {
-		std::cout << "IRC Error: " << e.what() << std::endl;
+		std::cerr << "IRC Error: " << e.what() << std::endl;
 		return (1);
 	} catch (const std::exception &e) {
-		std::cout << "Error: " << e.what() << std::endl;
+		std::cerr << "Error: " << e.what() << std::endl;
 		return (1);
 	}
-	std::cout << "ft_irc\n";
+	return (0);
 }
