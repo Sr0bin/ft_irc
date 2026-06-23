@@ -57,52 +57,64 @@ class NoSuchChannel : public ACommandError {
 	NoSuchChannel(const std::string &channel) throw();
 };
 
-class UnknownCommand : public ACommandError
-{
-public:
+class UnknownCommand : public ACommandError {
+  public:
 	UnknownCommand(const std::string &command) throw();
 };
 
-class NotRegistered : public ACommandError
-{
-public:
+class NotRegistered : public ACommandError {
+  public:
 	NotRegistered(void) throw();
 };
 
-class AlreadyRegistered : public ACommandError
-{
-public:
+class AlreadyRegistered : public ACommandError {
+  public:
 	AlreadyRegistered(void) throw();
 };
 
-class PasswordMismatch : public ACommandError
-{
-public:
+class PasswordMismatch : public ACommandError {
+  public:
 	PasswordMismatch(void) throw();
 };
 
-class NicknameInUse : public ACommandError
-{
-public:
+class NicknameInUse : public ACommandError {
+  public:
 	NicknameInUse(const std::string &nick) throw();
 };
 
-class NoNicknameGiven : public ACommandError
-{
-public:
+class NoNicknameGiven : public ACommandError {
+  public:
 	NoNicknameGiven(void) throw();
 };
 
-class ErroneousNickname : public ACommandError
-{
-public:
+class ErroneousNickname : public ACommandError {
+  public:
 	ErroneousNickname(const std::string &nick) throw();
 };
 
 class NotOnChannel : public ACommandError {
   public:
 	NotOnChannel(const std::string &channel) throw();
- 
+};
+
+class ChannelIsFull : public ACommandError {
+  public:
+	ChannelIsFull(const std::string &channel) throw();
+};
+
+class InviteOnly : public ACommandError {
+  public:
+	InviteOnly(const std::string &channel) throw();
+};
+
+class BadChannelKey : public ACommandError {
+  public:
+	BadChannelKey(const std::string &channel) throw();
+};
+
+class NotChanOp : public ACommandError {
+  public:
+	NotChanOp(const std::string &channel) throw();
 };
 
 #endif

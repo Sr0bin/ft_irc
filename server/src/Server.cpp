@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:38:13 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/22 16:50:24 by rorollin         ###   ########.fr       */
+/*   Updated: 2026/06/23 11:04:23 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,6 @@ void Server::run() {
 
 					while (client->extractLine(line)) {
 						Message msg = Parser::parseRawMessage(line);
-						// Parser => Renvoyer un Message
 						_dispatcher->dispatch(*client, msg);
 					}
 				}
