@@ -6,7 +6,7 @@
 #    By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/01/19 15:44:49 by rorollin          #+#    #+#              #
-#    Updated: 2026/06/24 14:20:49 by prigaudi         ###   ########.fr        #
+#    Updated: 2026/06/24 14:23:38 by prigaudi         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,7 +36,8 @@ SOURCES_NAME = main.cpp \
 			   commands/UserCommand.cpp \
 			   commands/JoinCommand.cpp \
 			   commands/PartCommand.cpp \
-			   commandes/TopicCommand.cpp \
+			   commands/TopicCommand.cpp \
+			   commands/KickCommand.cpp \
 			   commands/randomCmd.cpp     #FOR TESTING PURPOSE ONLY
 
 #---------------------------
