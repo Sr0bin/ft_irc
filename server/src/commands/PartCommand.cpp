@@ -9,22 +9,22 @@ PartCommand::~PartCommand() {}
 size_t PartCommand::minParams(void) const { return (1); }
 
 void PartCommand::execute(Client &client, Message &msg) {
-	const std::string &name = msg.getParam(0);
+	const std::string &ChanName = msg.getParam(0);
 	std::string reason = "";
 
 	if (msg.paramCount() >= 2)
 		reason = msg.getParam(1);
 
-	Channel *ch = _server.getChannelByName(name);
+	Channel *ch = _server.getChannelByName(ChanName);
 
 	if (ch == 0)
-		throw NoSuchChannel(name);
+		throw NoSuchChannel(ChanName);
 
 	if (!ch->isMember(client))
-		throw NotOnChannel(name);
+		throw NotOnChannel(ChanName);
 
 	std::vector<std::string> p;
-	p.push_back(name);
+	p.push_back(ChanName);
 	if (!reason.empty())
 		p.push_back(reason);
 	const std::string partMsg =
@@ -33,5 +33,5 @@ void PartCommand::execute(Client &client, Message &msg) {
 	ch->broadcast(partMsg, client);
 	client.queueReply(partMsg);
 
-	_server.removeClientFromChannel(client, name);
+	_server.removeClientFromChannel(client, ChanName);
 }
