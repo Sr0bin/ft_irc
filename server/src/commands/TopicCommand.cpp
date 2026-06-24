@@ -9,44 +9,44 @@ TopicCommand::~TopicCommand() {}
 size_t TopicCommand::minParams(void) const { return (1); }
 
 void TopicCommand::execute(Client &client, Message &msg) {
-	const std::string &name = msg.getParam(0);
+	const std::string &ChanName = msg.getParam(0);
 
-	Channel *ch = _server.getChannelByName(name);
+	Channel *ch = _server.getChannelByName(ChanName);
 	if (!ch)
-		throw(NoSuchChannel(name));
+		throw(NoSuchChannel(ChanName));
 
 	std::string topic = ch->getTopic();
 
 	const std::string serverName = _server.getServerName();
 	const std::string &nick = client.getNickName();
 
-	std::set<Client *> clients = ch->getMembers();
-	std::set<Client *>::iterator it = clients.find(&client);
-	if (it == clients.end())
-		throw(NotOnChannel(name));
+	if (!ch->isOperator(client))
+		throw(NotOnChannel(ChanName));
 
 	if (msg.paramCount() < 2) {
 		if (topic.empty())
 			client.queueReply(
-				RplNoTopic(name).toMessage(serverName, nick).serialize());
+				RplNoTopic(ChanName).toMessage(serverName, nick).serialize());
 		else {
-			client.queueReply(
-				RplTopic(name, topic).toMessage(serverName, nick).serialize());
+			client.queueReply(RplTopic(ChanName, topic)
+								  .toMessage(serverName, nick)
+								  .serialize());
 		}
 	} else {
 		if (ch->isTopicRestricted() && !ch->isOperator(client))
-			throw(NotChanOp(name));
+			throw(NotChanOp(ChanName));
 		else {
 			topic = msg.getParam(1);
 			ch->setTopic(topic);
 			std::vector<std::string> p;
-			p.push_back(name);
+			p.push_back(ChanName);
 			p.push_back(topic);
 			const std::string topicMsg =
 				Message(client.prefix(), "TOPIC", p).serialize();
 			ch->broadcast(topicMsg, client);
-			client.queueReply(
-				RplTopic(name, topic).toMessage(serverName, nick).serialize());
+			client.queueReply(RplTopic(ChanName, topic)
+								  .toMessage(serverName, nick)
+								  .serialize());
 		}
 	}
 }

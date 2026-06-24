@@ -16,10 +16,8 @@ void KickCommand::execute(Client &client, Message &msg) {
 	if (!ch)
 		throw(NoSuchChannel(ChanName));
 
-	std::set<Client *> clients = ch->getMembers();
-	std::set<Client *>::iterator it = clients.find(&client);
-	if (it == clients.end())
-		throw(NotOnChannel(ChanName));
+	if (!ch->isOperator(client))
+		throw(NotOnChannel(name));
 
 	std::set<Client *> operators = ch->getOperators();
 	std::set<Client *>::iterator it = operators.find(&client);
@@ -33,6 +31,7 @@ void KickCommand::execute(Client &client, Message &msg) {
 		   ERR_NOSUCHCHANNEL 403 OK
 		   ERR_BADCHANMASK => A IGNORER?
 		   ERR_CHANOPRIVSNEEDED 482 OK
-		   ERR_NOTONCHANNEL* 442 OK
-		 ERR_USERNOTINCHANNEL 441  
-		   /
+		   ERR_NOTONCHANNEL 442 OK
+		 ERR_USERNOTINCHANNEL 441
+
+		   */
