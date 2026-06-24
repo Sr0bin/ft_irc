@@ -10,7 +10,11 @@ size_t KickCommand::minParams(void) const { return (2); }
 
 void KickCommand::execute(Client &client, Message &msg) {
 	const std::string &chanName = msg.getParam(0);
-	const std::string &userToKick = msg.getParam(0);
+	const std::string &nicknameToKick = msg.getParam(1);
+	std::string reason = "";
+
+	if (msg.paramCount() >= 2)
+		reason = msg.getParam(2);
 
 	Channel *ch = _server.getChannelByName(chanName);
 	if (!ch)
@@ -18,6 +22,13 @@ void KickCommand::execute(Client &client, Message &msg) {
 
 	if (!ch->isMember(client))
 		throw(NotOnChannel(chanName));
+
+	if (!ch->isOperator(client))
+		throw(NotChanOp(chanName));
+
+	Client *clientToKick = _server.getClientByNick(nicknameToKick);
+	if (!clientToKick || ch->isMember(*clientToKick)) {
+	}
 }
 
 /*Numeric Replies:
