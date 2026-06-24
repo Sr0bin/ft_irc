@@ -9,20 +9,15 @@ KickCommand::~KickCommand() {}
 size_t KickCommand::minParams(void) const { return (2); }
 
 void KickCommand::execute(Client &client, Message &msg) {
-	const std::string &ChanName = msg.getParam(0);
+	const std::string &chanName = msg.getParam(0);
 	const std::string &userToKick = msg.getParam(0);
 
-	Channel *ch = _server.getChannelByName(ChanName);
+	Channel *ch = _server.getChannelByName(chanName);
 	if (!ch)
-		throw(NoSuchChannel(ChanName));
+		throw(NoSuchChannel(chanName));
 
-	if (!ch->isOperator(client))
-		throw(NotOnChannel(name));
-
-	std::set<Client *> operators = ch->getOperators();
-	std::set<Client *>::iterator it = operators.find(&client);
-	if (it == operators.end())
-		throw(NotChanOp(ChanName));
+	if (!ch->isMember(client))
+		throw(NotOnChannel(chanName));
 }
 
 /*Numeric Replies:

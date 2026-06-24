@@ -9,50 +9,50 @@ JoinCommand::~JoinCommand() {}
 size_t JoinCommand::minParams(void) const { return (1); }
 
 void JoinCommand::execute(Client &client, Message &msg) {
-	const std::string &ChanName = msg.getParam(0);
+	const std::string &chanName = msg.getParam(0);
 	std::string pass = "";
 
 	if (msg.paramCount() >= 2)
 		pass = msg.getParam(1);
 
-	Channel *ch = _server.getChannelByName(ChanName);
+	Channel *ch = _server.getChannelByName(chanName);
 	if (!ch)
-		ch = _server.addClientToChannel(client, ChanName);
+		ch = _server.addClientToChannel(client, chanName);
 	else if (ch->isMember(client))
 		return;
 	else {
 		ch->canJoin(client, pass);
 
-		_server.addClientToChannel(client, ChanName);
+		_server.addClientToChannel(client, chanName);
 	}
 
 	std::vector<std::string> p;
-	p.push_back(ChanName);
+	p.push_back(chanName);
 	const std::string joinMsg = Message(client.prefix(), "JOIN", p).serialize();
 	ch->broadcast(joinMsg, client);
 	client.queueReply(joinMsg);
 
 	const std::string serverName = _server.getServerName();
 
-	sendTopic(client, ch, ChanName, serverName);
-	sendNames(client, ch, ChanName, serverName);
+	sendTopic(client, ch, chanName, serverName);
+	sendNames(client, ch, chanName, serverName);
 }
 
 void JoinCommand::sendTopic(Client &client, Channel *ch,
-							const std::string &ChanName,
+							const std::string &chanName,
 							const std::string &serverName) {
 	std::string topic = ch->getTopic();
 	const std::string &nick = client.getNickName();
 	if (topic.empty())
 		client.queueReply(
-			RplNoTopic(ChanName).toMessage(serverName, nick).serialize());
+			RplNoTopic(chanName).toMessage(serverName, nick).serialize());
 	else
 		client.queueReply(
-			RplTopic(ChanName, topic).toMessage(serverName, nick).serialize());
+			RplTopic(chanName, topic).toMessage(serverName, nick).serialize());
 }
 
 void JoinCommand::sendNames(Client &client, Channel *ch,
-							const std::string &ChanName,
+							const std::string &chanName,
 							const std::string &serverName) {
 	std::string namesList = "";
 	const std::set<Client *> &members = ch->getMembers();
@@ -68,9 +68,9 @@ void JoinCommand::sendNames(Client &client, Channel *ch,
 	}
 
 	const std::string &nick = client.getNickName();
-	client.queueReply(RplNamReply(ChanName, namesList)
+	client.queueReply(RplNamReply(chanName, namesList)
 						  .toMessage(serverName, nick)
 						  .serialize());
 	client.queueReply(
-		RplEndOfNames(ChanName).toMessage(serverName, nick).serialize());
+		RplEndOfNames(chanName).toMessage(serverName, nick).serialize());
 }
