@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:15:56 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/23 17:11:38 by prigaudi         ###   ########.fr       */
+/*   Updated: 2026/06/24 13:41:58 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@ class Channel {
 	std::string getTopic(void) const;
 	const std::set<Client *> &getMembers(void) const;
 	const std::set<Client *> &getOperators(void) const;
+	bool isTopicRestricted(void) const;
+	void setTopic(std::string &topic);
 
   private:
 	// No copy allowed
