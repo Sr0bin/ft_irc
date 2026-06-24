@@ -102,3 +102,5 @@ std::string &Client::getOutBuffer(void) { return (_outBuffer); }
 void Client::addChannel(Channel *channel) { _channels.insert(channel); }
 
 void Client::removeChannel(Channel *channel) { _channels.erase(channel); }
+
+int Client::getFd() const { return (_fd); }
