@@ -143,4 +143,9 @@ class CannotSendToChan : public ACommandError {
 	public:
 		CannotSendToChan(const std::string &command) throw();
 };
+
+class UserOnChannel : public ACommandError {
+	public:
+		UserOnChannel(const std::string &command) throw();
+};
 #endif

@@ -88,3 +88,6 @@ NoRecipient::NoRecipient(const std::string &command) throw()
 
 CannotSendToChan::CannotSendToChan(const std::string &command) throw()
 	: ACommandError(404, command, "Cannot send to channel") {}
+
+UserOnChannel::UserOnChannel(const std::string &command) throw()
+	: ACommandError(443, command, "User already on channel") {}

@@ -19,6 +19,7 @@
 #include <iostream>
 #include <ostream>
 
+#include "InviteCommand.hpp"
 #include "randomCmd.hpp"
 #include "PassCommand.hpp"
 #include "NickCommand.hpp"
@@ -43,6 +44,7 @@ CommandDispatcher::CommandDispatcher(Server &server) : _server(server)
 	registerCommand("ping", new PingCommand(_server));
 	registerCommand("privmsg", new PrivmsgCommand(_server));
 	registerCommand("quit", new QuitCommand(_server));
+	registerCommand("invite", new InviteCommand(_server));
 }
 
 CommandDispatcher::~CommandDispatcher(void)
