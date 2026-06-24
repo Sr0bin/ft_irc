@@ -38,6 +38,7 @@ SOURCES_NAME = main.cpp \
 			   commands/PartCommand.cpp \
 			   commands/ModeCommand.cpp \
 			   commands/PingCommand.cpp	\
+			   commands/PrivmsgCommand.cpp \
 			   commands/randomCmd.cpp     #FOR TESTING PURPOSE ONLY
 
 #---------------------------

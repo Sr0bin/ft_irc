@@ -26,6 +26,7 @@
 #include "JoinCommand.hpp"
 #include "PartCommand.hpp"
 #include "PingCommand.hpp"
+#include "PrivmsgCommand.hpp"
 
 CommandDispatcher::CommandDispatcher(Server &server) : _server(server)
 {
@@ -39,6 +40,7 @@ CommandDispatcher::CommandDispatcher(Server &server) : _server(server)
 	registerCommand("part", new PartCommand(_server));
 	registerCommand("mode", new ModeCommand(_server));
 	registerCommand("ping", new PingCommand(_server));
+	registerCommand("privmsg", new PrivmsgCommand(_server));
 }
 
 CommandDispatcher::~CommandDispatcher(void)
