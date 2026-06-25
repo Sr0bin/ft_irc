@@ -35,7 +35,7 @@ void KickCommand::execute(Client &client, Message &msg) {
 	std::vector<std::string> p;
 	p.push_back(chanName);
 	p.push_back(nicknameToKick);
-	p.push_back(reason.empty() ? nicknameToKick : reason);
+	p.push_back(reason.empty() ? client.getNickName() : reason);
 
 	std::string kickMsg = Message(client.prefix(), "KICK", p, true).serialize();
 

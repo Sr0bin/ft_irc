@@ -83,10 +83,8 @@ std::string ModeCommand::currentModeString(Channel &ch)
 	if (ch.isTopicRestricted())
 		modes += "t";
 	if (!ch.getKey().empty())
-	{
+		// Advertise the +k flag but never leak the key value in a 324 query.
 		modes += "k";
-		args.push_back(ch.getKey());
-	}
 	if (ch.getUserLimit() != 0)
 	{
 		modes += "l";
@@ -125,6 +123,19 @@ void ModeCommand::execute(Client &client, Message &msg)
 		throw ChanOPrivsNeeded(name);
 
 	std::vector<ModeChange> changes = parseModeChange(msg);
+
+	// Pre-pass: validate every +o/-o target BEFORE applying anything. Otherwise a
+	// bad nick caught at apply time throws 441 mid-loop, after earlier modes
+	// (+t/+i…) already committed — the client gets 441 with no echo and the
+	// channel state diverges from what anyone was told.
+	for (size_t i = 0; i < changes.size(); ++i)
+	{
+		if (changes[i].mode != 'o')
+			continue;
+		Client *target = _server.getClientByNick(changes[i].arg);
+		if (target == 0 || !ch->isMember(*target))
+			throw UserNotInChannel(changes[i].arg, name);
+	}
 
 	// Apply each change, accumulating only the ones that resulted in a real
 	// state change into the echo modestring (RFC "changes which resulted").
