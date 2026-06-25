@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:38:05 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/25 11:39:45 by prigaudi         ###   ########.fr       */
+/*   Updated: 2026/06/25 20:30:30 by rorollin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,7 @@ void ACommand::completeRegistrationIfReady(Client &client) {
 
 	const std::string server = _server.getServerName();
 	const std::string nick = client.getNickName();
-	// ponytail: version/creation/mode strings are cosmetic placeholders; refine
-	// if the reference client complains
+
 	std::vector<std::string> none;
 	std::string welcome;
 

@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:38:13 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/25 11:48:27 by prigaudi         ###   ########.fr       */
+/*   Updated: 2026/06/25 20:42:40 by rorollin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -212,11 +212,6 @@ void Server::acceptClient() {
 
 	int clientFd =
 		accept(_config._listenFd, (struct sockaddr *)&clientAddr, &clientLen);
-	// poll() reporting the listen fd readable is a point-in-time hint, not a
-	// guarantee: the pending connection may be aborted (ECONNABORTED) or gone
-	// (EAGAIN) by the time we accept, or we may be out of fds (EMFILE). None of
-	// these is fatal — skip and retry on the next poll cycle instead of killing
-	// the server. (errno can't be checked here per the subject anyway.)
 	if (clientFd == -1)
 		return;
 	if (fcntl(clientFd, F_SETFL, O_NONBLOCK) == -1) {

@@ -42,9 +42,6 @@ class ACommandError : public IrcException {
 	std::string _text;
 };
 
-// Thin, readable throw sites: `throw NoSuchChannel(name)`. The code + text are
-// baked in here, so they stay consistent across every command that throws them.
-// Add one subclass per numeric as commands start needing it.
 class NeedMoreParams : public ACommandError {
   public:
 	NeedMoreParams(const std::string &command) throw();

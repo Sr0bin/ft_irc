@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:38:10 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/22 16:49:47 by rorollin         ###   ########.fr       */
+/*   Updated: 2026/06/25 20:42:40 by rorollin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,9 +51,7 @@ std::string Client::tag(void) const {
 void Client::queueReply(const std::string &msg) {
 	_outBuffer += msg;
 
-	// queueReply is the single chokepoint for everything we send (direct replies
-	// and channel broadcasts), so log here. A burst may carry several CRLF lines
-	// (e.g. the 001-004 welcome): frame each one on its own.
+	// Logging info since this is the only out of the server.
 	std::istringstream stream(msg);
 	std::string line;
 	while (std::getline(stream, line)) {
@@ -68,8 +66,6 @@ void Client::queueReply(const std::string &msg) {
 bool Client::hasPendingOutput(void) const { return (!_outBuffer.empty()); }
 
 bool Client::isRegistered(void) const {
-	// ponytail: stays false until the command layer sets _state = REGISTERED
-	// (PASS+NICK+USER)
 	return (_clientInfo._state == REGISTERED);
 }
 

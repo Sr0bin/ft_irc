@@ -18,7 +18,6 @@ bool Utils::ircEquals(const std::string &a, const std::string &b) {
 }
 
 void Utils::log(LogLevel level, const std::string &msg) {
-	// Fixed-width tags so every header lines up vertically when scanning.
 	static const char *tag[] = {" IN  ", " OUT ", " CONN", " ERR ", " BOOT"};
 
 	std::cerr << "=[" << tag[level] << "]=> " << msg << "\n";

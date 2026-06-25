@@ -42,8 +42,6 @@ void NickCommand::execute(Client &client, Message &msg) {
 	if (!isValidNick(nick))
 		throw ErroneousNickname(nick);
 
-	// getClientByNick is real now (Utils::ircEquals): reject a nick already
-	// held by another client.
 	Client *existing = _server.getClientByNick(nick);
 	if (existing != 0 && existing != &client)
 		throw NicknameInUse(nick);

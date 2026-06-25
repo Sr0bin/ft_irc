@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 14:19:43 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/22 11:38:05 by prigaudi         ###   ########.fr       */
+/*   Updated: 2026/06/25 20:42:40 by rorollin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ typedef struct clientInfo {
 	std::string _nickname;
 	std::string _username;
 	std::string _realname;
-	std::string _host; // peer address captured at accept (getpeername-equivalent)
+	std::string _host;
 	clientState _state;
 } clientInfo;
 

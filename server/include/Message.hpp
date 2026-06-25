@@ -6,7 +6,7 @@
 /*   By: rorollin <rorollin@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:23:20 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/16 20:53:25 by rorollin         ###   ########.fr       */
+/*   Updated: 2026/06/25 20:42:40 by rorollin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ private:
 	std::string _prefix;
 	std::string _command;
 	std::vector<std::string> _params;
-	bool _trailing; // true => the last param is a trailing arg (emitted with ':')
+	bool _trailing;
 };
 
 std::ostream& operator<<(std::ostream &os, const Message &msg);
