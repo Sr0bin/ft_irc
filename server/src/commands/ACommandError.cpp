@@ -94,6 +94,9 @@ NotChanOp::NotChanOp(const std::string &channel) throw()
 NoRecipient::NoRecipient(const std::string &command) throw()
 	: ACommandError(411, command, "No recipient given") {}
 
+NoTextToSend::NoTextToSend(const std::string &command) throw()
+	: ACommandError(412, command, "No text to send") {}
+
 CannotSendToChan::CannotSendToChan(const std::string &command) throw()
 	: ACommandError(404, command, "Cannot send to channel") {}
 
