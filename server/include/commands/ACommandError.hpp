@@ -98,7 +98,6 @@ class ErroneousNickname : public ACommandError {
 class NotOnChannel : public ACommandError {
   public:
 	NotOnChannel(const std::string &channel) throw();
-
 };
 
 class UnknownMode : public ACommandError {
@@ -113,7 +112,8 @@ class ChanOPrivsNeeded : public ACommandError {
 
 class UserNotInChannel : public ACommandError {
   public:
-	UserNotInChannel(const std::string &nick, const std::string &channel) throw();
+	UserNotInChannel(const std::string &nick,
+					 const std::string &channel) throw();
 };
 
 class ChannelIsFull : public ACommandError {
@@ -134,12 +134,6 @@ class BadChannelKey : public ACommandError {
 class NotChanOp : public ACommandError {
   public:
 	NotChanOp(const std::string &channel) throw();
-};
-
-class UserNotInChannel : public ACommandError {
-  public:
-	UserNotInChannel(const std::string &nick,
-					 const std::string &channel) throw();
 };
 
 #endif

@@ -90,7 +90,3 @@ BadChannelKey::BadChannelKey(const std::string &channel) throw()
 
 NotChanOp::NotChanOp(const std::string &channel) throw()
 	: ACommandError(482, channel, "You're not channel operator") {}
-
-UserNotInChannel::UserNotInChannel(const std::string &nick,
-								   const std::string &channel) throw()
-	: ACommandError(441, nick, channel, "They aren't on that channel") {}
