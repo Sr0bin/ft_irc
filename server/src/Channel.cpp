@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:38:07 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/25 10:50:47 by prigaudi         ###   ########.fr       */
+/*   Updated: 2026/06/25 10:57:07 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,10 +129,6 @@ const std::set<Client *> &Channel::getMembers(void) const { return (_members); }
 
 const std::set<Client *> &Channel::getOperators(void) const {
 	return (_operators);
-}
-
-bool Channel::isTopicRestricted(void) const {
-	return (_parameters._topicRestricted);
 }
 
 void Channel::setTopic(std::string &topic) { _topic = topic; }
