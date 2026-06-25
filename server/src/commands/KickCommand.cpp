@@ -32,10 +32,12 @@ void KickCommand::execute(Client &client, Message &msg) {
 
 	const std::string serverName = _server.getServerName();
 
-	std::string kickMsg = ":" + client.getNickName() + "!" +
-						  client.getUserName() + "@" + serverName + " KICK " +
-						  chanName + " " + nicknameToKick + " :" +
-						  (reason.empty() ? nicknameToKick : reason);
+	std::vector<std::string> p;
+	p.push_back(chanName);
+	p.push_back(nicknameToKick);
+	p.push_back(reason.empty() ? nicknameToKick : reason);
+
+	std::string kickMsg = Message(client.prefix(), "KICK", p, true).serialize();
 
 	ch->broadcast(kickMsg, *clientToKick);
 	clientToKick->queueReply(kickMsg);
