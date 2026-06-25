@@ -10,7 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#ifndef QUITCOMMAND_HPP
+#define QUITCOMMAND_HPP
+
 #include "ACommand.hpp"
 #include "../Client.hpp"
 #include "../Message.hpp"
@@ -25,3 +27,5 @@ class QuitCommand : public ACommand
 		size_t minParams() const;
 		bool requiresRegistration() const;
 };
+
+#endif

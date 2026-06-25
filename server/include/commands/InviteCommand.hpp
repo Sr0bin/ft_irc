@@ -10,7 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#ifndef INVITECOMMAND_HPP
+#define INVITECOMMAND_HPP
+
 #include "ACommand.hpp"
 #include "../Client.hpp"
 #include "../Message.hpp"
@@ -25,3 +27,5 @@ class InviteCommand : public ACommand
 		size_t minParams() const;
 		bool requiresRegistration() const;
 };
+
+#endif
