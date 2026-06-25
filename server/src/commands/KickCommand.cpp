@@ -13,7 +13,7 @@ void KickCommand::execute(Client &client, Message &msg) {
 	const std::string &nicknameToKick = msg.getParam(1);
 	std::string reason = "";
 
-	if (msg.paramCount() >= 2)
+	if (msg.paramCount() >= 3)
 		reason = msg.getParam(2);
 
 	Channel *ch = _server.getChannelByName(chanName);
