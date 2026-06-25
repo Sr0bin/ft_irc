@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:38:13 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/24 16:23:17 by prigaudi         ###   ########.fr       */
+/*   Updated: 2026/06/25 11:48:27 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -224,8 +224,8 @@ void Server::acceptClient() {
 
 	std::ostringstream tag;
 	tag << "[fd " << clientFd << "]";
-	Utils::log(LOG_CONN, tag.str() + " connect from " +
-							  inet_ntoa(clientAddr.sin_addr));
+	Utils::log(LOG_CONN,
+			   tag.str() + " connect from " + inet_ntoa(clientAddr.sin_addr));
 }
 
 void Server::disconnectClient(int fd) {

@@ -3,37 +3,28 @@
 /*                                                        :::      ::::::::   */
 /*   ACommand.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rorollin <rorollin@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:38:05 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/16 16:38:23 by rorollin         ###   ########.fr       */
+/*   Updated: 2026/06/25 11:39:45 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "ACommand.hpp"
 #include "Server.hpp"
+#include <iostream>
 
-ACommand::ACommand(Server &server) : _server(server)
-{
-}
+ACommand::ACommand(Server &server) : _server(server) {}
 
-ACommand::~ACommand(void)
-{
-}
+ACommand::~ACommand(void) {}
 
-bool ACommand::requiresRegistration(void) const
-{
-	return (true);
-}
+bool ACommand::requiresRegistration(void) const { return (true); }
 
-size_t ACommand::minParams(void) const
-{
-	return (0);
-}
+size_t ACommand::minParams(void) const { return (0); }
 
-void ACommand::completeRegistrationIfReady(Client &client)
-{
+void ACommand::completeRegistrationIfReady(Client &client) {
+	std::cout << "completeRegistration" << std::endl;
+
 	if (client.getState() != PASSWORD_OK)
 		return;
 	if (client.getNickName().empty() || client.getUserName().empty())
@@ -43,16 +34,22 @@ void ACommand::completeRegistrationIfReady(Client &client)
 
 	const std::string server = _server.getServerName();
 	const std::string nick = client.getNickName();
-	// ponytail: version/creation/mode strings are cosmetic placeholders; refine if the reference client complains
+	// ponytail: version/creation/mode strings are cosmetic placeholders; refine
+	// if the reference client complains
 	std::vector<std::string> none;
 	std::string welcome;
 
 	welcome += Message::numeric(server, 1, nick, none,
-		"Welcome to the Internet Relay Network " + client.prefix()).serialize();
+								"Welcome to the Internet Relay Network " +
+									client.prefix())
+				   .serialize();
 	welcome += Message::numeric(server, 2, nick, none,
-		"Your host is " + server + ", running version ft_irc-1.0").serialize();
+								"Your host is " + server +
+									", running version ft_irc-1.0")
+				   .serialize();
 	welcome += Message::numeric(server, 3, nick, none,
-		"This server was created at startup").serialize();
+								"This server was created at startup")
+				   .serialize();
 
 	std::vector<std::string> p004;
 	p004.push_back(server);

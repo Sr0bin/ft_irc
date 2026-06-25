@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/17 19:44:12 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/22 18:24:59 by rorollin         ###   ########.fr       */
+/*   Updated: 2026/06/25 11:38:30 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,9 @@ void PollMultiplexer::setWriteInterest(int fd, bool on) {
 }
 
 int PollMultiplexer::wait(std::vector<Event> &out) {
-	// std::vector::data() is C++11; &_fds[0] is the C++98 equivalent. Safe here:
-	// poll() is never reached with an empty set (the listen fd is always watched).
+	// std::vector::data() is C++11; &_fds[0] is the C++98 equivalent. Safe
+	// here: poll() is never reached with an empty set (the listen fd is always
+	// watched).
 	int ret = poll(&_fds[0], _fds.size(), -1);
 	if (ret == -1)
 		return (-1);
@@ -65,6 +66,5 @@ int PollMultiplexer::wait(std::vector<Event> &out) {
 
 		_fds[i].revents = 0;
 	}
-
 	return (ret);
 }
