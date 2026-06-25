@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:38:13 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/23 17:17:59 by prigaudi         ###   ########.fr       */
+/*   Updated: 2026/06/24 16:23:17 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -255,7 +255,7 @@ Client *Server::getClientByNick(const std::string &nick) {
 			return (client);
 		}
 	}
-	return (0);
+	return (NULL);
 }
 
 Channel *Server::getChannelByName(const std::string &name) {
@@ -265,7 +265,7 @@ Channel *Server::getChannelByName(const std::string &name) {
 		_channels.find(Utils::toLower(name));
 
 	if (it == _channels.end())
-		return (0);
+		return (NULL);
 	return (it->second);
 }
 

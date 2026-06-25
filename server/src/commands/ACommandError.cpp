@@ -20,6 +20,14 @@ ACommandError::ACommandError(int code, const std::string &param,
 	_params.push_back(param);
 }
 
+ACommandError::ACommandError(int code, const std::string &param1,
+							 const std::string &param2,
+							 const std::string &text) throw()
+	: IrcException(text), _code(code), _text(text) {
+	_params.push_back(param1);
+	_params.push_back(param2);
+}
+
 ACommandError::~ACommandError(void) throw() {}
 
 Message ACommandError::toMessage(const std::string &server,
@@ -82,3 +90,7 @@ BadChannelKey::BadChannelKey(const std::string &channel) throw()
 
 NotChanOp::NotChanOp(const std::string &channel) throw()
 	: ACommandError(482, channel, "You're not channel operator") {}
+
+UserNotInChannel::UserNotInChannel(const std::string &nick,
+								   const std::string &channel) throw()
+	: ACommandError(441, nick, channel, "They aren't on that channel") {}

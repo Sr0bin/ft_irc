@@ -26,6 +26,9 @@ class ACommandError : public IrcException {
 	ACommandError(int code, const std::string &text) throw();
 	ACommandError(int code, const std::string &param,
 				  const std::string &text) throw();
+	ACommandError(int code, const std::string &param1,
+				  const std::string &param2, const std::string &text) throw();
+
 	virtual ~ACommandError(void) throw();
 
 	// Pure data: builds the numeric Message from code/params/text. The caller
@@ -131,6 +134,12 @@ class BadChannelKey : public ACommandError {
 class NotChanOp : public ACommandError {
   public:
 	NotChanOp(const std::string &channel) throw();
+};
+
+class UserNotInChannel : public ACommandError {
+  public:
+	UserNotInChannel(const std::string &nick,
+					 const std::string &channel) throw();
 };
 
 #endif

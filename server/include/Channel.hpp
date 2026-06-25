@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:15:56 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/23 18:28:14 by rorollin         ###   ########.fr       */
+/*   Updated: 2026/06/25 10:48:27 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #define CHANNEL_HPP
 #include "ACommandError.hpp"
 #include "Client.hpp"
+#include "Utils.hpp"
 #include "ft_irc.hpp"
 
 class Channel {
@@ -49,6 +50,8 @@ class Channel {
 	std::string getTopic(void) const;
 	const std::set<Client *> &getMembers(void) const;
 	const std::set<Client *> &getOperators(void) const;
+	bool isTopicRestricted(void) const;
+	void setTopic(std::string &topic);
 
   private:
 	// No copy allowed
