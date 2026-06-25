@@ -67,12 +67,4 @@ class RplEndOfNames : public ACommandReply {
 	RplEndOfNames(const std::string &channel) throw();
 };
 
-//341
-class RplInviting : public ACommandReply
-{
-public:
-	RplInviting(const std::string &channel,
-				const std::string &nick);
-};
-
 #endif

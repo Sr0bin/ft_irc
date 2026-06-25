@@ -17,7 +17,6 @@
 
 #include "../../include/Server.hpp"
 #include "../../include/commands/ACommandError.hpp"
-#include "ACommandReply.hpp"
 
 InviteCommand::InviteCommand(Server &server) : ACommand(server) {}
 
@@ -45,9 +44,14 @@ void InviteCommand::execute(Client &client, Message &msg)
 	p.push_back(invited->getNickName());
 	p.push_back(channel->getName());
 	invited->queueReply(Message(client.prefix(), "INVITE", p).serialize());
-	client.queueReply(RplInviting(channel->getName(), invited->getNickName())
-				.toMessage(_server.getServerName(), client.getNickName())
-				.serialize());
+	// RPL_INVITING (341) is "<nick> <channel>" — both are middle params, no
+	// trailing colon, so build it directly instead of via the reply framework
+	// (which always emits its text as a trailing arg).
+	std::vector<std::string> rp;
+	rp.push_back(invited->getNickName());
+	rp.push_back(channel->getName());
+	client.queueReply(Message::numeric(_server.getServerName(), 341,
+				client.getNickName(), rp).serialize());
 }
 
 bool InviteCommand::requiresRegistration() const {return true;}

@@ -52,6 +52,3 @@ RplNamReply::RplNamReply(const std::string &channel,
 
 RplEndOfNames::RplEndOfNames(const std::string &channel) throw()
 	: ACommandReply(366, channel, "End of /NAMES list") {}
-
-RplInviting::RplInviting(const std::string &channel,
-				const std::string &nick) : ACommandReply(341, nick, channel) {};
