@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:38:12 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/25 10:53:12 by prigaudi         ###   ########.fr       */
+/*   Updated: 2026/06/25 10:55:15 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 #include <ostream>
 
 #include "JoinCommand.hpp"
+#include "KickCommand.hpp"
 #include "NickCommand.hpp"
 #include "PartCommand.hpp"
 #include "PassCommand.hpp"
@@ -37,6 +38,7 @@ CommandDispatcher::CommandDispatcher(Server &server) : _server(server) {
 	registerCommand("join", new JoinCommand(_server));
 	registerCommand("part", new PartCommand(_server));
 	registerCommand("topic", new TopicCommand(_server));
+	registerCommand("kick", new TopicCommand(_server));
 	registerCommand("mode", new ModeCommand(_server));
 	registerCommand("ping", new PingCommand(_server));
 }
