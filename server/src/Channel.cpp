@@ -131,4 +131,6 @@ const std::set<Client *> &Channel::getOperators(void) const {
 	return (_operators);
 }
 
+const std::set<Client *> &Channel::getInvited() const {return (_invited); }
+
 void Channel::setTopic(std::string &topic) { _topic = topic; }
