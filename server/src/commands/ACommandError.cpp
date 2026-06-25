@@ -97,5 +97,8 @@ NoTextToSend::NoTextToSend(const std::string &command) throw()
 CannotSendToChan::CannotSendToChan(const std::string &command) throw()
 	: ACommandError(404, command, "Cannot send to channel") {}
 
-UserOnChannel::UserOnChannel(const std::string &command) throw()
-	: ACommandError(443, command, "User already on channel") {}
+UserOnChannel::UserOnChannel(const std::string &nick,
+							 const std::string &channel) throw()
+	: ACommandError(443, channel, "is already on channel") {
+	_params.insert(_params.begin(), nick);
+}

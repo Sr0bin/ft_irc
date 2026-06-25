@@ -25,7 +25,7 @@ void JoinCommand::execute(Client &client, Message &msg) {
 	if (!ch)
 		ch = _server.addClientToChannel(client, chanName);
 	else if (ch->isMember(client))
-		throw UserOnChannel(chanName);
+		throw UserOnChannel(client.getNickName(), chanName);
 	else {
 		ch->canJoin(client, pass);
 		ch->removeInvited(client);

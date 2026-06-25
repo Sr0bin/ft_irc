@@ -35,7 +35,7 @@ void InviteCommand::execute(Client &client, Message &msg)
 		if (!channel->isOperator(client))
 			throw ChanOPrivsNeeded(msg.getParam(1));
 	if (channel->isMember(*invited))
-		throw UserOnChannel(msg.getParam(1));
+		throw UserOnChannel(invited->getNickName(), channel->getName());
 	channel->addInvited(*invited);
 	std::vector<std::string> p;
 	p.push_back(invited->getNickName());

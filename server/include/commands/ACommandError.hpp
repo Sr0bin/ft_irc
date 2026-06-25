@@ -143,7 +143,7 @@ class CannotSendToChan : public ACommandError {
 
 class UserOnChannel : public ACommandError {
   public:
-	UserOnChannel(const std::string &command) throw();
+	UserOnChannel(const std::string &nick, const std::string &channel) throw();
 };
 
 class NoTextToSend : public ACommandError {
