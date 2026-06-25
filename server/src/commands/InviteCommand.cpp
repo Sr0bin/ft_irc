@@ -37,8 +37,15 @@ void InviteCommand::execute(Client &client, Message &msg)
 	if (channel->isInviteOnly())
 		if (!channel->isOperator(client))
 			throw NotChanOp(msg.getParam(1));
-	if (channel->isMember(client))
+	if (channel->isMember(*invited))
 		throw UserOnChannel(msg.getParam(1));
+	std::set<Client *> invite_list = channel->getInvited();
+	std::set<Client *>::iterator it;
+	for (it = invite_list.begin(); it != invite_list.end(); ++it)
+		if (*it == invited)
+			return;
+	invite_list.insert(invited);
+	invited->queueReply(":"+client.prefix()+" INVITE "+invited->getNickName()+" : "+ channel->getName());
 }
 
 bool InviteCommand::requiresRegistration() const {return true;}
