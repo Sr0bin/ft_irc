@@ -42,7 +42,7 @@ void TopicCommand::execute(Client &client, Message &msg) {
 			p.push_back(chanName);
 			p.push_back(topic);
 			const std::string topicMsg =
-				Message(client.prefix(), "TOPIC", p).serialize();
+				Message(client.prefix(), "TOPIC", p, true).serialize();
 			ch->broadcast(topicMsg, client);
 			client.queueReply(RplTopic(chanName, topic)
 								  .toMessage(serverName, nick)

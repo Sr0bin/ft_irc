@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/01 00:00:00 by                   #+#    #+#             */
-/*   Updated: 2026/06/25 14:42:44 by prigaudi         ###   ########.fr       */
+/*   Updated: 2026/06/25 18:36:07 by rorollin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,14 +33,14 @@ void PrivmsgCommand::execute(Client &client, Message &msg) {
 
 		std::string content = msg.getParam(1);
 		if (content.empty())
-			throw NoTextToSend(content);
+			throw NoTextToSend("PRIVMSG");
 
 		std::vector<std::string> p;
 		p.push_back(targetNick);
 		p.push_back(content);
 
 		const std::string privMsg =
-			Message(client.prefix(), "PRIVMSG", p).serialize();
+			Message(client.prefix(), "PRIVMSG", p, true).serialize();
 		target->queueReply(privMsg);
 	} else {
 		std::string chanName = msg.getParam(0);
@@ -51,14 +51,14 @@ void PrivmsgCommand::execute(Client &client, Message &msg) {
 			throw CannotSendToChan(msg.getParam(0));
 		std::string content = msg.getParam(1);
 		if (content.empty())
-			throw NoTextToSend(msg.getParam(1));
+			throw NoTextToSend("PRIVMSG");
 
 		std::vector<std::string> p;
 		p.push_back(chanName);
 		p.push_back(content);
 
 		const std::string chanMsg =
-			Message(client.prefix(), "PRIVMSG", p).serialize();
+			Message(client.prefix(), "PRIVMSG", p, true).serialize();
 
 		channel->broadcast(chanMsg, client);
 	}
