@@ -30,7 +30,6 @@ class AMultiplexer;
 
 class Server {
   public:
-	Server(void);
 	Server(serverConfig config);
 	~Server(void);
 	void run();

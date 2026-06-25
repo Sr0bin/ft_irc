@@ -19,7 +19,6 @@ class Channel;
 
 class Client {
   public:
-	Client(void);
 	Client(int fd);
 	~Client(void);
 	void appendInput(const std::string &input);

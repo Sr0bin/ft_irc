@@ -19,7 +19,6 @@
 
 class Channel {
   public:
-	Channel(void);
 	Channel(const std::string &name);
 	~Channel(void);
 

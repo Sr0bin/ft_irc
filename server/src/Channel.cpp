@@ -22,8 +22,6 @@ static channelParam defaultParam(void) {
 	return (p);
 }
 
-Channel::Channel(void) : _parameters(defaultParam()) {}
-
 Channel::Channel(const std::string &name)
 	: _name(name), _parameters(defaultParam()) {}
 
