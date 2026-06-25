@@ -50,9 +50,11 @@ class Channel {
 	std::string getTopic(void) const;
 	const std::set<Client *> &getMembers(void) const;
 	const std::set<Client *> &getOperators(void) const;
+	const std::set<Client *> &getInvited(void) const;
 	void setTopic(std::string &topic);
-
-  private:
+	void addInvited(Client &client);
+	void removeInvited(Client &client);
+private:
 	// No copy allowed
 	Channel(const Channel &other);
 	Channel &operator=(const Channel &other);

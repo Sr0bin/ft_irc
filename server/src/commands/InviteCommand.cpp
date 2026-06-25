@@ -37,8 +37,10 @@ void InviteCommand::execute(Client &client, Message &msg)
 	if (channel->isInviteOnly())
 		if (!channel->isOperator(client))
 			throw NotChanOp(msg.getParam(1));
-	if (channel->isMember(client))
+	if (channel->isMember(*invited))
 		throw UserOnChannel(msg.getParam(1));
+	channel->addInvited(*invited);
+	invited->queueReply(":"+client.prefix()+" INVITE "+invited->getNickName()+" : "+ channel->getName()+"\r\n");
 }
 
 bool InviteCommand::requiresRegistration() const {return true;}
