@@ -20,7 +20,16 @@ Client::Client(int fd) : _fd(fd) { _clientInfo._state = CONNECTING; }
 
 Client::~Client(void) {}
 
-void Client::appendInput(const std::string &input) { _inBuffer += input; }
+void Client::appendInput(const std::string &input) {
+	_inBuffer += input;
+
+	// RFC 1459 caps a message at 512 bytes (CRLF included). A client that streams
+	// more than that with no line terminator would grow _inBuffer without bound
+	// (memory-exhaustion DoS). The line is invalid anyway, so drop the unterminated
+	// overflow — but keep the client connected.
+	if (_inBuffer.size() > 512 && _inBuffer.find("\r\n") == std::string::npos)
+		_inBuffer.clear();
+}
 
 bool Client::extractLine(std::string &out) {
 	std::string::size_type pos = _inBuffer.find("\r\n");
