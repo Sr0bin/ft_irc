@@ -12,7 +12,8 @@
 
 #include "../../include/commands/PingCommand.hpp"
 
-#include <sys/socket.h>
+#include "Server.hpp"
+#include <vector>
 
 PingCommand::PingCommand(Server &server) : ACommand(server) {}
 
@@ -22,10 +23,17 @@ size_t PingCommand::minParams() const {return 0;}
 
 void PingCommand::execute(Client &client, Message &msg)
 {
-	if (msg.paramCount() == 0)
-		client.queueReply("PONG\r\n");
-	else
-		client.queueReply("PONG :" + msg.getParam(0) + "\r\n");
+	// RFC: a server PONG is prefixed with the server name as origin and carries
+	// it back; the token (if any) is the trailing arg.
+	const std::string server = _server.getServerName();
+	std::vector<std::string> p;
+	p.push_back(server);
+	if (msg.paramCount() == 0) {
+		client.queueReply(Message(server, "PONG", p).serialize());
+	} else {
+		p.push_back(msg.getParam(0));
+		client.queueReply(Message(server, "PONG", p, true).serialize());
+	}
 }
 
 bool PingCommand::requiresRegistration() const {return false;}
