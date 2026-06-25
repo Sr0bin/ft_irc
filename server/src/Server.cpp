@@ -86,7 +86,8 @@ void Server::setupListenSocket() {
 	_config._listenFd = socket(AF_INET, SOCK_STREAM, 0);
 	if (_config._listenFd == -1)
 		throw FatalException("socket() failed");
-	fcntl(_config._listenFd, F_SETFL, O_NONBLOCK);
+	if (fcntl(_config._listenFd, F_SETFL, O_NONBLOCK) == -1)
+		throw FatalException("fcntl(O_NONBLOCK) on listen socket failed");
 
 	// SO_REUSEADDR lets bind() reuse a port still in TIME_WAIT from a previous
 	// run, so a quick restart doesn't fail with "address already in use".
@@ -216,7 +217,12 @@ void Server::acceptClient() {
 	// the server. (errno can't be checked here per the subject anyway.)
 	if (clientFd == -1)
 		return;
-	fcntl(clientFd, F_SETFL, O_NONBLOCK);
+	if (fcntl(clientFd, F_SETFL, O_NONBLOCK) == -1) {
+		// Couldn't make the socket non-blocking: a blocking recv/send would
+		// freeze the whole event loop, so drop this connection instead.
+		close(clientFd);
+		return;
+	}
 
 	_clients[clientFd] = new Client(clientFd);
 

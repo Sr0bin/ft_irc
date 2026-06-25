@@ -23,8 +23,6 @@ bool ACommand::requiresRegistration(void) const { return (true); }
 size_t ACommand::minParams(void) const { return (0); }
 
 void ACommand::completeRegistrationIfReady(Client &client) {
-	std::cout << "completeRegistration" << std::endl;
-
 	if (client.getState() != PASSWORD_OK)
 		return;
 	if (client.getNickName().empty() || client.getUserName().empty())
