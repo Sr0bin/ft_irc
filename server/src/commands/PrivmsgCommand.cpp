@@ -19,11 +19,16 @@ PrivmsgCommand::PrivmsgCommand(Server &server) : ACommand(server) {}
 
 PrivmsgCommand::~PrivmsgCommand() {}
 
-size_t PrivmsgCommand::minParams() const { return 2; }
+// minParams is 0 (not 2) so this command — not the dispatcher's generic 461 —
+// owns the recipient/text checks: a bare PRIVMSG must answer 411 (no recipient),
+// a target with no text 412 (no text to send).
+size_t PrivmsgCommand::minParams() const { return 0; }
 
 void PrivmsgCommand::execute(Client &client, Message &msg) {
 	const std::string target = msg.getParam(0);
-	if (target.empty() || target[0] != '#') {
+	if (target.empty())
+		throw NoRecipient("PRIVMSG");
+	if (target[0] != '#') {
 		std::string targetNick = msg.getParam(0);
 		Client *target = _server.getClientByNick(targetNick);
 		if (target == NULL)
