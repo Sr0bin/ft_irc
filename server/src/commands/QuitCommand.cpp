@@ -22,26 +22,26 @@ size_t QuitCommand::minParams() const {return 0;}
 
 void QuitCommand::execute(Client &client, Message &msg)
 {
+	// RFC QUIT relay is ":prefix QUIT :reason" — no channel param, reason is a
+	// trailing arg (so multi-word reasons survive). A peer sharing several
+	// channels with the quitter must receive the message only once.
+	std::vector<std::string> p;
+	p.push_back(msg.getParam(0).empty() ? "Client Quit" : msg.getParam(0));
+	const std::string content = Message(client.prefix(), "QUIT", p, true).serialize();
+
+	std::set<Client *> notified;
 	std::set<Channel *> channels = client.getChannels();
-	std::set<Channel *>::iterator it;
-	for (it = channels.begin(); it != channels.end(); ++it)
+	for (std::set<Channel *>::iterator it = channels.begin();
+		 it != channels.end(); ++it)
 	{
-		Channel *current_channel = *it;
-		std::set<Client *> client_list = current_channel->getMembers();
-		std::set<Client *>::iterator it2;
-		for (it2 = client_list.begin(); it2 != client_list.end(); ++it2)
+		const std::set<Client *> &members = (*it)->getMembers();
+		for (std::set<Client *>::const_iterator it2 = members.begin();
+			 it2 != members.end(); ++it2)
 		{
-			Client *current_client = *it2;
 			if (*it2 == &client)
 				continue;
-			std::string content;
-			std::vector<std::string> p;
-			//TODO: check the format of the quit message
-			p.push_back(current_channel->getName());
-			p.push_back(msg.getParam(0).empty() ? "Client Quit" : msg.getParam(0));
-			content = Message(client.prefix(), "QUIT", p).serialize();
-
-			current_client->queueReply(content);
+			if (notified.insert(*it2).second)
+				(*it2)->queueReply(content);
 		}
 	}
 	this->_server.disconnectClient(client.getFd());
