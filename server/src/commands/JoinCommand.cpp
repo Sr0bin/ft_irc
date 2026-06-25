@@ -24,10 +24,14 @@ void JoinCommand::execute(Client &client, Message &msg) {
 	if (!ch)
 		ch = _server.addClientToChannel(client, chanName);
 	else if (ch->isMember(client))
-		return;
+		throw UserOnChannel(chanName);
 	else {
 		ch->canJoin(client, pass);
-
+		std::set<Client *> inviteList = ch->getInvited();
+		std::set<Client *>::iterator it;
+		for (it = inviteList.begin(); it != inviteList.end(); ++it)
+			if (*it == &client)
+				inviteList.erase(it);
 		_server.addClientToChannel(client, chanName);
 	}
 
