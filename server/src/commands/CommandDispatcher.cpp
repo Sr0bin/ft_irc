@@ -12,6 +12,7 @@
 
 #include "CommandDispatcher.hpp"
 #include "ACommandError.hpp"
+#include "FatalException.hpp"
 #include "ModeCommand.hpp"
 #include "Server.hpp"
 #include "Utils.hpp"
@@ -29,12 +30,10 @@
 #include "QuitCommand.hpp"
 #include "TopicCommand.hpp"
 #include "UserCommand.hpp"
-#include "randomCmd.hpp"
 
 CommandDispatcher::CommandDispatcher(Server &server) : _server(server) {
 	// Keys are lower-case; dispatch() normalises the incoming command with
 	// Utils::toLower so the lookup is case-insensitive (IRC commands are).
-	registerCommand("random", new randomCmd(_server));
 	registerCommand("pass", new PassCommand(_server));
 	registerCommand("nick", new NickCommand(_server));
 	registerCommand("user", new UserCommand(_server));
@@ -77,6 +76,10 @@ void CommandDispatcher::dispatch(Client &client, Message &msg) {
 			throw NeedMoreParams(msg.getCommand());
 
 		cmd->execute(client, msg);
+	} catch (FatalException &) {
+		// A genuine fatal error must reach main(), not be swallowed by the
+		// std::exception safety net below.
+		throw;
 	} catch (ACommandError &e) {
 		// Unregistered clients have no nick yet: numerics use '*' as
 		// placeholder.

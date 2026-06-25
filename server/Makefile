@@ -42,8 +42,7 @@ SOURCES_NAME = main.cpp \
 			   commands/PingCommand.cpp	\
 			   commands/PrivmsgCommand.cpp \
 			   commands/QuitCommand.cpp	\
-			   commands/InviteCommand.cpp \
-			   commands/randomCmd.cpp     #FOR TESTING PURPOSE ONLY
+			   commands/InviteCommand.cpp
 
 #---------------------------
 
