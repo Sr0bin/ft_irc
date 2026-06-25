@@ -1,7 +1,9 @@
 #include "NickCommand.hpp"
 #include "ACommandError.hpp"
+#include "Channel.hpp"
 #include "Server.hpp"
 #include <cctype>
+#include <set>
 
 // IRC special chars allowed in a nick (RFC 1459/2812).
 static bool isNickSpecial(char c) {
@@ -46,6 +48,36 @@ void NickCommand::execute(Client &client, Message &msg) {
 	if (existing != 0 && existing != &client)
 		throw NicknameInUse(nick);
 
+	// A registered client renaming itself must tell everyone who shares a
+	// channel with it (and itself), once each. Pre-registration there is no one
+	// to notify, so we only set the nick.
+	const bool announce = client.isRegistered() &&
+						  !client.getNickName().empty() &&
+						  client.getNickName() != nick;
+	const std::string oldPrefix = client.prefix();
+
 	client.setNickName(nick);
+
+	if (announce) {
+		std::vector<std::string> p;
+		p.push_back(nick);
+		const std::string relay = Message(oldPrefix, "NICK", p).serialize();
+		client.queueReply(relay);
+
+		std::set<Client *> notified;
+		const std::set<Channel *> &channels = client.getChannels();
+		for (std::set<Channel *>::const_iterator it = channels.begin();
+			 it != channels.end(); ++it) {
+			const std::set<Client *> &members = (*it)->getMembers();
+			for (std::set<Client *>::const_iterator it2 = members.begin();
+				 it2 != members.end(); ++it2) {
+				if (*it2 == &client)
+					continue;
+				if (notified.insert(*it2).second)
+					(*it2)->queueReply(relay);
+			}
+		}
+	}
+
 	completeRegistrationIfReady(client);
 }
