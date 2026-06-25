@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/22 14:42:51 by prigaudi          #+#    #+#             */
-/*   Updated: 2026/06/22 16:14:58 by prigaudi         ###   ########.fr       */
+/*   Updated: 2026/06/25 17:31:33 by rorollin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,3 +52,6 @@ RplNamReply::RplNamReply(const std::string &channel,
 
 RplEndOfNames::RplEndOfNames(const std::string &channel) throw()
 	: ACommandReply(366, channel, "End of /NAMES list") {}
+
+RplInviting::RplInviting(const std::string &channel,
+				const std::string &nick) : ACommandReply(341, nick, channel) {};

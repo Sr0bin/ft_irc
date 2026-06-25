@@ -17,6 +17,7 @@
 
 #include "../../include/Server.hpp"
 #include "../../include/commands/ACommandError.hpp"
+#include "ACommandReply.hpp"
 
 InviteCommand::InviteCommand(Server &server) : ACommand(server) {}
 
@@ -40,8 +41,13 @@ void InviteCommand::execute(Client &client, Message &msg)
 	if (channel->isMember(*invited))
 		throw UserOnChannel(msg.getParam(1));
 	channel->addInvited(*invited);
-	invited->queueReply(":"+client.prefix()+" INVITE "+invited->getNickName()+" : "+ channel->getName()+"\r\n");
-	client.queueReply(":server 341 " + client.getNickName() + " " + invited->getNickName() + "\r\n");
+	std::vector<std::string> p;
+	p.push_back(invited->getNickName());
+	p.push_back(channel->getName());
+	invited->queueReply(Message(client.prefix(), "INVITE", p).serialize());
+	client.queueReply(RplInviting(channel->getName(), invited->getNickName())
+				.toMessage(_server.getServerName(), client.getNickName())
+				.serialize());
 }
 
 bool InviteCommand::requiresRegistration() const {return true;}

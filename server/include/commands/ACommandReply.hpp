@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/22 16:17:35 by prigaudi          #+#    #+#             */
-/*   Updated: 2026/06/22 16:17:39 by prigaudi         ###   ########.fr       */
+/*   Updated: 2026/06/25 17:31:33 by rorollin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,14 @@ class RplNamReply : public ACommandReply {
 class RplEndOfNames : public ACommandReply {
   public:
 	RplEndOfNames(const std::string &channel) throw();
+};
+
+//341
+class RplInviting : public ACommandReply
+{
+public:
+	RplInviting(const std::string &channel,
+				const std::string &nick);
 };
 
 #endif
