@@ -14,8 +14,6 @@
 #include "Utils.hpp"
 #include <sstream>
 
-Client::Client(void) : _fd(-1) { _clientInfo._state = CONNECTING; }
-
 Client::Client(int fd) : _fd(fd) { _clientInfo._state = CONNECTING; }
 
 Client::~Client(void) {}
@@ -76,9 +74,10 @@ bool Client::isRegistered(void) const {
 }
 
 std::string Client::prefix(void) const {
-	// ponytail: hardcoded host, replace once Server captures the peer address
-	// (getpeername)
-	return (_clientInfo._nickname + "!" + _clientInfo._username + "@localhost");
+	// Host is captured at accept; fall back to "localhost" before it's set.
+	const std::string host =
+		_clientInfo._host.empty() ? "localhost" : _clientInfo._host;
+	return (_clientInfo._nickname + "!" + _clientInfo._username + "@" + host);
 }
 
 std::string Client::getNickName(void) const { return (_clientInfo._nickname); }
@@ -96,6 +95,8 @@ void Client::setUserName(const std::string &user) {
 void Client::setRealName(const std::string &real) {
 	_clientInfo._realname = real;
 }
+
+void Client::setHost(const std::string &host) { _clientInfo._host = host; }
 
 clientState Client::getState(void) const { return (_clientInfo._state); }
 

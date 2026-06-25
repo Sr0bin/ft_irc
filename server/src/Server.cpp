@@ -26,7 +26,6 @@ volatile sig_atomic_t g_stop = 0;
 void requestStop(int) { g_stop = 1; }
 } // namespace
 
-Server::Server(void) : _mux(0), _dispatcher(0) {}
 
 Server::Server(serverConfig config)
 	: _config(config), _mux(0), _dispatcher(0) {}
@@ -227,14 +226,16 @@ void Server::acceptClient() {
 		return;
 	}
 
-	_clients[clientFd] = new Client(clientFd);
+	const std::string host = inet_ntoa(clientAddr.sin_addr);
+	Client *client = new Client(clientFd);
+	client->setHost(host);
+	_clients[clientFd] = client;
 
 	_mux->watch(clientFd);
 
 	std::ostringstream tag;
 	tag << "[fd " << clientFd << "]";
-	Utils::log(LOG_CONN,
-			   tag.str() + " connect from " + inet_ntoa(clientAddr.sin_addr));
+	Utils::log(LOG_CONN, tag.str() + " connect from " + host);
 }
 
 void Server::disconnectClient(int fd) {

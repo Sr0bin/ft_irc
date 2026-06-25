@@ -46,6 +46,7 @@ typedef struct clientInfo {
 	std::string _nickname;
 	std::string _username;
 	std::string _realname;
+	std::string _host; // peer address captured at accept (getpeername-equivalent)
 	clientState _state;
 } clientInfo;
 

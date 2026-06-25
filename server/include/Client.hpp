@@ -35,6 +35,7 @@ class Client {
 	void setNickName(const std::string &nick);
 	void setUserName(const std::string &user);
 	void setRealName(const std::string &real);
+	void setHost(const std::string &host);
 	clientState getState(void) const;
 	void setState(clientState state);
 	void addChannel(Channel *channel);
