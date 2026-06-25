@@ -27,17 +27,18 @@ void KickCommand::execute(Client &client, Message &msg) {
 		throw(NotChanOp(chanName));
 
 	Client *clientToKick = _server.getClientByNick(nicknameToKick);
-	if (!clientToKick || ch->isMember(*clientToKick)) {
-	}
+	if (!clientToKick || !ch->isMember(*clientToKick))
+		throw(UserNotInChannel(nicknameToKick, chanName));
+
+	const std::string serverName = _server.getServerName();
+
+	std::string kickMsg = ":" + client.getNickName() + "!" +
+						  client.getUserName() + "@" + serverName + " KICK " +
+						  chanName + " " + nicknameToKick + " :" +
+						  (reason.empty() ? nicknameToKick : reason);
+
+	ch->broadcast(kickMsg, *clientToKick);
+	clientToKick->queueReply(kickMsg);
+
+	_server.removeClientFromChannel(*clientToKick, chanName);
 }
-
-/*Numeric Replies:
-
-		   ERR_NEEDMOREPARAMS 461 OK
-		   ERR_NOSUCHCHANNEL 403 OK
-		   ERR_BADCHANMASK => A IGNORER?
-		   ERR_CHANOPRIVSNEEDED 482 OK
-		   ERR_NOTONCHANNEL 442 OK
-		 ERR_USERNOTINCHANNEL 441
-
-		   */
