@@ -22,7 +22,6 @@ size_t QuitCommand::minParams() const {return 0;}
 
 void QuitCommand::execute(Client &client, Message &msg)
 {
-	std::string content;
 	std::set<Channel *> channels = client.getChannels();
 	std::set<Channel *>::iterator it;
 	for (it = channels.begin(); it != channels.end(); ++it)
@@ -35,10 +34,13 @@ void QuitCommand::execute(Client &client, Message &msg)
 			Client *current_client = *it2;
 			if (*it2 == &client)
 				continue;
-			if (msg.getParam(0).empty())
-				content = ":" + client.prefix() + " QUIT " + current_channel->getName() + ": Client Quit\r\n";
-			else
-				content = ":" + client.prefix() + " QUIT " + current_channel->getName() + ":" + msg.getParam(0) + "\r\n";
+			std::string content;
+			std::vector<std::string> p;
+			//TODO: check the format of the quit message
+			p.push_back(current_channel->getName());
+			p.push_back(msg.getParam(0).empty() ? "Client Quit" : msg.getParam(0));
+			content = Message(client.prefix(), "QUIT", p).serialize();
+
 			current_client->queueReply(content);
 		}
 	}
