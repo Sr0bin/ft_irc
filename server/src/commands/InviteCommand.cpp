@@ -36,7 +36,7 @@ void InviteCommand::execute(Client &client, Message &msg)
 		throw NotOnChannel(msg.getParam(1));
 	if (channel->isInviteOnly())
 		if (!channel->isOperator(client))
-			throw NotChanOp(msg.getParam(1));
+			throw ChanOPrivsNeeded(msg.getParam(1));
 	if (channel->isMember(*invited))
 		throw UserOnChannel(msg.getParam(1));
 	channel->addInvited(*invited);

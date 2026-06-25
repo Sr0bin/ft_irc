@@ -88,9 +88,6 @@ InviteOnly::InviteOnly(const std::string &channel) throw()
 BadChannelKey::BadChannelKey(const std::string &channel) throw()
 	: ACommandError(475, channel, "Cannot join channel (+k)") {}
 
-NotChanOp::NotChanOp(const std::string &channel) throw()
-	: ACommandError(482, channel, "You're not channel operator") {}
-
 NoRecipient::NoRecipient(const std::string &command) throw()
 	: ACommandError(411, command, "No recipient given") {}
 

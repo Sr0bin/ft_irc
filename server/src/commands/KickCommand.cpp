@@ -24,7 +24,7 @@ void KickCommand::execute(Client &client, Message &msg) {
 		throw(NotOnChannel(chanName));
 
 	if (!ch->isOperator(client))
-		throw(NotChanOp(chanName));
+		throw(ChanOPrivsNeeded(chanName));
 
 	Client *clientToKick = _server.getClientByNick(nicknameToKick);
 	if (!clientToKick || !ch->isMember(*clientToKick))

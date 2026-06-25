@@ -131,11 +131,6 @@ class BadChannelKey : public ACommandError {
 	BadChannelKey(const std::string &channel) throw();
 };
 
-class NotChanOp : public ACommandError {
-  public:
-	NotChanOp(const std::string &channel) throw();
-};
-
 class NoRecipient : public ACommandError {
   public:
 	NoRecipient(const std::string &command) throw();

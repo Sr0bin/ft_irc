@@ -34,7 +34,7 @@ void TopicCommand::execute(Client &client, Message &msg) {
 		}
 	} else {
 		if (ch->isTopicRestricted() && !ch->isOperator(client))
-			throw(NotChanOp(chanName));
+			throw(ChanOPrivsNeeded(chanName));
 		else {
 			topic = msg.getParam(1);
 			ch->setTopic(topic);
