@@ -6,7 +6,7 @@
 #    By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/01/19 15:44:49 by rorollin          #+#    #+#              #
-#    Updated: 2026/06/25 10:49:04 by prigaudi         ###   ########.fr        #
+#    Updated: 2026/06/25 11:12:29 by prigaudi         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -42,7 +42,7 @@ SOURCES_NAME = main.cpp \
 			   commands/PingCommand.cpp	\
 			   commands/PrivmsgCommand.cpp \
 			   commands/QuitCommand.cpp	\
-			   commands/InviteCommand.cpp
+			   commands/InviteCommand.cpp \
 			   commands/randomCmd.cpp     #FOR TESTING PURPOSE ONLY
 
 #---------------------------
