@@ -133,4 +133,8 @@ const std::set<Client *> &Channel::getOperators(void) const {
 
 const std::set<Client *> &Channel::getInvited() const {return (_invited); }
 
+void Channel::addInvited(Client &client) {this->_invited.insert(&client);}
+
+void Channel::removeInvited(Client &client) {this->_invited.erase(&client);}
+
 void Channel::setTopic(std::string &topic) { _topic = topic; }

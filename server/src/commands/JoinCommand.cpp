@@ -1,4 +1,8 @@
 #include "JoinCommand.hpp"
+
+#include <iostream>
+#include <ostream>
+
 #include "ACommandError.hpp"
 #include "Server.hpp"
 
@@ -27,11 +31,7 @@ void JoinCommand::execute(Client &client, Message &msg) {
 		throw UserOnChannel(chanName);
 	else {
 		ch->canJoin(client, pass);
-		std::set<Client *> inviteList = ch->getInvited();
-		std::set<Client *>::iterator it;
-		for (it = inviteList.begin(); it != inviteList.end(); ++it)
-			if (*it == &client)
-				inviteList.erase(it);
+		ch->removeInvited(client);
 		_server.addClientToChannel(client, chanName);
 	}
 
