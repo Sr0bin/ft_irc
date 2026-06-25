@@ -6,7 +6,7 @@
 /*   By: prigaudi <prigaudi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/06/16 16:38:12 by rorollin          #+#    #+#             */
-/*   Updated: 2026/06/25 10:55:15 by prigaudi         ###   ########.fr       */
+/*   Updated: 2026/06/25 11:09:12 by prigaudi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,15 @@
 #include <iostream>
 #include <ostream>
 
+#include "InviteCommand.hpp"
 #include "JoinCommand.hpp"
 #include "KickCommand.hpp"
 #include "NickCommand.hpp"
 #include "PartCommand.hpp"
 #include "PassCommand.hpp"
 #include "PingCommand.hpp"
+#include "PrivmsgCommand.hpp"
+#include "QuitCommand.hpp"
 #include "TopicCommand.hpp"
 #include "UserCommand.hpp"
 #include "randomCmd.hpp"
@@ -41,6 +44,9 @@ CommandDispatcher::CommandDispatcher(Server &server) : _server(server) {
 	registerCommand("kick", new TopicCommand(_server));
 	registerCommand("mode", new ModeCommand(_server));
 	registerCommand("ping", new PingCommand(_server));
+	registerCommand("privmsg", new PrivmsgCommand(_server));
+	registerCommand("quit", new QuitCommand(_server));
+	registerCommand("invite", new InviteCommand(_server));
 }
 
 CommandDispatcher::~CommandDispatcher(void) {

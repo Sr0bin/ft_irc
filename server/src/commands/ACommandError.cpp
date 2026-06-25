@@ -90,3 +90,12 @@ BadChannelKey::BadChannelKey(const std::string &channel) throw()
 
 NotChanOp::NotChanOp(const std::string &channel) throw()
 	: ACommandError(482, channel, "You're not channel operator") {}
+
+NoRecipient::NoRecipient(const std::string &command) throw()
+	: ACommandError(411, command, "No recipient given") {}
+
+CannotSendToChan::CannotSendToChan(const std::string &command) throw()
+	: ACommandError(404, command, "Cannot send to channel") {}
+
+UserOnChannel::UserOnChannel(const std::string &command) throw()
+	: ACommandError(443, command, "User already on channel") {}

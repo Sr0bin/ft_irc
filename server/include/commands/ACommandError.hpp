@@ -136,4 +136,19 @@ class NotChanOp : public ACommandError {
 	NotChanOp(const std::string &channel) throw();
 };
 
+
+class NoRecipient : public ACommandError {
+	public:
+		NoRecipient(const std::string &command) throw();
+};
+
+class CannotSendToChan : public ACommandError {
+	public:
+		CannotSendToChan(const std::string &command) throw();
+};
+
+class UserOnChannel : public ACommandError {
+	public:
+		UserOnChannel(const std::string &command) throw();
+};
 #endif

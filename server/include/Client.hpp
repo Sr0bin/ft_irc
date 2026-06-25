@@ -41,6 +41,7 @@ class Client {
 	void removeChannel(Channel *channel);
 	const std::set<Channel *> &getChannels(void) const;
 	std::string &getOutBuffer(void);
+	int getFd(void) const;
 
   private:
 	// No copy allowed
