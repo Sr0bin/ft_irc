@@ -12,7 +12,6 @@
 
 #include "ACommand.hpp"
 #include "Server.hpp"
-#include <iostream>
 
 ACommand::ACommand(Server &server) : _server(server) {}
 

@@ -89,12 +89,9 @@ void CommandDispatcher::dispatch(Client &client, Message &msg) {
 		client.queueReply(
 			e.toMessage(_server.getServerName(), nick).serialize());
 	} catch (std::exception &e) {
-		// TODO: careful — this also swallows FatalException. By design it's
-		// never thrown from a command, but once main() is wired, add an
-		// explicit `catch (FatalException&) { throw; }` before this net so a
-		// real fatal error propagates up instead of being logged & ignored
-		// here. Safety net: a non-ACommandError must not kill the server. Log &
-		// continue.
+		// Safety net: a non-ACommandError must not kill the server — log &
+		// continue. (FatalException is rethrown by the catch above, so it
+		// reaches main() instead of being swallowed here.)
 		Utils::log(LOG_ERR, client.tag() + " dispatch: " + e.what());
 	}
 }

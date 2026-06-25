@@ -51,7 +51,7 @@ class Channel {
 	const std::set<Client *> &getMembers(void) const;
 	const std::set<Client *> &getOperators(void) const;
 	const std::set<Client *> &getInvited(void) const;
-	void setTopic(std::string &topic);
+	void setTopic(const std::string &topic);
 	void addInvited(Client &client);
 	void removeInvited(Client &client);
 private:

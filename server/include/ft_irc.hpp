@@ -64,24 +64,4 @@ typedef struct Event {
 
 } Event;
 
-/*A SUPPRIMER, MEMO PA
-struct pollfd {
-	int   fd;       // le file descriptor à surveiller
-	short events;   // ce qu'on veut surveiller (input)
-	short revents;  // ce qui s'est passé réellement (output, rempli par le
-kernel)
-};
-
-struct sockaddr_in {
-	sa_family_t    sin_family; // AF_INET (IPv4)
-	in_port_t      sin_port;   // port (en network byte order)
-	struct in_addr sin_addr;   // adresse IP
-	char           sin_zero[8]; // padding (inutilisé, mettre à 0)
-};
-
-struct in_addr {
-	uint32_t s_addr; // adresse IP (en network byte order)
-};
-*/
-
 #endif

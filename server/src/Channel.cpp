@@ -137,4 +137,4 @@ void Channel::addInvited(Client &client) {this->_invited.insert(&client);}
 
 void Channel::removeInvited(Client &client) {this->_invited.erase(&client);}
 
-void Channel::setTopic(std::string &topic) { _topic = topic; }
+void Channel::setTopic(const std::string &topic) { _topic = topic; }

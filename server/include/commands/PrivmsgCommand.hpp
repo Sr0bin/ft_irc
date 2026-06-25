@@ -25,7 +25,6 @@ class PrivmsgCommand : public ACommand
 
 		void execute(Client &client, Message &msg);
 		size_t minParams() const;
-		bool requiresRegistration() const;
 };
 
 #endif

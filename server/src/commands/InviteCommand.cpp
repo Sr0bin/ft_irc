@@ -12,9 +12,6 @@
 
 #include "../../include/commands/InviteCommand.hpp"
 
-#include <stdexcept>
-#include <sys/socket.h>
-
 #include "../../include/Server.hpp"
 #include "../../include/commands/ACommandError.hpp"
 
@@ -53,5 +50,3 @@ void InviteCommand::execute(Client &client, Message &msg)
 	client.queueReply(Message::numeric(_server.getServerName(), 341,
 				client.getNickName(), rp).serialize());
 }
-
-bool InviteCommand::requiresRegistration() const {return true;}

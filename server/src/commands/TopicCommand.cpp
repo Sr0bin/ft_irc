@@ -35,18 +35,17 @@ void TopicCommand::execute(Client &client, Message &msg) {
 	} else {
 		if (ch->isTopicRestricted() && !ch->isOperator(client))
 			throw(ChanOPrivsNeeded(chanName));
-		else {
-			topic = msg.getParam(1);
-			ch->setTopic(topic);
-			std::vector<std::string> p;
-			p.push_back(chanName);
-			p.push_back(topic);
-			const std::string topicMsg =
-				Message(client.prefix(), "TOPIC", p, true).serialize();
-			ch->broadcast(topicMsg, client);
-			client.queueReply(RplTopic(chanName, topic)
-								  .toMessage(serverName, nick)
-								  .serialize());
-		}
+		topic = msg.getParam(1);
+		ch->setTopic(topic);
+		std::vector<std::string> p;
+		p.push_back(chanName);
+		p.push_back(topic);
+		const std::string topicMsg =
+			Message(client.prefix(), "TOPIC", p, true).serialize();
+		ch->broadcast(topicMsg, client);
+		client.queueReply(RplTopic(chanName, topic)
+							  .toMessage(serverName, nick)
+							  .serialize());
+	
 	}
 }

@@ -9,7 +9,7 @@ PartCommand::~PartCommand() {}
 size_t PartCommand::minParams(void) const { return (1); }
 
 void PartCommand::execute(Client &client, Message &msg) {
-	const std::string &chanName = msg.getParam(0);
+	const std::string chanName = msg.getParam(0);
 	std::string reason = "";
 
 	if (msg.paramCount() >= 2)

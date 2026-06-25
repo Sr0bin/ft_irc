@@ -61,7 +61,7 @@ int PollMultiplexer::wait(std::vector<Event> &out) {
 		e.fd = _fds[i].fd;
 		e.readable = _fds[i].revents & POLLIN;
 		e.writable = _fds[i].revents & POLLOUT;
-		e.closed = _fds[i].revents & (POLLHUP | POLLERR);
+		e.closed = _fds[i].revents & (POLLHUP | POLLERR | POLLNVAL);
 		out.push_back(e);
 
 		_fds[i].revents = 0;

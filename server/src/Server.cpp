@@ -15,6 +15,7 @@
 #include "FatalException.hpp"
 #include <arpa/inet.h>
 #include <csignal>
+#include <cstring>
 #include <sstream>
 
 namespace {
@@ -101,7 +102,8 @@ void Server::setupListenSocket() {
 		 << "), non-blocking, SO_REUSEADDR";
 	Utils::log(LOG_BOOT, sock.str());
 
-	struct sockaddr_in addr = {};
+	struct sockaddr_in addr;
+	std::memset(&addr, 0, sizeof(addr));
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(_config._port);
 	addr.sin_addr.s_addr = INADDR_ANY;
@@ -205,7 +207,8 @@ void Server::updateWriteInterest() {
 }
 
 void Server::acceptClient() {
-	struct sockaddr_in clientAddr = {};
+	struct sockaddr_in clientAddr;
+	std::memset(&clientAddr, 0, sizeof(clientAddr));
 	socklen_t clientLen = sizeof(clientAddr);
 
 	int clientFd =

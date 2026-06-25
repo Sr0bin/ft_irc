@@ -12,11 +12,8 @@
 
 #include "../../include/commands/PrivmsgCommand.hpp"
 
-#include <stdexcept>
-
 #include "ACommandError.hpp"
 #include "Server.hpp"
-#include <iostream>
 
 PrivmsgCommand::PrivmsgCommand(Server &server) : ACommand(server) {}
 
@@ -25,7 +22,8 @@ PrivmsgCommand::~PrivmsgCommand() {}
 size_t PrivmsgCommand::minParams() const { return 2; }
 
 void PrivmsgCommand::execute(Client &client, Message &msg) {
-	if (msg.getParam(0)[0] != '#') {
+	const std::string target = msg.getParam(0);
+	if (target.empty() || target[0] != '#') {
 		std::string targetNick = msg.getParam(0);
 		Client *target = _server.getClientByNick(targetNick);
 		if (target == NULL)
@@ -63,5 +61,3 @@ void PrivmsgCommand::execute(Client &client, Message &msg) {
 		channel->broadcast(chanMsg, client);
 	}
 }
-
-bool PrivmsgCommand::requiresRegistration() const { return true; }

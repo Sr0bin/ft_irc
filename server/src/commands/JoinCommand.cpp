@@ -1,8 +1,5 @@
 #include "JoinCommand.hpp"
 
-#include <iostream>
-#include <ostream>
-
 #include "ACommandError.hpp"
 #include "Server.hpp"
 
@@ -13,7 +10,7 @@ JoinCommand::~JoinCommand() {}
 size_t JoinCommand::minParams(void) const { return (1); }
 
 void JoinCommand::execute(Client &client, Message &msg) {
-	const std::string &chanName = msg.getParam(0);
+	const std::string chanName = msg.getParam(0);
 	std::string pass = "";
 
 	// Channel names must start with '#' (subject scope). Reject otherwise so a
