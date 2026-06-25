@@ -41,6 +41,7 @@ void InviteCommand::execute(Client &client, Message &msg)
 		throw UserOnChannel(msg.getParam(1));
 	channel->addInvited(*invited);
 	invited->queueReply(":"+client.prefix()+" INVITE "+invited->getNickName()+" : "+ channel->getName()+"\r\n");
+	client.queueReply(":server 341 " + client.getNickName() + " " + invited->getNickName() + "\r\n");
 }
 
 bool InviteCommand::requiresRegistration() const {return true;}
