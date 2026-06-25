@@ -29,12 +29,10 @@
 #include "QuitCommand.hpp"
 #include "TopicCommand.hpp"
 #include "UserCommand.hpp"
-#include "randomCmd.hpp"
 
 CommandDispatcher::CommandDispatcher(Server &server) : _server(server) {
 	// Keys are lower-case; dispatch() normalises the incoming command with
 	// Utils::toLower so the lookup is case-insensitive (IRC commands are).
-	registerCommand("random", new randomCmd(_server));
 	registerCommand("pass", new PassCommand(_server));
 	registerCommand("nick", new NickCommand(_server));
 	registerCommand("user", new UserCommand(_server));
